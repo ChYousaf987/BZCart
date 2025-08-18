@@ -10,34 +10,40 @@ const TopCategories = () => {
     },
     {
       name: "Dolor Sit",
-      image: "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
+      image:
+        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
     },
     {
       name: "Amet Vape",
-      image: "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
+      image:
+        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
     },
     {
       name: "Consectetur",
-      image: "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
+      image:
+        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
     },
     {
       name: "Adipiscing",
-      image: "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
+      image:
+        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
     },
     {
       name: "Elit Devices",
-      image: "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
+      image:
+        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
     },
     {
       name: "Another Item",
-      image: "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
+      image:
+        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
     },
   ];
 
   return (
     <div className=" md:w-[85%] mx-auto px-4 py-12">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-start md:items-center mb-8">
         <h2 className="text-lg md:text-2xl font-bold text- border-b-2 text-gray-500 border-[#f06621] inline-block pb-1">
           Shop From <span className="text-[#f06621]">Top Categories</span>
         </h2>
