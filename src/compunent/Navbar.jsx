@@ -60,7 +60,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="sticky top-0 z-20 shadow bg-orange-50">
+    <div className="sticky top-0 z-20 shadow bg-orange-50/90">
       {/* Top Header */}
       <header className="bg-gray-100 text-gray-700 py-2 px-4 hidden md:flex justify-between md:justify-around items-center">
         <div className="text-gray-500 md:-ml-20">Welcome To BZ Cart.store</div>
@@ -97,7 +97,7 @@ const Navbar = () => {
 
         <div className="flex gap-10">
           {/* Search Bar */}
-          <div className="hidden md:flex items-center bg-[#f9edda] px-4 py-2 rounded-3xl">
+          <div className="hidden md:flex items-center bg-orange-100 px-4 py-2 rounded-3xl">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-5 h-5 text-[#f06621]"
@@ -146,7 +146,7 @@ const Navbar = () => {
       </div>
 
       {/* Category Bar */}
-      <div className="relative bg-[#fdf7ef] border-b border-gray-200">
+      <div className="relative bg-[#] border-b border-gray-200">
         {/* Desktop Categories */}
         <div className="hidden md:flex gap-4 px-4 py-3 overflow-x-auto scrollbar-hide">
           {categories.map((cat, idx) => (
@@ -159,7 +159,7 @@ const Navbar = () => {
                 className={`flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap font-normal transition-colors ${
                   active === cat.name
                     ? "bg-orange-500 text-white"
-                    : "bg-[#f7ebd9] text-gray-800 hover:bg-[#eedcc2]"
+                    : "bg-orange-100 text-gray-800 hover:bg-[#eedcc2]"
                 }`}
               >
                 <span>{cat.name.toUpperCase()}</span>
