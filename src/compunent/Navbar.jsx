@@ -1,64 +1,63 @@
 import React, { useState } from "react";
-import { FaShoppingCart, FaUser, FaBars, FaSignOutAlt } from "react-icons/fa";
+import { FaShoppingCart, FaUser, FaBars, FaChevronDown } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { CiDeliveryTruck, CiLocationOn } from "react-icons/ci";
 import { RiDiscountPercentLine } from "react-icons/ri";
-import { IoIosArrowDown } from "react-icons/io";
 
 const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(location.pathname);
 
-  // Dummy user (frontend only)
-  const user = { username: "JohnDoe" }; // change null if you want to show logged-out state
+  // Dummy user
+  const user = { username: "JohnDoe" };
 
-  // Dummy categories (frontend only)
+  // Dummy categories
   const categories = [
-    // Electronics
-    { _id: "1", name: "Electronics" },
-    { _id: "10", name: "Laptops", parent_category: { _id: "1" } },
-    { _id: "11", name: "Smartphones", parent_category: { _id: "1" } },
-    { _id: "12", name: "Cameras", parent_category: { _id: "1" } },
-
-    // Clothing
-    { _id: "2", name: "Clothing" },
-    { _id: "20", name: "Men's Wear", parent_category: { _id: "2" } },
-    { _id: "21", name: "Women's Wear", parent_category: { _id: "2" } },
-    { _id: "22", name: "Kids' Wear", parent_category: { _id: "2" } },
-
-    // Shoes
-    { _id: "3", name: "Shoes" },
-    { _id: "30", name: "Sneakers", parent_category: { _id: "3" } },
-    { _id: "31", name: "Formal Shoes", parent_category: { _id: "3" } },
-    { _id: "32", name: "Sandals", parent_category: { _id: "3" } },
-
-    // Home & Kitchen
-    { _id: "4", name: "Home & Kitchen" },
-    { _id: "40", name: "Furniture", parent_category: { _id: "4" } },
-    { _id: "41", name: "Cookware", parent_category: { _id: "4" } },
-    { _id: "42", name: "Decor", parent_category: { _id: "4" } },
-
-    // Beauty & Personal Care
-    { _id: "5", name: "Beauty & Personal Care" },
-    { _id: "50", name: "Skincare", parent_category: { _id: "5" } },
-    { _id: "51", name: "Makeup", parent_category: { _id: "5" } },
-    { _id: "52", name: "Hair Care", parent_category: { _id: "5" } },
-
-    // Sports & Outdoors
-    { _id: "6", name: "Sports & Outdoors" },
-    { _id: "60", name: "Fitness Equipment", parent_category: { _id: "6" } },
-    { _id: "61", name: "Outdoor Gear", parent_category: { _id: "6" } },
-    { _id: "62", name: "Team Sports", parent_category: { _id: "6" } },
-
-    // Groceries
-    { _id: "9", name: "Groceries" },
-    { _id: "90", name: "Fruits & Vegetables", parent_category: { _id: "9" } },
-    { _id: "91", name: "Beverages", parent_category: { _id: "9" } },
-    { _id: "92", name: "Snacks", parent_category: { _id: "9" } },
+    {
+      name: "Shop All",
+      sub: ["Trending", "Best Sellers", "New Arrivals"],
+    },
+    {
+      name: "Electronics",
+      sub: ["Mobiles", "Laptops", "Headphones", "Cameras"],
+    },
+    {
+      name: "Clothing",
+      sub: ["Men", "Women", "Kids", "Accessories"],
+    },
+    {
+      name: "Shoes",
+      sub: ["Sneakers", "Sandals", "Boots"],
+    },
+    {
+      name: "Home & Kitchen",
+      sub: ["Furniture", "Appliances", "Cookware"],
+    },
+    {
+      name: "Beauty & Personal Care",
+      sub: ["Makeup", "Skincare", "Haircare"],
+    },
+    {
+      name: "Sports & Outdoors",
+      sub: ["Fitness", "Cycling", "Camping"],
+    },
+    {
+      name: "Groceries",
+      sub: ["Fresh", "Snacks", "Drinks"],
+    },
+    {
+      name: "Home & Kitchen",
+      sub: ["Furniture", "Appliances", "Cookware"],
+    },
   ];
 
-  const parentCategories = categories.filter((cat) => !cat.parent_category);
+  const [active, setActive] = useState("Shop All");
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const toggleDropdown = (cat) => {
+    setOpenDropdown(openDropdown === cat ? null : cat);
+  };
 
   return (
     <div className="sticky top-0 z-20 shadow bg-orange-50">
@@ -86,13 +85,18 @@ const Navbar = () => {
           </a>
         </div>
       </header>
+
       {/* Main Nav */}
       <div className="flex flex-wrap items-center justify-between md:justify-around px-4 sm:px-6">
-        <Link to="/home" className="flex my-5 items-center gap-4">
-          <img src="./logosss.png" alt="Logo" className="object-contain" />
+        <Link
+          to="/home"
+          className="flex my-5 items-center gap-4 md:h-[6vh] md:w-[20%] h-[3vh] w-[60%] "
+        >
+          <img src="./log.png" alt="Logo" className="object-contain" />
         </Link>
 
         <div className="flex gap-10">
+          {/* Search Bar */}
           <div className="hidden md:flex items-center bg-[#f9edda] px-4 py-2 rounded-3xl">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -115,6 +119,7 @@ const Navbar = () => {
             />
           </div>
 
+          {/* Right Menu */}
           <div className="flex items-center whitespace-nowrap gap-2 md:gap-4 text-black">
             <Link to="/" className="">
               <button className="flex items-center gap-2 text-sm font-medium">
@@ -140,79 +145,79 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Dropdown Menu */}
-      <div
-        className={`${
-          isMenuOpen ? "flex" : "hidden"
-        } flex-col md:flex md:flex-row md:items-center md:justify-center gap-3 px-4 py-4 md:py-3 `}
-      >
-        <Link
-          to="/home"
-          className={`${
-            activeMenu === "/"
-              ? "bg-[#f06621] text-white"
-              : "bg-[#f9edda] text-black"
-          } flex items-center gap-1 font-semibold px-4 py-2 rounded-full text-sm hover:text-white hover:bg-[#ed824c]`}
-          onClick={() => setActiveMenu("/")}
-        >
-          SHOP ALL
-          <IoIosArrowDown size={18} />
-        </Link>
+      {/* Category Bar */}
+      <div className="relative bg-[#fdf7ef] border-b border-gray-200">
+        {/* Desktop Categories */}
+        <div className="hidden md:flex gap-4 px-4 py-3 overflow-x-auto scrollbar-hide">
+          {categories.map((cat, idx) => (
+            <div key={idx} className="relative">
+              <button
+                onClick={() => {
+                  setActive(cat.name);
+                  toggleDropdown(cat.name);
+                }}
+                className={`flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap font-normal transition-colors ${
+                  active === cat.name
+                    ? "bg-orange-500 text-white"
+                    : "bg-[#f7ebd9] text-gray-800 hover:bg-[#eedcc2]"
+                }`}
+              >
+                <span>{cat.name.toUpperCase()}</span>
+                {cat.sub.length > 0 && <FaChevronDown size={12} />}
+              </button>
 
-        {parentCategories.map((category) => (
-          <div key={category._id} className="relative group">
-            <Link
-              to={`/category/${category._id}`}
-              className={`${
-                activeMenu === `/category/${category._id}`
-                  ? "bg-[#f06621] text-white"
-                  : "bg-[#f7ebd9] text-gray-700"
-              } flex items-center gap-1 font-semibold px-4 py-2 rounded-full text-sm hover:text-white hover:bg-[#ed824c]`}
-              onClick={() => setActiveMenu(`/category/${category._id}`)}
-            >
-              {category.name.toUpperCase()}
-              <IoIosArrowDown size={18} />
-            </Link>
-
-            {/* Subcategory Dropdown */}
-            {categories.filter(
-              (subcat) => subcat.parent_category?._id === category._id
-            ).length > 0 && (
-              <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 hidden group-hover:block">
-                {categories
-                  .filter(
-                    (subcat) => subcat.parent_category?._id === category._id
-                  )
-                  .map((subcat) => (
-                    <Link
-                      key={subcat._id}
-                      to={`/category/${subcat._id}`}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#f06621] hover:text-white"
-                      onClick={() => setActiveMenu(`/category/${subcat._id}`)}
+              {openDropdown === cat.name && cat.sub.length > 0 && (
+                <div className="absolute top-12 left-0 bg-white shadow-lg rounded-lg p-3 min-w-[180px] z-50">
+                  {cat.sub.map((subItem, i) => (
+                    <button
+                      key={i}
+                      className="block w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 text-sm text-gray-700"
                     >
-                      {subcat.name}
-                    </Link>
+                      {subItem}
+                    </button>
                   ))}
-              </div>
-            )}
-          </div>
-        ))}
-
-        {/* Mobile menu extras */}
-        <div className="md:hidden font-semibold px-4 py-2 rounded-full text-sm">
-          <a href="#" className="text-gray-500 my-2 flex items-center gap-2">
-            <CiLocationOn size={20} className="text-[#f06621]" />
-            Deliver to 423651
-          </a>
-          <a href="#" className="text-gray-500 my-2 flex items-center gap-2">
-            <CiDeliveryTruck size={20} className="text-[#f06621]" />
-            Track your order
-          </a>
-          <a href="#" className="text-gray-500 my-2 flex items-center gap-2">
-            <RiDiscountPercentLine size={20} className="text-[#f06621]" />
-            All Offers
-          </a>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
+
+        {/* Mobile Categories (collapsible) */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-white shadow-inner px-4 py-3 space-y-2">
+            {categories.map((cat, idx) => (
+              <div key={idx}>
+                <button
+                  onClick={() => toggleDropdown(cat.name)}
+                  className="flex justify-between items-center w-full px-3 py-2 rounded-md bg-[#f7ebd9] text-gray-800 font-medium"
+                >
+                  {cat.name}
+                  {cat.sub.length > 0 && (
+                    <FaChevronDown
+                      size={12}
+                      className={`transition-transform ${
+                        openDropdown === cat.name ? "rotate-180" : ""
+                      }`}
+                    />
+                  )}
+                </button>
+
+                {openDropdown === cat.name && (
+                  <div className="pl-5 mt-1 space-y-1">
+                    {cat.sub.map((subItem, i) => (
+                      <button
+                        key={i}
+                        className="block w-full text-left px-3 py-1 rounded-md hover:bg-gray-100 text-sm text-gray-700"
+                      >
+                        {subItem}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

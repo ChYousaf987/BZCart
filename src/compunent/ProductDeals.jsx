@@ -83,9 +83,10 @@ const ProductDeals = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-gray-500 border-b-2 border-[#f06621] inline-block pb-1">
-          Grab the best deal on <span className="text-[#f06621]">Trending Now</span>
+          Grab the best deal on{" "}
+          <span className="text-[#f06621]">Trending Now</span>
         </h2>
         <Link
           to="/eliquids"
