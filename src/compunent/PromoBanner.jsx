@@ -12,7 +12,7 @@ const PromoBanner = () => {
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
       >
         <source
-          src="https://videos.pexels.com/video-files/6962491/6962491-sd_640_360_25fps.mp4"
+          src="./video.mp4"
           type="video/mp4"
         />
         Your browser does not support the video tag.
