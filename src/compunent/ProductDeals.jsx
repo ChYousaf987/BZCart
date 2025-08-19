@@ -37,39 +37,6 @@ const ProductDeals = () => {
       product_catagory: ["e-liquid"],
       rating: 4,
     },
-    {
-      _id: "1",
-      product_name: "Mango E-Liquid",
-      product_base_price: 2500,
-      product_discounted_price: 1999,
-      product_images: [
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      ],
-      product_catagory: ["e-liquid"],
-      rating: 4.5,
-    },
-    {
-      _id: "2",
-      product_name: "Strawberry Ice E-Liquid",
-      product_base_price: 2800,
-      product_discounted_price: 2200,
-      product_images: [
-        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
-      ],
-      product_catagory: ["e-liquid"],
-      rating: 4.2,
-    },
-    {
-      _id: "3",
-      product_name: "Blueberry Blast",
-      product_base_price: 2000,
-      product_discounted_price: 1800,
-      product_images: [
-        "https://static.vecteezy.com/system/resources/previews/053/366/782/non_2x/collection-of-full-body-a-business-suit-mock-up-isolated-on-a-transparency-background-png.png",
-      ],
-      product_catagory: ["e-liquid"],
-      rating: 4,
-    },
   ];
 
   const eliquidProducts = products.filter((item) =>
@@ -82,15 +49,15 @@ const ProductDeals = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-12 font-montserrat">
       <div className="flex justify-between items-start md:items-center mb-6">
-        <h2 className="text-lg md:text-2xl font-bold text-gray-500 border-b-2 border-[#f06621] inline-block pb-1">
+        <h2 className="text-lg md:text-2xl font-bold text-dark border-b-2 border-primary inline-block pb-1">
           Grab the best deal on{" "}
-          <span className="text-[#f06621]">Trending Now</span>
+          <span className="text-primary">Trending Now</span>
         </h2>
         <Link
           to="/eliquids"
-          className="text-[#f06621] font-medium text-sm hover:underline"
+          className="text-primary font-medium text-sm hover:underline"
         >
           View All →
         </Link>
@@ -116,7 +83,7 @@ const ProductDeals = () => {
                     </div>
                   )}
                   <Link to={`/product/${product._id}`}>
-                    <div className="p-4 h-48 flex items-center justify-center bg-[#fbf6f4]">
+                    <div className="p-4 h-48 flex items-center justify-center bg-light">
                       <img
                         src={
                           product.product_images[0] ||
@@ -126,13 +93,13 @@ const ProductDeals = () => {
                         className="object-contain max-h-full transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>
-                    <div className="px-5 py-4 border-t bg-orange-50">
-                      <h3 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1 hover:text-[#f06621] transition-colors duration-200">
+                    <div className="px-5 py-4 border-t bg-primary/5">
+                      <h3 className="font-semibold text-dark text-sm mb-1 line-clamp-1 hover:text-primary transition-colors duration-200">
                         {product.product_name}
                       </h3>
 
                       {/* Rating Stars */}
-                      <div className="flex items-center text-yellow-400 text-sm mb-1">
+                      <div className="flex items-center text-yellow-950 text-sm mb-1">
                         {[...Array(5)].map((_, i) => (
                           <svg
                             key={i}
@@ -146,18 +113,18 @@ const ProductDeals = () => {
                             <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                           </svg>
                         ))}
-                        <span className="text-gray-600 text-xs ml-2">
+                        <span className="text-dark/70 text-xs ml-2">
                           ({rating})
                         </span>
                       </div>
                     </div>
                   </Link>
-                  <div className="px-5 pb-4 bg-orange-50">
+                  <div className="px-5 pb-4 bg-primary/5">
                     <div className="flex items-center gap-2 text-sm">
                       <span className="line-through text-gray-400">
                         Rs. {product.product_base_price || "N/A"}
                       </span>
-                      <span className="font-semibold text-black">
+                      <span className="font-semibold text-dark">
                         Rs. {product.product_discounted_price || "N/A"}
                       </span>
                     </div>

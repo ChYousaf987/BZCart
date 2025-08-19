@@ -12,7 +12,7 @@ import TopBrands from "./compunent/TopBrands";
 const App = () => {
   return (
     <>
-      <div className="bg-[#f2efeb] w-[100%] font-serif">
+      <div className=" w-[100%] ">
         <Navbar />
         <Slider />
         <ProductDeals />

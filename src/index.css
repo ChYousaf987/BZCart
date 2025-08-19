@@ -2,13 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Montserrat from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap');
+
 .container {
   width: 85%;
   margin: auto;
 }
 
-
-/* hide scrollbar */
+/* Hide scrollbar */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }

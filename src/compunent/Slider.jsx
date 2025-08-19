@@ -12,12 +12,12 @@ const Slider = () => {
       buttonText: "Shop Now",
       link: "/shop/summer",
       image:
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560", // add your local image path
+        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
       background: "/images/bg1.jpg",
     },
     {
       id: 2,
-      title: "woman purse",
+      title: "Woman Purse",
       subtitle: "Trendy fashion just for you",
       buttonText: "Discover",
       link: "/shop/new",
@@ -72,7 +72,7 @@ const Slider = () => {
     direction === "next" ? "animate-slide-in-right" : "animate-slide-in-left";
 
   return (
-    <div className="relative md:mt-2 bg-[#1c2341] md:w-[90%] md:max-w-7xl mx-auto px-4 py-6 z-10 shadow-2xl md:rounded-xl overflow-hidden">
+    <div className="relative md:mt-2 bg-dark md:w-[90%] md:max-w-7xl mx-auto px-4 py-6 z-10 shadow-2xl md:rounded-xl overflow-hidden font-montserrat">
       {/* Background Image */}
       {slides[current].background && (
         <img
@@ -115,7 +115,7 @@ const Slider = () => {
               </h2>
               <Link
                 to={slides[current].link}
-                className="bg-[#f06621] text-white px-4 py-2 rounded-full text-sm sm:text-base hover:bg-[#f06621] transition duration-300 z-20"
+                className="bg-primary text-white px-4 py-2 rounded-full text-sm sm:text-base hover:bg-primary/90 transition duration-300 z-20"
               >
                 {slides[current].buttonText}
               </Link>
@@ -129,18 +129,18 @@ const Slider = () => {
             handleSlideChange(current === 0 ? slides.length - 1 : current - 1)
           }
           aria-label="Previous slide"
-          className="absolute z-30 left-2 sm:left-2 md:-left-2 top-1/2 transform -translate-y-1/2 bg-white/90 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#f06621] transition-all duration-300"
+          className="absolute z-30 left-2 sm:left-2 md:-left-2 top-1/2 transform -translate-y-1/2 bg-white/90 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
         >
-          <IoIosArrowBack className="text-[#f06621] text-xl" />
+          <IoIosArrowBack className="text-primary text-xl" />
         </button>
         <button
           onClick={() =>
             handleSlideChange(current === slides.length - 1 ? 0 : current + 1)
           }
           aria-label="Next slide"
-          className="absolute z-30 right-2 sm:right-2 md:-right-2 top-1/2 transform -translate-y-1/2 bg-white/90 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#f06621] transition-all duration-300"
+          className="absolute z-30 right-2 sm:right-2 md:-right-2 top-1/2 transform -translate-y-1/2 bg-white/90 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
         >
-          <IoIosArrowForward className="text-[#f06621] text-xl" />
+          <IoIosArrowForward className="text-primary text-xl" />
         </button>
       </div>
 
@@ -152,7 +152,7 @@ const Slider = () => {
             onClick={() => handleSlideChange(index)}
             aria-label={`Go to slide ${index + 1}`}
             className={`h-2 w-2 sm:w-3 sm:h-2 rounded-full ${
-              index === current ? "bg-[#f06621] w-6 sm:w-6" : "bg-gray-400"
+              index === current ? "bg-primary w-6 sm:w-6" : "bg-gray-400"
             } transition-all duration-300 cursor-pointer`}
           ></button>
         ))}
