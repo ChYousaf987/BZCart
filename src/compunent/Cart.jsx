@@ -8,14 +8,15 @@ const Cart = () => {
     <div className="min-h-screen bg-gray-100">
       <Navbar />
 
-      <div className="w-[90%] mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          <div className="md:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
-            <ViewAll />
-          </div>
-          <div className="bg-white p-6 rounded-2xl shadow-lg">
-            <Carts />
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+        {/* Products (Left) */}
+        <div className="md:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
+          <ViewAll />
+        </div>
+
+        {/* Cart (Right) */}
+        <div className="bg-white p-6 rounded-2xl shadow-lg w-full">
+          <Carts />
         </div>
       </div>
     </div>

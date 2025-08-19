@@ -37,6 +37,39 @@ const ProductDeals = () => {
       product_catagory: ["e-liquid"],
       rating: 4,
     },
+    {
+      _id: "1",
+      product_name: "Mango E-Liquid",
+      product_base_price: 2500,
+      product_discounted_price: 1999,
+      product_images: [
+        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
+      ],
+      product_catagory: ["e-liquid"],
+      rating: 4.5,
+    },
+    {
+      _id: "2",
+      product_name: "Strawberry Ice E-Liquid",
+      product_base_price: 2800,
+      product_discounted_price: 2200,
+      product_images: [
+        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
+      ],
+      product_catagory: ["e-liquid"],
+      rating: 4.2,
+    },
+    {
+      _id: "3",
+      product_name: "Blueberry Blast",
+      product_base_price: 2000,
+      product_discounted_price: 1800,
+      product_images: [
+        "https://static.vecteezy.com/system/resources/previews/053/366/782/non_2x/collection-of-full-body-a-business-suit-mock-up-isolated-on-a-transparency-background-png.png",
+      ],
+      product_catagory: ["e-liquid"],
+      rating: 4,
+    },
   ];
 
   const eliquidProducts = products.filter((item) =>

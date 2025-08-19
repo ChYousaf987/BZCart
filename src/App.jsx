@@ -1,28 +1,15 @@
 import React from "react";
-import Navbar from "./compunent/Navbar";
-import Slider from "./compunent/Slider";
-import ProductDeals from "./compunent/ProductDeals";
-import TopCategories from "./compunent/TopCategories";
-import Essential from "./compunent/Essential";
-import PromoBanner from "./compunent/PromoBanner";
-import Footer from "./compunent/Footer";
-import TopBrands from "./compunent/TopBrands";
-
+import { Routes, Route } from "react-router-dom";
+import Home from "./compunent/Home";
+import Cart from "./compunent/Cart";
 
 const App = () => {
   return (
-    <>
-      <div className=" w-[100%] ">
-        <Navbar />
-        <Slider />
-        <ProductDeals />
-        <TopCategories />
-        <Essential />
-        <TopBrands />
-        <PromoBanner />
-        <Footer />
-      </div>
-    </>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/cart" element={<Cart />} />
+      {/* Add more routes here */}
+    </Routes>
   );
 };
 

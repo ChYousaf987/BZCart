@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaShoppingCart, FaUser, FaBars, FaChevronDown } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { CiDeliveryTruck, CiLocationOn } from "react-icons/ci";
@@ -7,56 +7,48 @@ import { RiDiscountPercentLine } from "react-icons/ri";
 const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState(location.pathname);
+  const [active, setActive] = useState(""); // nothing active at start
+  const [openDropdown, setOpenDropdown] = useState(null);
 
-  // Dummy user
-  const user = { username: "JohnDoe" };
+  // update active menu when route changes
+  useEffect(() => {
+    if (location.pathname === "/cart") {
+      setActive("Shop All");
+    } else {
+      setActive(""); // nothing active on homepage or other pages
+    }
+  }, [location.pathname]);
 
-  // Dummy categories
   const categories = [
-    {
-      name: "Shop All",
-      sub: ["Trending", "Best Sellers", "New Arrivals"],
-    },
+    { name: "Shop All", sub: ["Trending", "Best Sellers", "New Arrivals"] },
     {
       name: "Electronics",
       sub: ["Mobiles", "Laptops", "Headphones", "Cameras"],
     },
-    {
-      name: "Clothing",
-      sub: ["Men", "Women", "Kids", "Accessories"],
-    },
-    {
-      name: "Shoes",
-      sub: ["Sneakers", "Sandals", "Boots"],
-    },
-    {
-      name: "Home & Kitchen",
-      sub: ["Furniture", "Appliances", "Cookware"],
-    },
-    {
-      name: "Beauty & Personal Care",
-      sub: ["Makeup", "Skincare", "Haircare"],
-    },
-    {
-      name: "Sports & Outdoors",
-      sub: ["Fitness", "Cycling", "Camping"],
-    },
-    {
-      name: "Groceries",
-      sub: ["Fresh", "Snacks", "Drinks"],
-    },
-    {
-      name: "Home & Kitchen",
-      sub: ["Furniture", "Appliances", "Cookware"],
-    },
+    { name: "Clothing", sub: ["Men", "Women", "Kids", "Accessories"] },
+    { name: "Shoes", sub: ["Sneakers", "Sandals", "Boots"] },
+    { name: "Home & Kitchen", sub: ["Furniture", "Appliances", "Cookware"] },
+    { name: "Beauty & Personal Care", sub: ["Makeup", "Skincare", "Haircare"] },
+    { name: "Sports & Outdoors", sub: ["Fitness", "Cycling", "Camping"] },
+    { name: "Groceries", sub: ["Fresh", "Snacks", "Drinks"] },
   ];
-
-  const [active, setActive] = useState("Shop All");
-  const [openDropdown, setOpenDropdown] = useState(null);
 
   const toggleDropdown = (cat) => {
     setOpenDropdown(openDropdown === cat ? null : cat);
+  };
+
+  const scrollLeft = () => {
+    document.getElementById("category-scroll")?.scrollBy({
+      left: -200,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollRight = () => {
+    document.getElementById("category-scroll")?.scrollBy({
+      left: 200,
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -88,8 +80,8 @@ const Navbar = () => {
       {/* Main Nav */}
       <div className="flex flex-wrap items-center justify-between md:justify-around px-4 sm:px-6 bg-white">
         <Link
-          to="/home"
-          className="flex my-5 items-center gap-4 md:h-[6vh] md:w-[20%] h-[3vh] w-[60%] "
+          to="/"
+          className="flex my-5 items-center gap-4 md:h-[6vh] md:w-[20%] h-[3vh] w-[60%]"
         >
           <img src="./log.png" alt="Logo" className="object-contain" />
         </Link>
@@ -120,15 +112,15 @@ const Navbar = () => {
 
           {/* Right Menu */}
           <div className="flex items-center whitespace-nowrap gap-2 md:gap-4 text-dark">
-            <Link to="/">
+            <div>
               <button className="flex items-center gap-2 text-sm font-medium">
                 <FaUser className="text-primary" />
                 <span className="hidden sm:inline text-dark/70">Sign In</span>
               </button>
-            </Link>
+            </div>
             <div className="p-[0.8px] h-6 bg-dark/10"></div>
             <Link
-              to="/payment"
+              to="/cart"
               className="flex items-center gap-2 text-sm font-medium"
             >
               <FaShoppingCart className="text-primary" />
@@ -144,68 +136,59 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Category Bar */}
-      <div className="relative bg-light border-b border-dark/10">
-        {/* Desktop Categories */}
-        <div className="hidden md:flex gap-4 px-4 py-3 overflow-x-auto scrollbar-hide">
-          {categories.map((cat, idx) => (
-            <div key={idx} className="relative">
-              <button
-                onClick={() => {
-                  setActive(cat.name);
-                  toggleDropdown(cat.name);
-                }}
-                className={`flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap font-medium transition-colors ${
-                  active === cat.name
-                    ? "bg-primary text-white"
-                    : "bg-primary/10 text-dark hover:bg-primary/20"
-                }`}
-              >
-                <span>{cat.name.toUpperCase()}</span>
-                {cat.sub.length > 0 && <FaChevronDown size={12} />}
-              </button>
+      {/* Category Bar Desktop */}
+      <div className="relative bg-light border-b border-dark/10 hidden md:block">
+        <div className="relative w-[95%] mx-auto flex items-center">
+          {/* Left Arrow */}
+          <button
+            onClick={scrollLeft}
+            className="absolute left-0 z-10 bg-white shadow-md p-2 rounded-full -ml-2 hover:bg-primary/10"
+          >
+            <FaChevronDown className="rotate-90 text-dark" size={16} />
+          </button>
 
-              {openDropdown === cat.name && cat.sub.length > 0 && (
-                <div className="absolute top-12 left-0 bg-white shadow-lg rounded-lg p-3 min-w-[180px] z-50">
-                  {cat.sub.map((subItem, i) => (
-                    <button
-                      key={i}
-                      className="block w-full text-left px-3 py-2 rounded-md hover:bg-light text-sm text-dark"
-                    >
-                      {subItem}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Mobile Categories */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white shadow-inner px-4 py-3 space-y-2">
+          {/* Scrollable Categories */}
+          <div
+            id="category-scroll"
+            className="flex gap-4 px-10 py-3 overflow-x-auto scrollbar-hide scroll-smooth"
+          >
             {categories.map((cat, idx) => (
-              <div key={idx}>
-                <button
-                  onClick={() => toggleDropdown(cat.name)}
-                  className="flex justify-between items-center w-full px-3 py-2 rounded-md bg-primary/10 text-dark font-medium"
-                >
-                  {cat.name}
-                  {cat.sub.length > 0 && (
-                    <FaChevronDown
-                      size={12}
-                      className={`transition-transform ${
-                        openDropdown === cat.name ? "rotate-180" : ""
-                      }`}
-                    />
-                  )}
-                </button>
-                {openDropdown === cat.name && (
-                  <div className="pl-5 mt-1 space-y-1">
+              <div key={idx} className="relative flex-shrink-0">
+                {cat.name === "Shop All" ? (
+                  <Link
+                    to="/cart"
+                    onClick={() => setActive(cat.name)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap font-medium transition-colors ${
+                      active === cat.name
+                        ? "bg-primary text-white"
+                        : "bg-primary/10 text-dark hover:bg-primary/20"
+                    }`}
+                  >
+                    <span>{cat.name.toUpperCase()}</span>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setActive(cat.name);
+                      toggleDropdown(cat.name);
+                    }}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap font-medium transition-colors ${
+                      active === cat.name
+                        ? "bg-primary text-white"
+                        : "bg-primary/10 text-dark hover:bg-primary/20"
+                    }`}
+                  >
+                    <span>{cat.name.toUpperCase()}</span>
+                    {cat.sub.length > 0 && <FaChevronDown size={12} />}
+                  </button>
+                )}
+
+                {openDropdown === cat.name && cat.sub.length > 0 && (
+                  <div className="absolute top-12 left-0 bg-white shadow-lg rounded-lg p-3 min-w-[180px] z-50">
                     {cat.sub.map((subItem, i) => (
                       <button
                         key={i}
-                        className="block w-full text-left px-3 py-1 rounded-md hover:bg-light text-sm text-dark"
+                        className="block w-full text-left px-3 py-2 rounded-md hover:bg-light text-sm text-dark"
                       >
                         {subItem}
                       </button>
@@ -215,8 +198,67 @@ const Navbar = () => {
               </div>
             ))}
           </div>
-        )}
+
+          {/* Right Arrow */}
+          <button
+            onClick={scrollRight}
+            className="absolute right-0 z-10 bg-white shadow-md p-2 rounded-full -mr-2 hover:bg-primary/10"
+          >
+            <FaChevronDown className="-rotate-90 text-dark" size={16} />
+          </button>
+        </div>
       </div>
+
+      {/* Category Bar Mobile */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white shadow-inner px-4 py-3 space-y-2">
+          {categories.map((cat, idx) => (
+            <div key={idx}>
+              {cat.name === "Shop All" ? (
+                <Link
+                  to="/cart"
+                  onClick={() => {
+                    setActive(cat.name);
+                    setIsMenuOpen(false); // close menu on click
+                  }}
+                  className="block w-full text-left px-3 py-2 rounded-md bg-primary/10 text-dark font-medium"
+                >
+                  {cat.name}
+                </Link>
+              ) : (
+                <>
+                  <button
+                    onClick={() => toggleDropdown(cat.name)}
+                    className="flex justify-between items-center w-full px-3 py-2 rounded-md bg-primary/10 text-dark font-medium"
+                  >
+                    {cat.name}
+                    {cat.sub.length > 0 && (
+                      <FaChevronDown
+                        size={12}
+                        className={`transition-transform ${
+                          openDropdown === cat.name ? "rotate-180" : ""
+                        }`}
+                      />
+                    )}
+                  </button>
+                  {openDropdown === cat.name && (
+                    <div className="pl-5 mt-1 space-y-1">
+                      {cat.sub.map((subItem, i) => (
+                        <button
+                          key={i}
+                          className="block w-full text-left px-3 py-1 rounded-md hover:bg-light text-sm text-dark"
+                        >
+                          {subItem}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,112 +1,127 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { PulseLoader } from "react-spinners";
-import { fetchProducts } from "../features/products/productSlice";
-import { addToCart, fetchCart } from "../features/cart/cartSlice";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React from "react";
+import { Link } from "react-router-dom";
 
 const ViewAll = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { products, loading, error } = useSelector((state) => state.products);
-  const { user } = useSelector((state) => state.auth);
-  const { error: cartError } = useSelector((state) => state.cart);
-  const [loadingItems, setLoadingItems] = useState({});
+  const products = [
+    {
+      _id: "1",
+      product_name: "Mango E-Liquid",
+      product_base_price: 2500,
+      product_discounted_price: 1999,
+      product_images: [
+        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
+      ],
+      product_description: "Delicious mango flavored e-liquid.",
+      rating: 4.5,
+    },
+    {
+      _id: "2",
+      product_name: "Strawberry Ice E-Liquid",
+      product_base_price: 2800,
+      product_discounted_price: 2200,
+      product_images: [
+        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
+      ],
+      product_description: "Refreshing strawberry ice e-liquid.",
+      rating: 4.2,
+    },
+    {
+      _id: "3",
+      product_name: "Blueberry Blast",
+      product_base_price: 2000,
+      product_discounted_price: 1800,
+      product_images: [
+        "https://static.vecteezy.com/system/resources/previews/053/366/782/non_2x/collection-of-full-body-a-business-suit-mock-up-isolated-on-a-transparency-background-png.png",
+      ],
+      product_description: "Tangy blueberry blast for vaping lovers.",
+      rating: 4,
+    },
+    {
+      _id: "1",
+      product_name: "Mango E-Liquid",
+      product_base_price: 2500,
+      product_discounted_price: 1999,
+      product_images: [
+        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
+      ],
+      product_description: "Delicious mango flavored e-liquid.",
+      rating: 4.5,
+    },
+    {
+      _id: "2",
+      product_name: "Strawberry Ice E-Liquid",
+      product_base_price: 2800,
+      product_discounted_price: 2200,
+      product_images: [
+        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
+      ],
+      product_description: "Refreshing strawberry ice e-liquid.",
+      rating: 4.2,
+    },
+    {
+      _id: "3",
+      product_name: "Blueberry Blast",
+      product_base_price: 2000,
+      product_discounted_price: 1800,
+      product_images: [
+        "https://static.vecteezy.com/system/resources/previews/053/366/782/non_2x/collection-of-full-body-a-business-suit-mock-up-isolated-on-a-transparency-background-png.png",
+      ],
+      product_description: "Tangy blueberry blast for vaping lovers.",
+      rating: 4,
+    },
+  ];
 
-  useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (cartError) {
-      toast.error(cartError);
-    }
-  }, [cartError]);
-
-  const handleAddToCart = (item) => {
-    if (!user) {
-      toast.warn("Please log in to add items to cart");
-      navigate("/login");
-      return;
-    }
-    setLoadingItems((prev) => ({ ...prev, [item._id]: true }));
-
-    const cartItem = {
-      prod_id: item._id,
-      selected_image: item.product_images?.[0] || null,
-    };
-
-    dispatch(addToCart(cartItem))
-      .unwrap()
-      .then(() => {
-        toast.success(`${item.product_name} added to cart!`);
-        dispatch(fetchCart());
-      })
-      .catch((err) => {
-        toast.error(err || "Failed to add to cart");
-      })
-      .finally(() => {
-        setLoadingItems((prev) => ({ ...prev, [item._id]: false }));
-      });
-  };
-
-  // Calculate discount percentage
   const calculateDiscountPercentage = (basePrice, discountedPrice) => {
     if (!basePrice || !discountedPrice || basePrice <= 0) return 0;
     return Math.round(((basePrice - discountedPrice) / basePrice) * 100);
   };
 
   return (
-    <div>
-      <ToastContainer />
-      {loading ? (
-        <div className="text-center py-4">
-          <PulseLoader size={15} color="blue" />
-        </div>
-      ) : error ? (
-        <p className="text-center text-red-500">{error}</p>
-      ) : products.length === 0 ? (
-        <h3 className="text-center text-gray-600 text-2xl font-medium">
-          No Products Available
-        </h3>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((item) => {
-            const discountPercentage = calculateDiscountPercentage(
-              item.product_base_price,
-              item.product_discounted_price
-            );
-            return (
-              <div
-                key={item._id}
-                className="relative bg-white rounded-2xl p-4 shadow hover:shadow-lg transition-all duration-300"
-              >
-                <Link to={`/product/${item._id}`}>
-                  <div className="relative">
-                    <img
-                      src={
-                        item.product_images[0] ||
-                        "https://via.placeholder.com/300"
-                      }
-                      alt={item.product_name}
-                      loading="lazy"
-                      className="h-48 w-full rounded-md object-cover mb-3 hover:opacity-90 transition-opacity duration-200"
-                    />
-                    {discountPercentage > 0 && (
-                      <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
-                        {discountPercentage}% off
-                      </span>
-                    )}
-                  </div>
-                  <h6 className="font-semibold text-lg text-gray-800 mb-1 hover:text-blue-600 transition-colors duration-200">
+    <div className="max-w-7xl mx-auto px-6 py-12 font-montserrat">
+      {/* Section Title */}
+      <h2 className="text-4xl font-extrabold text-dark mb-12 text-center">
+        Our <span className="text-primary">Products</span>
+      </h2>
+
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        {products.map((item) => {
+          const discountPercentage = calculateDiscountPercentage(
+            item.product_base_price,
+            item.product_discounted_price
+          );
+
+          return (
+            <div
+              key={item._id}
+              className="group relative bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden"
+            >
+              {/* Image */}
+              <Link to={`/product/${item._id}`} className="relative">
+                <img
+                  src={item.product_images[0]}
+                  alt={item.product_name}
+                  className="h-64 w-full object-contain bg-light p-6 transition-transform duration-500 group-hover:scale-105"
+                />
+                {discountPercentage > 0 && (
+                  <span className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                    -{discountPercentage}%
+                  </span>
+                )}
+              </Link>
+
+              {/* Product Info */}
+              <div className="flex-1 p-5 flex flex-col justify-between">
+                <div>
+                  <h6 className="font-semibold text-lg text-dark group-hover:text-primary transition-colors duration-200">
                     {item.product_name}
                   </h6>
-                  <p className="text-gray-600 text-sm mb-1 line-clamp-2">
+                  <p className="text-dark/60 text-sm mt-1 line-clamp-2">
                     {item.product_description}
                   </p>
-                  <div className="flex items-center gap-1 mb-2">
+
+                  {/* Rating */}
+                  <div className="flex items-center gap-1 mt-2">
                     {[...Array(5)].map((_, i) => (
                       <svg
                         key={i}
@@ -121,41 +136,32 @@ const ViewAll = () => {
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.286 3.966c.3.921-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.197-1.539-1.118l1.285-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.951-.69l1.286-3.967z" />
                       </svg>
                     ))}
-                    <span className="text-xs text-gray-500 ml-1">
-                      ({item.rating || 4})
+                    <span className="text-xs text-dark/50 ml-1">
+                      {item.rating}
                     </span>
                   </div>
-                </Link>
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-2 mb-2">
+                </div>
+
+                {/* Price + Cart */}
+                <div className="mt-4">
+                  <div className="flex items-center gap-2">
                     <span className="text-gray-400 line-through text-sm">
                       Rs. {item.product_base_price}
                     </span>
-                    <span className="text-blue-600 font-bold text-lg">
+                    <span className="text-primary font-bold text-xl">
                       Rs. {item.product_discounted_price}
                     </span>
                   </div>
-                  <button
-                    onClick={() => handleAddToCart(item)}
-                    disabled={loadingItems[item._id]}
-                    className={`w-full md:w-[80%] mx-auto py-2 rounded-3xl text-white font-medium transition-all duration-200 ${
-                      loadingItems[item._id]
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-blue-500 hover:bg-blue-600"
-                    }`}
-                  >
-                    {loadingItems[item._id] ? (
-                      <PulseLoader size={8} color="white" />
-                    ) : (
-                      "Add to Cart"
-                    )}
+
+                  <button className="w-full mt-4 py-2 bg-primary hover:bg-primary/90 text-white font-semibold rounded-full transition duration-300 shadow-md">
+                    🛒 Add to Cart
                   </button>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
