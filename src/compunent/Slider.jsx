@@ -48,7 +48,7 @@ const CustomSlider = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true, // 🔹 enable autoplay
-    autoplaySpeed: 2000, // 4 seconds
+    autoplaySpeed: 1500, // 4 seconds
     arrows: false, // show next/prev arrows
     pauseOnHover: false, // 🔹 stop auto when hover
   };
