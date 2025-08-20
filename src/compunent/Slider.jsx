@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import React from "react";
+import Slider from "react-slick";
 import { Link } from "react-router-dom";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-const Slider = () => {
-  // Dummy static slides (frontend only)
+const CustomSlider = () => {
   const slides = [
     {
       id: 1,
@@ -13,7 +14,8 @@ const Slider = () => {
       link: "/shop/summer",
       image:
         "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      background: "/images/bg1.jpg",
+      background:
+        "https://img.freepik.com/premium-photo/realstic-dark-rough-grunge-paper-overlay-texturee_435219-1929.jpg?semt=ais_hybrid&w=740&q=80",
     },
     {
       id: 2,
@@ -23,7 +25,8 @@ const Slider = () => {
       link: "/shop/new",
       image:
         "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
-      background: "/images/bg3.jpg",
+      background:
+        "https://t4.ftcdn.net/jpg/13/65/88/15/360_F_1365881525_OK6k5Z4CAnu3cGMtkmZxIFuO39nlO2nW.jpg",
     },
     {
       id: 3,
@@ -33,132 +36,67 @@ const Slider = () => {
       link: "/shop/electronics",
       image:
         "https://static.vecteezy.com/system/resources/previews/053/366/782/non_2x/collection-of-full-body-a-business-suit-mock-up-isolated-on-a-transparency-background-png.png",
-      background: "/images/bg2.jpg",
+      background:
+        "https://t4.ftcdn.net/jpg/03/92/25/09/360_F_392250914_2Od8jNRBPgpMu8W29vCh4hiu5EUXbgGU.jpg",
     },
   ];
 
-  const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState("next");
-
-  // Inject CSS animations dynamically
-  useEffect(() => {
-    const styleSheet = document.createElement("style");
-    styleSheet.textContent = `
-      @keyframes slideInRight {
-        from { opacity: 0; transform: translateX(20px); }
-        to { opacity: 1; transform: translateX(0); }
-      }
-      @keyframes slideInLeft {
-        from { opacity: 0; transform: translateX(-20px); }
-        to { opacity: 1; transform: translateX(0); }
-      }
-      .animate-slide-in-right {
-        animation: slideInRight 0.5s ease-out forwards;
-      }
-      .animate-slide-in-left {
-        animation: slideInLeft 0.5s ease-out forwards;
-      }
-    `;
-    document.head.appendChild(styleSheet);
-    return () => document.head.removeChild(styleSheet);
-  }, []);
-
-  const handleSlideChange = (newIndex) => {
-    setDirection(newIndex > current ? "next" : "prev");
-    setCurrent(newIndex);
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 3000,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true, // 🔹 enable autoplay
+    autoplaySpeed: 2000, // 4 seconds
+    arrows: false, // show next/prev arrows
+    pauseOnHover: false, // 🔹 stop auto when hover
   };
 
-  const animationClass =
-    direction === "next" ? "animate-slide-in-right" : "animate-slide-in-left";
-
   return (
-    <div className="relative md:mt-2 bg-dark md:w-[90%] md:max-w-7xl mx-auto px-4 py-6 z-10 shadow-2xl md:rounded-xl overflow-hidden font-montserrat">
-      {/* Background Image */}
-      {slides[current].background && (
-        <img
-          src={slides[current].background}
-          alt="Slide background"
-          className={`absolute inset-0 w-full h-full object-cover z-0 ${animationClass}`}
-        />
-      )}
+    <div className="relative md:mt-2 bg-dark md:w-[90%] md:max-w-7xl mx-auto px-2 py-6 shadow-2xl md:rounded-xl overflow-hidden font-montserrat">
+      <Slider {...settings}>
+        {slides.map((slide) => (
+          <div key={slide.id} className="relative">
+            {/* Background */}
+            {slide.background && (
+              <img
+                src={slide.background}
+                alt="Slide background"
+                className="absolute inset-0 w-full h-full object-cover z-0"
+              />
+            )}
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/30 z-0"></div>
 
-      {/* Overlay */}
-      {slides[current].background && (
-        <div className="absolute inset-0 bg-black/30 z-5"></div>
-      )}
+            {/* Content */}
+            <div className="relative flex flex-col-reverse sm:flex-row items-center justify-between z-10 px-9 md:pl-24 py-10 gap-6">
+              {/* Image */}
+              <div className="text-white max-w-md text-center sm:text-left">
+                <p className="text-sm sm:text-lg">{slide.subtitle}</p>
+                <h2 className="text-2xl sm:text-4xl font-bold py-2 mb-6">
+                  {slide.title}
+                </h2>
+                <Link
+                  to={slide.link}
+                  className="bg-primary text-white px-4 py-2 rounded-full text-sm sm:text-base hover:bg-primary/90 transition duration-300"
+                >
+                  {slide.buttonText}
+                </Link>
+              </div>
+              <img
+                src={slide.image}
+                alt={slide.title}
+                className="h-40 sm:h-56 lg:h-72 object-contain"
+              />
 
-      {/* Decorative Circles */}
-      <div className="absolute -top-32 right-32 w-80 h-80 bg-gray-200/5 rounded-full z-10"></div>
-      <div className="absolute -top-40 right-24 w-96 h-96 rounded-full border-2 border-gray-200/5 z-10"></div>
-
-      {/* Main Content */}
-      <div className="relative z-20 rounded-xl p-4 sm:p-6 lg:p-8">
-        <div className="flex items-center justify-between">
-          <div
-            key={current}
-            className="flex-1 flex flex-col sm:flex-row md:px-10 justify-between items-center gap-4 sm:gap-8"
-          >
-            {/* Image */}
-            <img
-              src={slides[current].image}
-              alt={slides[current].title}
-              className={`order-1 sm:order-2 h-40 sm:h-56 lg:h-72 object-contain ${animationClass} z-20`}
-            />
-
-            {/* Text */}
-            <div
-              className={`order-2 sm:order-1 text-white max-w-md text-center px-6 sm:text-left ${animationClass} z-20`}
-            >
-              <p className="text-sm sm:text-lg">{slides[current].subtitle}</p>
-              <h2 className="text-2xl sm:text-4xl font-bold py-1 mb-6 sm:py-2">
-                {slides[current].title}
-              </h2>
-              <Link
-                to={slides[current].link}
-                className="bg-primary text-white px-4 py-2 rounded-full text-sm sm:text-base hover:bg-primary/90 transition duration-300 z-20"
-              >
-                {slides[current].buttonText}
-              </Link>
+              {/* Text */}
             </div>
           </div>
-        </div>
-
-        {/* Arrows */}
-        <button
-          onClick={() =>
-            handleSlideChange(current === 0 ? slides.length - 1 : current - 1)
-          }
-          aria-label="Previous slide"
-          className="absolute z-30 left-2 sm:left-2 md:-left-2 top-1/2 transform -translate-y-1/2 bg-white/90 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
-        >
-          <IoIosArrowBack className="text-primary text-xl" />
-        </button>
-        <button
-          onClick={() =>
-            handleSlideChange(current === slides.length - 1 ? 0 : current + 1)
-          }
-          aria-label="Next slide"
-          className="absolute z-30 right-2 sm:right-2 md:-right-2 top-1/2 transform -translate-y-1/2 bg-white/90 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
-        >
-          <IoIosArrowForward className="text-primary text-xl" />
-        </button>
-      </div>
-
-      {/* Dots */}
-      <div className="flex justify-center mt-4 gap-2 z-30 relative">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => handleSlideChange(index)}
-            aria-label={`Go to slide ${index + 1}`}
-            className={`h-2 w-2 sm:w-3 sm:h-2 rounded-full ${
-              index === current ? "bg-primary w-6 sm:w-6" : "bg-gray-400"
-            } transition-all duration-300 cursor-pointer`}
-          ></button>
         ))}
-      </div>
+      </Slider>
     </div>
   );
 };
 
-export default Slider;
+export default CustomSlider;

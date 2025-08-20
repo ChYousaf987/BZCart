@@ -16,8 +16,8 @@ const Home = () => {
         <Slider />
         <ProductDeals />
         <TopCategories />
-        <TopBrands />
         <Essential />
+        <TopBrands />
         <PromoBanner />
         <Footer />
       </div>

@@ -1,8 +1,37 @@
 import React from "react";
+import Slider from "react-slick";
 import { Link } from "react-router-dom";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+// 🔹 Custom Next Arrow
+const NextArrow = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="absolute right-2 sm:right-4 md:right-6 lg:-right-12 
+               top-1/2 -translate-y-1/2 z-20 
+               bg-primary text-white p-2 rounded-full shadow-lg 
+               hover:bg-primary/90 transition"
+  >
+    <IoIosArrowForward size={20} />
+  </button>
+);
+
+// 🔹 Custom Prev Arrow
+const PrevArrow = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="absolute left-2 sm:left-4 md:left-6 lg:-left-12 
+               top-1/2 -translate-y-1/2 z-20 
+               bg-primary text-white p-2 rounded-full shadow-lg 
+               hover:bg-primary/90 transition"
+  >
+    <IoIosArrowBack size={20} />
+  </button>
+);
 
 const ProductDeals = () => {
-  // Dummy products (replace with your own data)
   const products = [
     {
       _id: "1",
@@ -81,8 +110,33 @@ const ProductDeals = () => {
     return Math.round(((base - discounted) / base) * 100);
   };
 
+  // react-slick settings
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 800,
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    pauseOnHover: true,
+    arrows: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: { slidesToShow: 3 },
+      },
+      {
+        breakpoint: 640,
+        settings: { slidesToShow: 1 },
+      },
+    ],
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 font-montserrat">
+    <div className="max-w-7xl mx-auto px-4 py-12 font-montserrat relative">
       <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-dark border-b-2 border-primary inline-block pb-1">
           Grab the best deal on{" "}
@@ -96,11 +150,11 @@ const ProductDeals = () => {
         </Link>
       </div>
 
-      <div className="flex overflow-x-auto gap-6 sm:gap-8 pb-4 snap-x snap-mandatory scrollbar-hide">
-        {eliquidProducts.length === 0 ? (
-          <p className="text-center w-full">No E-Liquids found</p>
-        ) : (
-          eliquidProducts.map((product) => {
+      {eliquidProducts.length === 0 ? (
+        <p className="text-center w-full">No E-Liquids found</p>
+      ) : (
+        <Slider {...settings}>
+          {eliquidProducts.map((product) => {
             const discountPercent = getDiscountPercent(
               product.product_base_price,
               product.product_discounted_price
@@ -108,7 +162,7 @@ const ProductDeals = () => {
             const rating = product.rating || 4;
 
             return (
-              <div key={product._id} className="snap-start min-w-[250px]">
+              <div key={product._id} className="px-2">
                 <div className="group bg-white rounded-2xl border shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
                   {discountPercent !== null && (
                     <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-bl-lg z-10">
@@ -132,7 +186,7 @@ const ProductDeals = () => {
                       </h3>
 
                       {/* Rating Stars */}
-                      <div className="flex items-center text-yellow-950 text-sm mb-1">
+                      <div className="flex items-center text-yellow-500 text-sm mb-1">
                         {[...Array(5)].map((_, i) => (
                           <svg
                             key={i}
@@ -173,9 +227,9 @@ const ProductDeals = () => {
                 </div>
               </div>
             );
-          })
-        )}
-      </div>
+          })}
+        </Slider>
+      )}
     </div>
   );
 };

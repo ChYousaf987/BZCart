@@ -31,6 +31,9 @@ const Navbar = () => {
     { name: "Beauty & Personal Care", sub: ["Makeup", "Skincare", "Haircare"] },
     { name: "Sports & Outdoors", sub: ["Fitness", "Cycling", "Camping"] },
     { name: "Groceries", sub: ["Fresh", "Snacks", "Drinks"] },
+    { name: "Beauty & Personal Care", sub: ["Makeup", "Skincare", "Haircare"] },
+    { name: "Sports & Outdoors", sub: ["Fitness", "Cycling", "Camping"] },
+    { name: "Groceries", sub: ["Fresh", "Snacks", "Drinks"] },
   ];
 
   const toggleDropdown = (cat) => {
@@ -52,7 +55,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="sticky top-0 z-20 shadow font-montserrat">
+    <div className="sticky top-0 z-20 shadow overflow-x-hidden font-montserrat">
       {/* Top Header */}
       <header className="bg-light text-dark py-2 px-4 hidden md:flex justify-between md:justify-around items-center">
         <div className="text-dark/70 md:-ml-20">Welcome To BZ Cart.store</div>
@@ -112,18 +115,18 @@ const Navbar = () => {
 
           {/* Right Menu */}
           <div className="flex items-center whitespace-nowrap gap-2 md:gap-4 text-dark">
-            <div>
+            <Link to="/auth">
               <button className="flex items-center gap-2 text-sm font-medium">
-                <FaUser className="text-primary" />
+                <FaUser size={20} className="text-primary" />
                 <span className="hidden sm:inline text-dark/70">Sign In</span>
               </button>
-            </div>
+            </Link>
             <div className="p-[0.8px] h-6 bg-dark/10"></div>
             <Link
               to="/cart"
               className="flex items-center gap-2 text-sm font-medium"
             >
-              <FaShoppingCart className="text-primary" />
+              <FaShoppingCart size={23} className="text-primary" />
               <span className="hidden sm:inline text-dark/70">Cart</span>
             </Link>
             <button
@@ -142,15 +145,15 @@ const Navbar = () => {
           {/* Left Arrow */}
           <button
             onClick={scrollLeft}
-            className="absolute left-0 z-10 bg-white shadow-md p-2 rounded-full -ml-2 hover:bg-primary/10"
+            className="absolute left-0 z-10 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primary/90 transition -ml-2"
           >
-            <FaChevronDown className="rotate-90 text-dark" size={16} />
+            <FaChevronDown className="rotate-90 " size={16} />
           </button>
 
           {/* Scrollable Categories */}
           <div
             id="category-scroll"
-            className="flex gap-4 px-10 py-3 overflow-x-auto scrollbar-hide scroll-smooth"
+            className="flex w-[95%] mx-auto gap-4 px-10 py-3 overflow-x-auto scrollbar-hide scroll-smooth"
           >
             {categories.map((cat, idx) => (
               <div key={idx} className="relative flex-shrink-0">
@@ -202,9 +205,9 @@ const Navbar = () => {
           {/* Right Arrow */}
           <button
             onClick={scrollRight}
-            className="absolute right-0 z-10 bg-white shadow-md p-2 rounded-full -mr-2 hover:bg-primary/10"
+            className="absolute right-0 z-10 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primary/90 transition -mr-6"
           >
-            <FaChevronDown className="-rotate-90 text-dark" size={16} />
+            <FaChevronDown className="-rotate-90" size={16} />
           </button>
         </div>
       </div>

@@ -1,170 +1,186 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { registerMyUser, userReset } from "../features/users/userSlice";
-import OTPModal from "./OTPModal";
-import logos from "../assets/logos.png";
+import {
+  FaFacebookF,
+  FaGoogle,
+  FaLinkedinIn,
+  FaUser,
+  FaEnvelope,
+  FaLock,
+} from "react-icons/fa";
+import InputWithIcon from "./InputWithIcon";
+import {
+  registerMyUser,
+  verifyOTPData,
+  userReset,
+} from "../features/users/userSlice";
 
-const Signup = () => {
-  const [showPass, setShowPass] = useState(false);
-  const [showOTPModal, setShowOTPModal] = useState(false);
-  const [formFields, setFormFields] = useState({
+export default function Signup({ setIsSignIn }) {
+  const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
+  const [otp, setOtp] = useState("");
+  const [showOtpInput, setShowOtpInput] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { userLoading, userError, userMessage, userSuccess } = useSelector(
-    (state) => state.auth
-  );
+  const { user, userLoading, userError, userMessage, userSuccess } =
+    useSelector((state) => state.auth);
 
-  const { username, email, password, confirmPassword } = formFields;
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleChange = (e) => {
-    setFormFields({
-      ...formFields,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const handleOtpChange = (e) => setOtp(e.target.value);
 
-  const validateForm = () => {
-    if (!username || !email || !password || !confirmPassword) {
-      toast.error("Please fill in all fields");
-      return false;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error("Please enter a valid email");
-      return false;
-    }
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return false;
-    }
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return false;
-    }
-    return true;
-  };
-
-  const handleRegister = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
-    await dispatch(registerMyUser({ username, email, password }));
+    if (!showOtpInput) {
+      dispatch(registerMyUser(formData));
+    } else {
+      dispatch(verifyOTPData({ otp }));
+    }
   };
 
   useEffect(() => {
-    if (userError) {
-      toast.error(userMessage);
+    if (userSuccess && user && !showOtpInput) {
+      setShowOtpInput(true);
+      dispatch(userReset());
+    } else if (userSuccess && user && showOtpInput) {
+      toast.success(
+        `Welcome, ${user.username}! Account verified successfully!`,
+        {
+          position: "top-right",
+          autoClose: 3000,
+        }
+      );
+      navigate("/");
       dispatch(userReset());
     }
-    if (userSuccess) {
-      setShowOTPModal(true);
-      toast.success("OTP sent to your email! Awaiting admin approval.");
-    }
-  }, [userError, userMessage, userSuccess, dispatch]);
-
-  const handleOTPSubmit = () => {
-    setShowOTPModal(false);
-    dispatch(userReset());
-    navigate("/");
-  };
-
-  const handleOTPClose = () => {
-    setShowOTPModal(false);
-    dispatch(userReset());
-  };
+  }, [userSuccess, user, showOtpInput, navigate, dispatch]);
 
   return (
-    <div className="bg-[#EFF6FF] h-screen flex justify-center items-center">
-      <div className="flex flex-col md:flex-row w-[90%] max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden min-h-[500px]">
-        {/* Left Form */}
-        <div className="md:w-1/2 w-full p-10 flex flex-col justify-center gap-5">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-4">
-            SIGN UP
-          </h2>
-          <form className="space-y-5" onSubmit={handleRegister}>
-            <input
-              type="text"
-              name="username"
-              value={username}
-              onChange={handleChange}
-              placeholder="Username"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="email"
-              name="email"
-              value={email}
-              onChange={handleChange}
-              placeholder="Email"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <div className="relative">
-              <input
-                type={showPass ? "text" : "password"}
-                name="password"
-                value={password}
-                onChange={handleChange}
-                placeholder="Password"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <div
-                className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-600"
-                onClick={() => setShowPass(!showPass)}
-              >
-                {showPass ? <FaEyeSlash /> : <FaEye />}
-              </div>
-            </div>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirm Password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              type="submit"
-              disabled={userLoading}
-              className="bg-blue-600 text-white py-2 w-full rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-            >
-              {userLoading ? "Registering..." : "Register"}
-            </button>
-            <p className="text-center text-sm text-gray-700">
-              Already have an account?{" "}
-              <Link to="/" className="text-blue-500 underline">
-                Sign In
-              </Link>
-            </p>
-          </form>
-        </div>
-
-        {/* Right Image */}
-        <div className="md:w-1/2 w-full h-64 md:h-auto relative">
-          <div className="absolute right-1 top-1 z-20">
-            <img src={logos} alt="logos" className="w-[150px]" />
-          </div>
-          <img
-            src="https://media.istockphoto.com/id/656814364/photo/young-person-vaping-an-e-cig-with-lots-of-clouds-isolated-on-a-dark-background.jpg?s=612x612&w=0&k=20&c=EdUsNTeF9pL2rUWF8zV6yTLRNigw0ty9dGPC_xvReCQ="
-            alt="Vape"
-            className="w-full h-full object-cover"
-          />
-        </div>
+    <div className="flex flex-col md:flex-row w-full font-montserrat">
+      {/* Left Panel */}
+      <div className="w-full md:w-1/2 relative bg-gradient-to-b from-primary to-dark text-white flex flex-col justify-center items-center p-8 rounded-t-2xl md:rounded-tl-2xl md:rounded-bl-2xl">
+        <Link
+          to="/"
+          className="absolute -top-0 left-0 flex items-center z-10 gap-4 md:h-[13vh] md:w-[30%] bg-white h-[3vh] w-[60%]"
+        >
+          <img src="./logo.png" alt="Logo" className="object-contain" />
+        </Link>
+        <h2 className="text-2xl font-bold mb-3 mt-10">Welcome Back!</h2>
+        <p className="text-center max-w-xs mb-4">
+          Already have an account? Sign in to continue with Referra!
+        </p>
+        <button
+          onClick={() => setIsSignIn(true)}
+          className="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-dark transition"
+        >
+          Sign In
+        </button>
       </div>
 
-      <OTPModal
-        isOpen={showOTPModal}
-        onClose={handleOTPClose}
-        onSubmit={handleOTPSubmit}
-      />
+      {/* Right Panel - Form */}
+      <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center p-6 md:p-10">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-primary mb-4 text-center">
+          {showOtpInput ? "Verify Your Email" : "Create An Account"}
+        </h2>
+
+        {userSuccess && !showOtpInput && (
+          <p className="text-green-500 text-sm mb-4">OTP sent to your email!</p>
+        )}
+        {userSuccess && showOtpInput && (
+          <p className="text-green-500 text-sm mb-4">
+            Email verified successfully!
+          </p>
+        )}
+
+        <div className="flex space-x-3 md:space-x-4 mb-6">
+          {[FaFacebookF, FaGoogle, FaLinkedinIn].map((Icon, idx) => (
+            <button
+              key={idx}
+              className="border rounded-full p-3 w-12 h-12 flex items-center justify-center hover:bg-light transition"
+            >
+              <Icon className="text-lg text-dark" />
+            </button>
+          ))}
+        </div>
+
+        <p className="mb-4 text-gray-500 text-sm text-center">
+          {showOtpInput
+            ? "Enter the OTP sent to your email"
+            : "Or Signup Through Your Email"}
+        </p>
+
+        <form onSubmit={handleSubmit} className="w-full max-w-[24rem]">
+          {!showOtpInput ? (
+            <>
+              <InputWithIcon
+                type="text"
+                name="username"
+                placeholder="Name"
+                Icon={FaUser}
+                value={formData.username}
+                onChange={handleChange}
+              />
+              <InputWithIcon
+                type="email"
+                name="email"
+                placeholder="Email"
+                Icon={FaEnvelope}
+                value={formData.email}
+                onChange={handleChange}
+              />
+              {userError && (
+                <p className="text-red-500 text-sm mb-4">{userMessage}</p>
+              )}
+              <InputWithIcon
+                type="password"
+                name="password"
+                placeholder="Password"
+                Icon={FaLock}
+                value={formData.password}
+                onChange={handleChange}
+              />
+              <div className="flex items-center mb-4">
+                <input type="checkbox" id="robot" className="mr-2 w-4 h-4" />
+                <label htmlFor="robot" className="text-sm text-gray-700">
+                  I am not a robot
+                </label>
+              </div>
+            </>
+          ) : (
+            <InputWithIcon
+              type="text"
+              name="otp"
+              placeholder="Enter OTP"
+              Icon={FaLock}
+              value={otp}
+              onChange={handleOtpChange}
+            />
+          )}
+
+          <button
+            type="submit"
+            disabled={userLoading}
+            className={`w-full p-3 bg-primary text-white rounded-full hover:bg-primary/90 transition ${
+              userLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {userLoading
+              ? showOtpInput
+                ? "Verifying OTP..."
+                : "Signing Up..."
+              : showOtpInput
+              ? "Verify OTP"
+              : "Sign Up"}
+          </button>
+        </form>
+      </div>
     </div>
   );
-};
-
-export default Signup;
+}

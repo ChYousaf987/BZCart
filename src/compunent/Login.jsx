@@ -1,129 +1,138 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import {
+  FaFacebookF,
+  FaGoogle,
+  FaLinkedinIn,
+  FaEnvelope,
+  FaLock,
+} from "react-icons/fa";
+import InputWithIcon from "./InputWithIcon";
 import { loginMyUser, userReset } from "../features/users/userSlice";
-import logos from "../assets/logos.png";
-const Login = () => {
-  const [showPass, setShowPass] = useState(false);
-  const [formFields, setFormFields] = useState({
-    email: "",
-    password: "",
-  });
 
+export default function Login({ setIsSignIn }) {
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { userLoading, userError, userMessage, userSuccess, user } =
+  const { user, userLoading, userError, userMessage, userSuccess } =
     useSelector((state) => state.auth);
 
-  const { email, password } = formFields;
-
   const handleChange = (e) => {
-    setFormFields({
-      ...formFields,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const validateForm = () => {
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
-      return false;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error("Invalid email format");
-      return false;
-    }
-    return true;
-  };
-
-  const handleLogin = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
-    await dispatch(loginMyUser({ email, password }));
+    dispatch(loginMyUser(formData));
   };
 
   useEffect(() => {
-    if (userError) {
-      toast.error(userMessage);
+    if (userSuccess && user) {
+      toast.success(`Welcome back, ${user.username}!`, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      navigate("/");
       dispatch(userReset());
     }
-    if (userSuccess && user && user.isApproved) {
-      toast.success("Login successful!");
-      dispatch(userReset());
-      navigate("/home");
-    }
-  }, [userError, userMessage, userSuccess, user, dispatch, navigate]);
+  }, [userSuccess, user, navigate, dispatch]);
 
   return (
-    <div className="bg-[#EFF6FF] h-screen flex justify-center items-center">
-      <div className="flex flex-col md:flex-row w-[90%] max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden min-h-[500px]">
-        {/* Left Image */}
-        <div className="md:w-1/2 w-full h-64 md:h-auto relative">
-          <div className="absolute right-1 top-1 z-20">
-            <img src={logos} alt="logos" className="w-[150px]" />
-          </div>
-          <img
-            src="https://media.istockphoto.com/id/656814364/photo/young-person-vaping-an-e-cig-with-lots-of-clouds-isolated-on-a-dark-background.jpg?s=612x612&w=0&k=20&c=EdUsNTeF9pL2rUWF8zV6yTLRNigw0ty9dGPC_xvReCQ="
-            alt="Vape"
-            className="w-full h-full object-cover "
-          />
+    <div className="flex flex-col md:flex-row w-full font-montserrat">
+      {/* Left Panel - Form */}
+      <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center p-6 md:p-10">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-primary mb-4 text-center">
+          Sign in to BZ Cart
+        </h2>
+
+        {userError && (
+          <p className="text-red-500 text-sm mb-4">{userMessage}</p>
+        )}
+        {userSuccess && (
+          <p className="text-green-500 text-sm mb-4">Login successful!</p>
+        )}
+
+        <div className="flex space-x-3 md:space-x-4 mb-6">
+          {[FaFacebookF, FaGoogle, FaLinkedinIn].map((Icon, idx) => (
+            <button
+              key={idx}
+              className="border rounded-full p-3 w-12 h-12 flex items-center justify-center hover:bg-light transition"
+            >
+              <Icon className="text-lg text-dark" />
+            </button>
+          ))}
         </div>
 
-        {/* Right Login Form */}
-        <div className="md:w-1/2 w-full p-10 flex flex-col justify-center gap-5">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-4">
-            LOGIN
-          </h2>
-          <form className="space-y-5" onSubmit={handleLogin}>
-            <input
-              type="email"
-              name="email"
-              value={email}
-              onChange={handleChange}
-              placeholder="Email"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <div className="relative">
-              <input
-                type={showPass ? "text" : "password"}
-                name="password"
-                value={password}
-                onChange={handleChange}
-                placeholder="Password"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <div
-                className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-600"
-                onClick={() => setShowPass(!showPass)}
-              >
-                {showPass ? <FaEyeSlash /> : <FaEye />}
-              </div>
-            </div>
+        <p className="mb-4 text-gray-500 text-sm text-center">
+          Or Sign in Through Your Email
+        </p>
+
+        <form onSubmit={handleSubmit} className="w-full max-w-[24rem]">
+          <InputWithIcon
+            type="email"
+            name="email"
+            placeholder="Email"
+            Icon={FaEnvelope}
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <InputWithIcon
+            type="password"
+            name="password"
+            placeholder="Password"
+            Icon={FaLock}
+            value={formData.password}
+            onChange={handleChange}
+          />
+          <div className="w-full text-right mb-4">
             <button
-              type="submit"
-              disabled={userLoading}
-              className="bg-blue-600 text-white py-2 w-full rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+              type="button"
+              className="text-sm text-primary hover:underline"
             >
-              {userLoading ? "Logging in..." : "Login"}
+              Forgot Password?
             </button>
-            <Link to="/signup">
-              <button
-                type="button"
-                className="border border-blue-600 mt-3 text-blue-600 py-2 w-full rounded-lg hover:bg-blue-50 transition"
-              >
-                Register
-              </button>
-            </Link>
-            <p className="text-sm text-gray-500 hover:underline cursor-pointer text-center">
-              Forgot your password?
-            </p>
-          </form>
-        </div>
+          </div>
+
+          <div className="flex items-center mb-4">
+            <input type="checkbox" id="remember" className="mr-2 w-4 h-4" />
+            <label htmlFor="remember" className="text-sm text-gray-700">
+              Remember me
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            disabled={userLoading}
+            className={`w-full p-3 bg-primary text-white rounded-full hover:bg-primary/90 transition ${
+              userLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {userLoading ? "Signing In..." : "Sign In"}
+          </button>
+        </form>
+      </div>
+
+      {/* Right Panel */}
+      <div className="w-full relative md:w-1/2 bg-gradient-to-b from-primary to-dark text-white flex flex-col justify-center items-center p-8 rounded-b-2xl md:rounded-tr-2xl md:rounded-br-2xl">
+        <Link
+          to="/"
+          className="absolute -top-0 right-0 flex items-center z-10 gap-4 md:h-[13vh] md:w-[30%] bg-white h-[3vh] w-[60%]"
+        >
+          <img src="./logo.png" alt="Logo" className="object-contain" />
+        </Link>
+        <h2 className="text-2xl font-bold mb-3 mt-10">Hi User!</h2>
+        <p className="text-center max-w-xs mb-4">
+          Don't have an account? Sign up to join Referra!
+        </p>
+        <button
+          onClick={() => setIsSignIn(false)}
+          className="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-dark transition"
+        >
+          Sign Up
+        </button>
       </div>
     </div>
   );
-};
-
-export default Login;
+}
