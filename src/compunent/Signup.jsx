@@ -68,7 +68,7 @@ export default function Signup({ setIsSignIn }) {
       <div className="w-full md:w-1/2 relative bg-gradient-to-b from-primary to-dark text-white flex flex-col justify-center items-center p-8 rounded-t-2xl md:rounded-tl-2xl md:rounded-bl-2xl">
         <Link
           to="/"
-          className="absolute -top-0 left-0 flex items-center z-10 gap-4 md:h-[13vh] md:w-[30%] bg-white h-[3vh] w-[60%]"
+          className="absolute top-0 left-0 flex items-center z-10 gap-4 h-[8vh] w-[30%] md:h-[13vh] md:w-[30%] bg-white "
         >
           <img src="./logo.png" alt="Logo" className="object-contain" />
         </Link>
