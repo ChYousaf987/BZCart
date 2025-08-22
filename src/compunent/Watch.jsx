@@ -1,25 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import Navbar from "./Navbar";
-import E_LiquidsMenu from "./E_LiquidsMenu";
+import WatchMenu from "./WatchMenu";
 
-const E_Liquids = () => {
+const Watch = () => {
   return (
     <div className="relative min-h-screen">
       {/* Page Content */}
       <div className="relative z-20">
         <Navbar />
 
-        <div className="pt-10 pb-20 px-4 sm:px-8 lg:px-16 w-full max-w-8xl mx-auto">
+        <div className="pt-10 pb-20 px-4 sm:px-8 lg:px-16 w-full ma mx-auto">
           {/* Page Heading */}
           <div className="mb-10 text-center">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-primary drop-shadow-lg animate-fade-in-up">
-              Explore Clothing
+              Explore Watch
             </h1>
           </div>
 
           {/* Product List Container */}
           <div className="rounded-2xl p-6 sm:p-10">
-            <E_LiquidsMenu />
+           <WatchMenu />
           </div>
         </div>
       </div>
@@ -27,4 +27,4 @@ const E_Liquids = () => {
   );
 };
 
-export default E_Liquids;
+export default Watch;

@@ -7,22 +7,28 @@ import { RiDiscountPercentLine } from "react-icons/ri";
 const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [active, setActive] = useState(""); // nothing active at start
+  const [active, setActive] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
 
-  // update active menu when route changes
-  useEffect(() => {
-    if (location.pathname === "/cart") {
-      setActive("Shop All");
-    } else {
-      setActive(""); // nothing active on homepage or other pages
-    }
-  }, [location.pathname]);
+  // Update active state on route change
+
+
+  // Category → route mapping
+  const categoryRoutes = {
+    "Shop All": "/cart",
+    Clothing: "/E_Liquids",
+    Watch: "/watch",
+    Shoes: "/watch",
+    "Home & Kitchen": "/watch",
+    "Beauty & Personal Care": "/watch",
+    "Sports & Outdoors": "/watch",
+    Groceries: "/watch",
+  };
 
   const categories = [
     { name: "Shop All", sub: ["Trending", "Best Sellers", "New Arrivals"] },
     {
-      name: "Electronics",
+      name: "Watch",
       sub: ["Mobiles", "Laptops", "Headphones", "Cameras"],
     },
     { name: "Clothing", sub: ["Men", "Women", "Kids", "Accessories"] },
@@ -31,6 +37,7 @@ const Navbar = () => {
     { name: "Beauty & Personal Care", sub: ["Makeup", "Skincare", "Haircare"] },
     { name: "Sports & Outdoors", sub: ["Fitness", "Cycling", "Camping"] },
     { name: "Groceries", sub: ["Fresh", "Snacks", "Drinks"] },
+    { name: "Home & Kitchen", sub: ["Furniture", "Appliances", "Cookware"] },
     { name: "Beauty & Personal Care", sub: ["Makeup", "Skincare", "Haircare"] },
     { name: "Sports & Outdoors", sub: ["Fitness", "Cycling", "Camping"] },
     { name: "Groceries", sub: ["Fresh", "Snacks", "Drinks"] },
@@ -86,7 +93,7 @@ const Navbar = () => {
           to="/"
           className="flex my-5 items-center gap-4 md:h-[6vh] md:w-[20%] h-[3vh] w-[60%]"
         >
-          <img src="./log.png" alt="Logo" className="object-contain" />
+          <img src="./log.png" alt="Logoss" className="object-contain" />
         </Link>
 
         <div className="flex gap-10">
@@ -123,7 +130,7 @@ const Navbar = () => {
             </Link>
             <div className="p-[0.8px] h-6 bg-dark/10"></div>
             <Link
-              to="/cart"
+              to="/Payment"
               className="flex items-center gap-2 text-sm font-medium"
             >
               <FaShoppingCart size={23} className="text-primary" />
@@ -157,9 +164,9 @@ const Navbar = () => {
           >
             {categories.map((cat, idx) => (
               <div key={idx} className="relative flex-shrink-0">
-                {cat.name === "Shop All" ? (
+                {categoryRoutes[cat.name] ? (
                   <Link
-                    to="/cart"
+                    to={categoryRoutes[cat.name]}
                     onClick={() => setActive(cat.name)}
                     className={`flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap font-medium transition-colors ${
                       active === cat.name
@@ -217,12 +224,12 @@ const Navbar = () => {
         <div className="md:hidden bg-white shadow-inner px-4 py-3 space-y-2">
           {categories.map((cat, idx) => (
             <div key={idx}>
-              {cat.name === "Shop All" ? (
+              {categoryRoutes[cat.name] ? (
                 <Link
-                  to="/cart"
+                  to={categoryRoutes[cat.name]}
                   onClick={() => {
                     setActive(cat.name);
-                    setIsMenuOpen(false); // close menu on click
+                    setIsMenuOpen(false);
                   }}
                   className="block w-full text-left px-3 py-2 rounded-md bg-primary/10 text-dark font-medium"
                 >
