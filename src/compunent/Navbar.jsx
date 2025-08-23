@@ -62,63 +62,64 @@ const Navbar = () => {
   };
 
   return (
-    <div className="sticky top-0 z-20 shadow overflow-x-hidden font-montserrat">
+    <div className="sticky top-0 z-20 shadow overflow-x-hidden font-montserrat bg-white">
       {/* Top Header */}
-      <header className="bg-light text-dark py-2 px-4 hidden md:flex justify-between md:justify-around items-center">
-        <div className="text-dark/70 md:-ml-20">Welcome To BZ Cart.store</div>
-        <div className="flex gap-5 md:-mr-20">
-          <a
-            href="#"
-            className="flex items-center gap-2 text-sm hover:underline"
-          >
-            <CiLocationOn size={17} className="text-primary" />
-            Deliver to <span className="text-dark font-semibold">423651</span>
-          </a>
-          <div className="p-[0.8px] bg-dark/10"></div>
-          <a href="#" className="flex items-center gap-2 hover:underline">
-            <CiDeliveryTruck size={17} className="text-primary" />
-            Track your order
-          </a>
-          <div className="p-[0.8px] bg-dark/10"></div>
-          <a href="#" className="flex items-center gap-2 hover:underline">
-            <RiDiscountPercentLine size={17} className="text-primary" />
-            All Offers
-          </a>
+      <header className="bg-light text-dark md:py-2 ">
+        <div className=" hidden md:flex justify-between md:justify-between items-center w-[95%] mx-auto">
+          <div className="text-dark">Welcome To BZ Cart.store</div>
+          <div className="flex gap-5">
+            <a
+              href="#"
+              className="flex items-center gap-2 text-sm hover:underline"
+            >
+              <CiLocationOn size={17} className="text-primary" />
+              Deliver to <span className="text-dark font-semibold">423651</span>
+            </a>
+            <div className="p-[0.8px] bg-dark/10"></div>
+            <a href="#" className="flex items-center gap-2 hover:underline">
+              <CiDeliveryTruck size={17} className="text-primary" />
+              Track your order
+            </a>
+            <div className="p-[0.8px] bg-dark/10"></div>
+            <a href="#" className="flex items-center gap-2 hover:underline">
+              <RiDiscountPercentLine size={17} className="text-primary" />
+              All Offers
+            </a>
+          </div>
         </div>
       </header>
 
       {/* Main Nav */}
-      <div className="flex flex-wrap items-center justify-between md:justify-around px-4 sm:px-6 bg-white">
+      <div className="flex flex-wrap items-center justify-between md:justify-between bg-white w-[95%] mx-auto">
         <Link
           to="/"
-          className="flex my-5 items-center gap-4 md:h-[6vh] md:w-[20%] h-[3vh] w-[60%]"
+          className="flex  -ms-5 md:-ms-9 items-center gap-4 h-[10vh] md:h-[12vh] overflow-hidden md:w-[20%]  w-[60%]"
         >
           <img src="./log.png" alt="Logoss" className="object-contain" />
         </Link>
-
+        <div className="hidden md:flex items-center bg-primary/10 px-4 py-2 rounded-3xl">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-5 h-5 text-primary"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.5"
+              d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
+            />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search more..."
+            className="bg-transparent w-96 px-2 outline-none text-dark placeholder-dark/50"
+          />
+        </div>
         <div className="flex gap-10">
           {/* Search Bar */}
-          <div className="hidden md:flex items-center bg-primary/10 px-4 py-2 rounded-3xl">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5 text-primary"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
-              />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search more..."
-              className="bg-transparent w-96 px-2 outline-none text-dark placeholder-dark/50"
-            />
-          </div>
 
           {/* Right Menu */}
           <div className="flex items-center whitespace-nowrap gap-2 md:gap-4 text-dark">
@@ -147,8 +148,8 @@ const Navbar = () => {
       </div>
 
       {/* Category Bar Desktop */}
-      <div className="relative bg-light border-b border-dark/10 hidden md:block">
-        <div className="relative w-[95%] mx-auto flex items-center">
+      <div className="relative  border-b border-dark/10 hidden md:block w-[95%] mx-auto">
+        <div className="relative  mx-auto flex items-center">
           {/* Left Arrow */}
           <button
             onClick={scrollLeft}
@@ -212,7 +213,7 @@ const Navbar = () => {
           {/* Right Arrow */}
           <button
             onClick={scrollRight}
-            className="absolute right-0 z-10 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primary/90 transition -mr-6"
+            className="absolute right-0 z-10 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primary/90 transition -mr-2"
           >
             <FaChevronDown className="-rotate-90" size={16} />
           </button>

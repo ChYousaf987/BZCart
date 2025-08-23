@@ -11,7 +11,7 @@ import Footer from "./Footer";
 const Home = () => {
   return (
     <>
-      <div className="relative ">
+      <div className="relative">
         <Navbar />
         <Slider />
         <ProductDeals />

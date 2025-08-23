@@ -9,10 +9,7 @@ import "slick-carousel/slick/slick-theme.css";
 const NextArrow = ({ onClick }) => (
   <button
     onClick={onClick}
-    className="absolute right-2 sm:right-4 md:right-6 lg:-right-12 
-               top-1/2 -translate-y-1/2 z-20 
-               bg-primary text-white p-2 rounded-full shadow-lg 
-               hover:bg-primary/90 transition"
+    className="absolute right-5 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 z-10 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primary/90 transition"
   >
     <IoIosArrowForward size={20} />
   </button>
@@ -22,10 +19,7 @@ const NextArrow = ({ onClick }) => (
 const PrevArrow = ({ onClick }) => (
   <button
     onClick={onClick}
-    className="absolute left-2 sm:left-4 md:left-6 lg:-left-12 
-               top-1/2 -translate-y-1/2 z-20 
-               bg-primary text-white p-2 rounded-full shadow-lg 
-               hover:bg-primary/90 transition"
+    className="absolute left-5 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 z-10 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primary/90 transition"
   >
     <IoIosArrowBack size={20} />
   </button>
@@ -136,7 +130,7 @@ const ProductDeals = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 font-montserrat relative">
+    <div className="md:w-[90%] mx-auto px-2 md:px-0 py-12 font-montserrat relative">
       <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-dark border-b-2 border-primary inline-block pb-1">
           Grab the best deal on{" "}
@@ -165,7 +159,7 @@ const ProductDeals = () => {
               <div key={product._id} className="px-2">
                 <div className="group bg-white rounded-2xl border shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
                   {discountPercent !== null && (
-                    <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-bl-lg z-10">
+                    <div className="absolute top-2 right-2 bg-primary text-white text-xs font-semibold px-2 py-1 rounded-bl-lg z-10">
                       {discountPercent}% OFF
                     </div>
                   )}

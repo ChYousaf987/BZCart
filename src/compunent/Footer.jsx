@@ -9,9 +9,9 @@ const Footer = () => {
       <div className="hidden md:flex absolute -top-32 -right-28 w-96 h-96 rounded-full border border-primary/30"></div>
 
       {/* Desktop Layout */}
-      <div className="max-w-7xl mx-auto hidden md:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 relative z-10">
+      <div className="md:w-[90%]  mx-auto hidden md:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 relative z-10">
         {/* Contact Us */}
-        <div>
+        <div className="">
           <h3 className="text-lg font-semibold mb-6">Contact Us</h3>
           <div className="flex items-start gap-3 mb-4">
             <FaWhatsapp className="text-xl mt-1 text-primary" />
@@ -31,7 +31,7 @@ const Footer = () => {
         </div>
 
         {/* Most Popular Categories */}
-        <div>
+        <div className="mx-auto">
           <h3 className="text-lg font-semibold border-b-2 border-primary inline-block mb-6">
             Most Popular Categories
           </h3>
@@ -46,7 +46,7 @@ const Footer = () => {
         </div>
 
         {/* Customer Services */}
-        <div>
+        <div className="mx-auto">
           <h3 className="text-lg font-semibold border-b-2 border-primary inline-block mb-6">
             Customer Services
           </h3>

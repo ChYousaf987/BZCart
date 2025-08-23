@@ -77,8 +77,8 @@ const WatchMenu = () => {
   };
 
   return (
-    <div className="w-[100%] mx-auto px-6 py-10 font-montserrat">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+    <div className="md:w-[95%] mx-auto px-6  py-10 font-montserrat">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10">
         {products.map((item) => {
           const discountPercentage = calculateDiscountPercentage(
             item.product_base_price,

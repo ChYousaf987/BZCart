@@ -85,7 +85,7 @@ const Cartss = () => {
 
   return (
     <div className="bg-light font-montserrat">
-      <div className="w-[85%] mx-auto pt-8 flex flex-col lg:flex-row justify-between gap-6 p-4 min-h-screen">
+      <div className="w-[95%] mx-auto pt-8 flex flex-col lg:flex-row justify-between gap-6 p-4 min-h-screen">
         {/* Cart Items */}
         <div className="w-full lg:w-2/3">
           <h2 className="text-3xl font-bold mb-4 text-dark">

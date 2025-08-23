@@ -52,7 +52,7 @@ const SingleProduct = () => {
     <>
       <Navbar />
       <div className="min-h-screen bg-light p-8 font-montserrat">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto bg-white p-6 rounded-2xl shadow">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-[90%] mx-auto bg-white p-6 rounded-2xl shadow">
           <img
             src={product.image}
             alt={product.name}
@@ -113,7 +113,7 @@ const SingleProduct = () => {
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto mt-12">
+        <div className="w-[90%] mx-auto mt-12">
           <h2 className="text-2xl font-bold text-dark mb-4">
             Customer Reviews
           </h2>
@@ -128,7 +128,7 @@ const SingleProduct = () => {
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto mt-12">
+        <div className="w-[90%] mx-auto mt-12">
           <h2 className="text-2xl font-bold text-dark mb-6">
             Related Products
           </h2>
