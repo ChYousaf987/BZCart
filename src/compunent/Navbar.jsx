@@ -62,7 +62,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="sticky top-0 z-20 shadow overflow-x-hidden font-montserrat bg-white">
+    <div className="sticky top-0 z-20 shadow overflow-x-hidden bg-white">
       {/* Top Header */}
       <header className="bg-light text-dark md:py-1 ">
         <div className=" hidden md:flex justify-between md:justify-between items-center w-[95%] mx-auto">
@@ -169,7 +169,7 @@ const Navbar = () => {
                   <Link
                     to={categoryRoutes[cat.name]}
                     onClick={() => setActive(cat.name)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap font-medium transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-2  rounded-full whitespace-nowrap text-sm transition-colors ${
                       active === cat.name
                         ? "bg-primary text-white"
                         : "bg-primary/10 text-dark hover:bg-primary/20"

@@ -14,8 +14,7 @@ const CustomSlider = () => {
       link: "/shop/summer",
       image:
         "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      background:
-        "",
+      background: "",
     },
     {
       id: 2,

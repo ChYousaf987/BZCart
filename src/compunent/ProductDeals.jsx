@@ -124,16 +124,16 @@ const ProductDeals = () => {
       },
       {
         breakpoint: 640,
-        settings: { slidesToShow: 1 },
+        settings: { slidesToShow: 2 },
       },
     ],
   };
 
   return (
-    <div className="md:w-[90%] mx-auto px-2 md:px-0 py-12 font-montserrat relative">
+    <div className="md:w-[95%] mx-auto px-2 md:px-0 py-12 font-montserrat relative">
       <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-dark border-b-2 border-primary inline-block pb-1">
-          Grab the best deal on{" "}
+          
           <span className="text-primary">Trending Now</span>
         </h2>
         <Link
