@@ -95,7 +95,7 @@ const E_LiquidsMenu = () => {
                 <img
                   src={item.product_images[0]}
                   alt={item.product_name}
-                  className="h-64 w-full object-contain bg-light p-6 transition-transform duration-500 group-hover:scale-105"
+                  className=" h-44 md:h-64 w-full object-contain bg-light p-6 transition-transform duration-500 group-hover:scale-105"
                 />
                 {discountPercentage > 0 && (
                   <span className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
@@ -139,7 +139,7 @@ const E_LiquidsMenu = () => {
                 {/* Price + Add to Cart */}
                 <div className="mt-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-400 line-through text-sm">
+                    <span className="text-gray-400 line-through md:text-sm">
                       Rs. {item.product_base_price}
                     </span>
                     <span className="text-primary font-bold text-xl">
