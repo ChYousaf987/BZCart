@@ -15,7 +15,7 @@ const CustomSlider = () => {
       image:
         "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
       background:
-        "https://img.freepik.com/premium-photo/realstic-dark-rough-grunge-paper-overlay-texturee_435219-1929.jpg?semt=ais_hybrid&w=740&q=80",
+        "",
     },
     {
       id: 2,
@@ -54,47 +54,13 @@ const CustomSlider = () => {
   };
 
   return (
-    <div className="relative md:mt-2 bg-dark md:w-[95%] h-[60vh] mx-auto px-2 py-6 shadow-2xl md:rounded-xl overflow-hidden font-montserrat">
-      <Slider {...settings}>
-        {slides.map((slide) => (
-          <div key={slide.id} className="relative">
-            {/* Background */}
-            {slide.background && (
-              <img
-                src={slide.background}
-                alt="Slide background"
-                className="absolute inset-0 w-full h-full object-cover z-0"
-              />
-            )}
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/30 z-0"></div>
-
-            {/* Content */}
-            <div className="relative flex flex-col-reverse sm:flex-row items-center justify-between z-10 px-9 md:pl-24 py-10 gap-6">
-              {/* Image */}
-              <div className="text-white max-w-md text-center sm:text-left">
-                <p className="text-sm sm:text-lg">{slide.subtitle}</p>
-                <h2 className="text-2xl sm:text-4xl font-bold py-2 mb-6">
-                  {slide.title}
-                </h2>
-                <Link
-                  to={slide.link}
-                  className="bg-primary text-white px-4 py-2 rounded-full text-sm sm:text-base hover:bg-primary/90 transition duration-300"
-                >
-                  {slide.buttonText}
-                </Link>
-              </div>
-              <img
-                src={slide.image}
-                alt={slide.title}
-                className="h-40 sm:h-56 lg:h-72 object-contain"
-              />
-
-              {/* Text */}
-            </div>
-          </div>
-        ))}
-      </Slider>
+    <div className="relative md:mt-2 rounded-lg md:w-[95%] h-[70vh] bg-cover mx-auto px-2 py-6 shadow-2xl md:rounded-xl overflow-hidden font-montserrat">
+      <img
+        src="https://www.bzcart.store/cdn/shop/files/Picsart_25-07-30_18-44-30-234.jpg?v=1753884532"
+        className="rounded-lg "
+        width="100%"
+        alt=""
+      />
     </div>
   );
 };

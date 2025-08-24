@@ -64,7 +64,7 @@ const Navbar = () => {
   return (
     <div className="sticky top-0 z-20 shadow overflow-x-hidden font-montserrat bg-white">
       {/* Top Header */}
-      <header className="bg-light text-dark md:py-2 ">
+      <header className="bg-light text-dark md:py-1 ">
         <div className=" hidden md:flex justify-between md:justify-between items-center w-[95%] mx-auto">
           <div className="text-dark">Welcome To BZ Cart.store</div>
           <div className="flex gap-5">
@@ -93,7 +93,7 @@ const Navbar = () => {
       <div className="flex flex-wrap items-center justify-between md:justify-between bg-white w-[95%] mx-auto">
         <Link
           to="/"
-          className="flex  -ms-5 md:-ms-9 items-center gap-4 h-[10vh] md:h-[12vh] overflow-hidden md:w-[20%]  w-[60%]"
+          className="flex  -ms-5 md:-ms-9 items-center gap-4 h-[10vh] md:h-[10vh] overflow-hidden md:w-[20%]  w-[60%]"
         >
           <img src="./log.png" alt="Logoss" className="object-contain" />
         </Link>
