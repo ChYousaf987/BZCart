@@ -54,7 +54,7 @@ const CustomSlider = () => {
   };
 
   return (
-    <div className="relative md:mt-2 bg-dark md:w-[90%] mx-auto px-2 py-6 shadow-2xl md:rounded-xl overflow-hidden font-montserrat">
+    <div className="relative md:mt-2 bg-dark md:w-[95%] h-[60vh] mx-auto px-2 py-6 shadow-2xl md:rounded-xl overflow-hidden font-montserrat">
       <Slider {...settings}>
         {slides.map((slide) => (
           <div key={slide.id} className="relative">
