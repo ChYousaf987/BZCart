@@ -46,7 +46,7 @@ const CustomSlider = () => {
                 <img
                   src={slide.image}
                   alt="Slide background"
-                  className=" inset-0 object-cover md:w-full md:h-full"
+                  className=" inset-0 object-cover md:w-full h-[30vh] md:h-full"
                 />
               )}
             </div>
