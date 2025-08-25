@@ -36,21 +36,23 @@ const CustomSlider = () => {
   };
 
   return (
-    <div className="relative md:w-[100%] mx-auto p-6 pb-10 bg-[#FCF7F8] ">
-      <Slider {...settings}>
-        {slides.map((slide) => (
-          <div key={slide.id} className="relative rounded-3xl overflow-hidden">
-            {/* Background */}
-            {slide.image && (
-              <img
-                src={slide.image}
-                alt="Slide background"
-                className=" inset-0  object-cover w-[1440px] h-[600px]"
-              />
-            )}
-          </div>
-        ))}
-      </Slider>
+    <div className="relative md:w-[100%] mx-auto md:p-6 md:pb-10 bg-[#FCF7F8] ">
+      <div className="md:w-[98%] md:h-[70vh] mx-auto px-2 md:px-0 md:rounded-3xl overflow-hidden">
+        <Slider {...settings}>
+          {slides.map((slide) => (
+            <div key={slide.id} className="relative ">
+              {/* Background */}
+              {slide.image && (
+                <img
+                  src={slide.image}
+                  alt="Slide background"
+                  className=" inset-0 object-cover md:w-full md:h-full"
+                />
+              )}
+            </div>
+          ))}
+        </Slider>
+      </div>
     </div>
   );
 };

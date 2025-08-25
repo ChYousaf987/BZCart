@@ -8,7 +8,7 @@ const Cart = () => {
     <div className="min-h-screen bg-gray-100">
       <Navbar />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+      <div className=" grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
         {/* Products (Left) */}
         <div className="md:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
           <ViewAll />

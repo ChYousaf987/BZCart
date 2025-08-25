@@ -54,7 +54,7 @@ const Essential = () => {
   ];
 
   return (
-    <div className="md:w-[90%] mx-auto px-2 md:px-0 py-12">
+    <div className="md:w-[90%] mx-auto px-2 md:px-0 py-12 font-cabin">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-lg md:text-2xl font-bold border-b-2 text-gray-500 border-[#f06621] inline-block pb-1">

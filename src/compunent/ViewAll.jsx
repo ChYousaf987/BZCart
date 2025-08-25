@@ -77,14 +77,14 @@ const ViewAll = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 font-montserrat">
+    <div className=" mx-auto md:px-2 py-12 font-cabin">
       {/* Section Title */}
       <h2 className="text-4xl font-extrabold text-dark mb-12 text-center">
         Our <span className="text-primary">Products</span>
       </h2>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {products.map((item) => {
           const discountPercentage = calculateDiscountPercentage(
             item.product_base_price,
@@ -101,17 +101,17 @@ const ViewAll = () => {
                 <img
                   src={item.product_images[0]}
                   alt={item.product_name}
-                  className="h-64 w-full object-contain bg-light p-6 transition-transform duration-500 group-hover:scale-105"
+                  className="h-48 md:h-64 w-full object-contain bg-light p-6 transition-transform duration-500 group-hover:scale-105"
                 />
                 {discountPercentage > 0 && (
-                  <span className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                  <span className="absolute top-2 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                     -{discountPercentage}%
                   </span>
                 )}
               </Link>
 
               {/* Product Info */}
-              <div className="flex-1 p-5 flex flex-col justify-between">
+              <div className="flex-1 p-2 md:p-5 flex flex-col justify-between">
                 <div>
                   <h6 className="font-semibold text-lg text-dark group-hover:text-primary transition-colors duration-200">
                     {item.product_name}
@@ -143,19 +143,19 @@ const ViewAll = () => {
                 </div>
 
                 {/* Price + Cart */}
-                <div className="mt-4">
+                <div className="mt-2 md:mt-4">
                   <div className="flex items-center gap-2">
                     <span className="text-gray-400 line-through text-sm">
                       Rs. {item.product_base_price}
                     </span>
-                    <span className="text-primary font-bold text-xl">
+                    <span className="text-primary font-semibold md:font-bold md:text-xl">
                       Rs. {item.product_discounted_price}
                     </span>
                   </div>
 
-                  <button className="w-full mt-4 py-2 bg-primary hover:bg-primary/90 text-white font-semibold rounded-full transition duration-300 shadow-md">
+                  {/* <button className="w-full mt-4 py-2 bg-primary hover:bg-primary/90 text-white font-semibold rounded-full transition duration-300 shadow-md">
                     🛒 Add to Cart
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>

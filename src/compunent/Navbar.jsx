@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaShoppingCart, FaUser, FaBars, FaChevronDown } from "react-icons/fa";
+import { FaShoppingCart, FaUser, FaBars, FaChevronDown, FaRegUser } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { CiDeliveryTruck, CiLocationOn } from "react-icons/ci";
 import { RiDiscountPercentLine } from "react-icons/ri";
@@ -11,7 +11,6 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
 
   // Update active state on route change
-
 
   // Category → route mapping
   const categoryRoutes = {
@@ -62,11 +61,11 @@ const Navbar = () => {
   };
 
   return (
-    <div className="sticky top-0 z-20 shadow overflow-x-hidden bg-white">
+    <div className="sticky top-0 z-20 shadow overflow-x-hidden font-cabin bg-white">
       {/* Top Header */}
-      <header className="bg-light text-dark md:py-1 ">
+      <header className="bg-light text-dark md:py-1 text-sm">
         <div className=" hidden md:flex justify-between md:justify-between items-center w-[95%] mx-auto">
-          <div className="text-dark">Welcome To BZ Cart.store</div>
+          <div className="text-dark -sm">Welcome To BZCart.store</div>
           <div className="flex gap-5">
             <a
               href="#"
@@ -125,7 +124,7 @@ const Navbar = () => {
           <div className="flex items-center whitespace-nowrap gap-2 md:gap-4 text-dark">
             <Link to="/auth">
               <button className="flex items-center gap-2 text-sm font-medium">
-                <FaUser size={20} className="text-primary" />
+                <FaRegUser size={20} className="text-primary" />
                 <span className="hidden sm:inline text-dark/70">Sign In</span>
               </button>
             </Link>
@@ -134,7 +133,23 @@ const Navbar = () => {
               to="/Payment"
               className="flex items-center gap-2 text-sm font-medium"
             >
-              <FaShoppingCart size={23} className="text-primary" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6 text-primary"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2" // ← makes lines thicker
+              >
+                <path
+                  d="M11 7H3.577A2 2 0 0 0 1.64 9.497l2.051 8A2 2 0 0 0 5.63 19H16.37a2 2 0 0 0 1.937-1.503l2.052-8A2 2 0 0 0 18.422 7H11Zm0 0V1"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+
               <span className="hidden sm:inline text-dark/70">Cart</span>
             </Link>
             <button

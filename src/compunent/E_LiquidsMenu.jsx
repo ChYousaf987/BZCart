@@ -77,8 +77,8 @@ const E_LiquidsMenu = () => {
   };
 
   return (
-    <div className="md:w-[100%] mx-auto px-2  py-10 font-montserrat">
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <div className="md:w-[95%] mx-auto px-3 md:px-0 py-10 font-cabin">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {products.map((item) => {
           const discountPercentage = calculateDiscountPercentage(
             item.product_base_price,
@@ -90,22 +90,22 @@ const E_LiquidsMenu = () => {
               key={item._id}
               className="group relative bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden"
             >
-              {/* Product Image */}
+              {/* Image */}
               <Link to={`/product/${item._id}`} className="relative">
                 <img
                   src={item.product_images[0]}
                   alt={item.product_name}
-                  className=" h-44 md:h-64 w-full object-contain bg-light p-6 transition-transform duration-500 group-hover:scale-105"
+                  className="h-48 md:h-64 w-full object-contain bg-light p-6 transition-transform duration-500 group-hover:scale-105"
                 />
                 {discountPercentage > 0 && (
-                  <span className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                  <span className="absolute top-2 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                     -{discountPercentage}%
                   </span>
                 )}
               </Link>
 
               {/* Product Info */}
-              <div className="flex-1 p-5 flex flex-col justify-between">
+              <div className="flex-1 p-2 md:p-5 flex flex-col justify-between">
                 <div>
                   <h6 className="font-semibold text-lg text-dark group-hover:text-primary transition-colors duration-200">
                     {item.product_name}
@@ -136,20 +136,20 @@ const E_LiquidsMenu = () => {
                   </div>
                 </div>
 
-                {/* Price + Add to Cart */}
-                <div className="mt-4">
+                {/* Price + Cart */}
+                <div className="mt-2 md:mt-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-400 line-through md:text-sm">
+                    <span className="text-gray-400 line-through text-sm">
                       Rs. {item.product_base_price}
                     </span>
-                    <span className="text-primary font-bold text-xl">
+                    <span className="text-primary font-semibold md:font-bold md:text-xl">
                       Rs. {item.product_discounted_price}
                     </span>
                   </div>
 
-                  <button className="w-full mt-4 py-2 bg-primary hover:bg-primary/90 text-white font-semibold rounded-full transition duration-300 shadow-md">
-                    🛒 Add to Cart
-                  </button>
+                  {/* <button className="w-full mt-4 py-2 bg-primary hover:bg-primary/90 text-white font-semibold rounded-full transition duration-300 shadow-md">
+                              🛒 Add to Cart
+                            </button> */}
                 </div>
               </div>
             </div>

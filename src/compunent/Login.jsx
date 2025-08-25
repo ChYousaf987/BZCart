@@ -40,11 +40,11 @@ export default function Login({ setIsSignIn }) {
   }, [userSuccess, user, navigate, dispatch]);
 
   return (
-    <div className="flex flex-col md:flex-row w-full font-montserrat">
+    <div className="flex flex-col md:flex-row w-full font-cabin">
       {/* Left Panel - Form */}
       <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center p-6 md:p-10">
         <h2 className="text-2xl sm:text-3xl font-semibold text-primary mb-4 text-center">
-          Sign in to BZ Cart
+          Sign in to BZCart
         </h2>
 
         {userError && (
@@ -115,20 +115,24 @@ export default function Login({ setIsSignIn }) {
       </div>
 
       {/* Right Panel */}
-      <div className="w-full relative md:w-1/2 bg-gradient-to-b from-primary to-dark text-white flex flex-col justify-center items-center p-8 rounded-b-2xl md:rounded-tr-2xl md:rounded-br-2xl">
-        <Link
-          to="/"
-          className="absolute top-0 right-0 flex items-center z-10 gap-4 h-[8vh] w-[30%] md:h-[13vh] md:w-[30%] bg-white "
-        >
-          <img src="./logo.png" alt="Logo" className="object-contain" />
-        </Link>
-        <h2 className="text-2xl font-bold mb-3 mt-10">Hi User!</h2>
-        <p className="text-center max-w-xs mb-4">
+      <div
+        className="w-full relative md:w-1/2 text-white flex flex-col justify-center items-center p-8 rounded-b-2xl md:rounded-tr-2xl md:rounded-br-2xl bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('./logo.png')",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/80 to-dark/80 rounded-b-2xl md:rounded-tr-2xl md:rounded-br-2xl" />
+
+        
+
+        <h2 className="text-2xl font-bold mb-3 mt-10 z-10">Hi User!</h2>
+        <p className="text-center max-w-xs mb-4 z-10">
           Don't have an account? Sign up to join Referra!
         </p>
         <button
           onClick={() => setIsSignIn(false)}
-          className="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-dark transition"
+          className="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-dark transition z-10"
         >
           Sign Up
         </button>

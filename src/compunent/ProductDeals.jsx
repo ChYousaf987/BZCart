@@ -124,16 +124,15 @@ const ProductDeals = () => {
       },
       {
         breakpoint: 640,
-        settings: { slidesToShow: 2 },
+        settings: { slidesToShow: 1 },
       },
     ],
   };
 
   return (
-    <div className="md:w-[95%] mx-auto px-2 md:px-0 py-12 font-montserrat relative">
+    <div className="md:w-[95%] mx-auto px-2 md:px-0 py-12 font-cabin relative">
       <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-dark border-b-2 border-primary inline-block pb-1">
-          
           <span className="text-primary">Trending Now</span>
         </h2>
         <Link

@@ -12,6 +12,8 @@ module.exports = {
       },
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"],
+        geometric: ["Geometric 415", "sans-serif"],
+        cabin: ["Cabin", "sans-serif"], // ✅ new font
       },
     },
   },

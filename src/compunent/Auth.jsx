@@ -7,7 +7,7 @@ export default function Auth() {
   const [isSignIn, setIsSignIn] = useState(true);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-light font-montserrat p-4 md:p-8 overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-light font-cabin p-4 md:p-8 overflow-hidden">
       <div className="relative w-full max-w-[80rem] h-auto shadow-xl rounded-2xl bg-white overflow-hidden flex flex-col md:flex-row">
         <AnimatePresence mode="wait">
           {isSignIn ? (

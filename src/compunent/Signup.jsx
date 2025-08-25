@@ -63,22 +63,27 @@ export default function Signup({ setIsSignIn }) {
   }, [userSuccess, user, showOtpInput, navigate, dispatch]);
 
   return (
-    <div className="flex flex-col md:flex-row w-full font-montserrat">
+    <div className="flex flex-col md:flex-row w-full font-cabin">
       {/* Left Panel */}
-      <div className="w-full md:w-1/2 relative bg-gradient-to-b from-primary to-dark text-white flex flex-col justify-center items-center p-8 rounded-t-2xl md:rounded-tl-2xl md:rounded-bl-2xl">
-        <Link
-          to="/"
-          className="absolute top-0 left-0 flex items-center z-10 gap-4 h-[8vh] w-[30%] md:h-[13vh] md:w-[30%] bg-white "
-        >
-          <img src="./logo.png" alt="Logo" className="object-contain" />
-        </Link>
-        <h2 className="text-2xl font-bold mb-3 mt-10">Welcome Back!</h2>
-        <p className="text-center max-w-xs mb-4">
+      <div
+        className="w-full md:w-1/2 relative text-white flex flex-col justify-center items-center p-8 rounded-t-2xl md:rounded-tl-2xl md:rounded-bl-2xl bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('./logg.png')",
+        }}
+      >
+        {/* Gradient overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/80 to-dark/80 rounded-t-2xl md:rounded-tl-2xl md:rounded-bl-2xl" />
+
+        
+
+        <h2 className="text-2xl font-bold mb-3 mt-10 z-10">Welcome Back!</h2>
+        <p className="text-center max-w-xs mb-4 z-10">
           Already have an account? Sign in to continue with Referra!
         </p>
         <button
           onClick={() => setIsSignIn(true)}
-          className="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-dark transition"
+          className="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-dark transition z-10"
         >
           Sign In
         </button>
