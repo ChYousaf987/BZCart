@@ -8,13 +8,11 @@ const CustomSlider = () => {
   const slides = [
     {
       id: 1,
-      image:
-        "https://www.bzcart.store/cdn/shop/files/Picsart_25-08-08_14-04-01-708.jpg?v=1754649898",
+      image: "/asd.webp",
     },
     {
       id: 2,
-      image:
-        "https://www.bzcart.store/cdn/shop/files/Picsart_25-08-07_13-18-41-350.jpg?v=1754557538",
+      image: "/zxc.jpg",
     },
     {
       id: 3,
@@ -36,7 +34,7 @@ const CustomSlider = () => {
   };
 
   return (
-    <div className="relative md:w-[100%] mx-auto md:p-6 md:pb-10 bg-[#FCF7F8] ">
+    <div className="relative md:w-[100%] mx-auto md:px-6 md:pb-10 bg-[#FCF7F8] ">
       <div className="md:w-[98%] md:h-[70vh] mx-auto px-2 md:px-0 md:rounded-3xl overflow-hidden">
         <Slider {...settings}>
           {slides.map((slide) => (
