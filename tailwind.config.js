@@ -13,7 +13,9 @@ module.exports = {
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"],
         geometric: ["Geometric 415", "sans-serif"],
-        cabin: ["Cabin", "sans-serif"], // ✅ new font
+        cabin: ["Cabin", "sans-serif"],
+        public: ["'Public Sans'", "sans-serif"], // ✅ Google font
+        daraz: ["'Daraz Sans'", "sans-serif"], // ✅ custom font (self-hosted)
       },
     },
   },

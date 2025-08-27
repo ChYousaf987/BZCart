@@ -61,7 +61,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="sticky top-0 z-20 shadow overflow-x-hidden font-cabin bg-white">
+    <div className="sticky top-0 z-20 shadow overflow-x-hidden font-public bg-white">
       {/* Top Header */}
       <header className="bg-light text-dark md:py-1 text-sm">
         <div className=" hidden md:flex justify-between md:justify-between items-center w-[95%] mx-auto">

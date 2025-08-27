@@ -11,7 +11,7 @@ import Footer from "./Footer";
 const Home = () => {
   return (
     <>
-      <div className="relative bg-[#FCF7F8]">
+      <div className="relative font-public bg-[#FCF7F8]">
         <Navbar />
         <Slider />
         <ProductDeals />

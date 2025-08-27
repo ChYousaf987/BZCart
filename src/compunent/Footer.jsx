@@ -3,7 +3,7 @@ import { FaWhatsapp, FaPhone } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="relative bg-dark text-light px-6 py-8 overflow-hidden font-montserrat">
+    <footer className="relative bg-dark text-light px-6 py-8 overflow-hidden font-">
       {/* Decorative Circles */}
       <div className="hidden md:flex absolute -top-24 -right-20 w-80 h-80 rounded-full bg-primary/10"></div>
       <div className="hidden md:flex absolute -top-32 -right-28 w-96 h-96 rounded-full border border-primary/30"></div>

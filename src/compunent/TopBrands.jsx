@@ -82,7 +82,7 @@ const TopBrands = () => {
   };
 
   return (
-    <div className="md:w-[90%] mx-auto px-2 md:px-0 py-12 font-cabin">
+    <div className="md:w-[90%] mx-auto px-2 md:px-0 py-12 ">
       <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-gray-500 border-b-2 border-[#f06621] inline-block pb-1">
           Shop From
