@@ -43,7 +43,7 @@ export default function Login({ setIsSignIn }) {
     <div className="flex flex-col md:flex-row w-full font-cabin">
       {/* Left Panel - Form */}
       <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center p-6 md:p-10">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-primary mb-4 text-center">
+        <h2 className="text-2xl sm:text-4xl font-bold text-primary mb-4 text-center">
           Sign in to BZCart
         </h2>
 
@@ -55,12 +55,16 @@ export default function Login({ setIsSignIn }) {
         )}
 
         <div className="flex space-x-3 md:space-x-4 mb-6">
-          {[FaFacebookF, FaGoogle, FaLinkedinIn].map((Icon, idx) => (
+          {[
+            { Icon: FaFacebookF, color: "#1877F2" }, // Facebook Blue
+            { Icon: FaGoogle, color: "#DB4437" }, // Google Red (main)
+            { Icon: FaLinkedinIn, color: "#0A66C2" }, // LinkedIn Blue
+          ].map(({ Icon, color }, idx) => (
             <button
               key={idx}
               className="border rounded-full p-3 w-12 h-12 flex items-center justify-center hover:bg-light transition"
             >
-              <Icon className="text-lg text-dark" />
+              <Icon className="text-lg" style={{ color }} />
             </button>
           ))}
         </div>
@@ -116,26 +120,36 @@ export default function Login({ setIsSignIn }) {
 
       {/* Right Panel */}
       <div
-        className="w-full relative md:w-1/2 text-white flex flex-col justify-center items-center p-8 rounded-b-2xl md:rounded-tr-2xl md:rounded-br-2xl bg-cover bg-center"
+        className="w-full relative md:w-1/2 text-white flex flex-col justify-between items-center p-8 rounded-b-2xl md:rounded-tr-2xl md:rounded-br-2xl bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url('./logo.png')",
+          backgroundImage: "url('./logo.png')",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/80 to-dark/80 rounded-b-2xl md:rounded-tr-2xl md:rounded-br-2xl" />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/95 to-dark/95 rounded-b-2xl md:rounded-tr-2xl md:rounded-br-2xl" />
 
-        
+        {/* Text Center */}
+        <div className="z-10 flex-1 flex flex-col items-center justify-center">
+          <h2 className="text-2xl font-bold mb-3">Hi User!</h2>
+          <p className="text-center max-w-xs">
+            Don't have an account? Sign up to join Referra!
+          </p>
+        </div>
 
-        <h2 className="text-2xl font-bold mb-3 mt-10 z-10">Hi User!</h2>
-        <p className="text-center max-w-xs mb-4 z-10">
-          Don't have an account? Sign up to join Referra!
-        </p>
+        {/* Button Bottom */}
+        <div className="flex gap-5">
         <button
           onClick={() => setIsSignIn(false)}
           className="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-dark transition z-10"
-        >
+          >
           Sign Up
         </button>
+        <Link to="/"
+          className="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-dark transition z-10"
+          >
+         Back To Home Page
+        </Link>
+          </div>
       </div>
     </div>
   );
