@@ -65,22 +65,23 @@ const Navbar = () => {
       {/* 🔹 Middle bar */}
       <div className="flex justify-between md:w-[95%] mx-auto px-2 md:px-0 items-center py-4 bg-white border-b">
         {/* Mobile menu button */}
-        <button
-          className="md:hidden text-gray-700"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          <FaBars size={22} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            className="md:hidden text-gray-700"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <FaBars size={22} />
+          </button>
 
-        {/* Logo */}
-        <Link to="/">
-          <img
-            src="/loggg.png"
-            alt="logo"
-            className="w-[150px] md:w-[200px] object-contain"
-          />
-        </Link>
-
+          {/* Logo */}
+          <Link to="/">
+            <img
+              src="/loggg.png"
+              alt="logo"
+              className="w-[150px] md:w-[200px] object-contain"
+            />
+          </Link>
+        </div>
         {/* Search (Desktop only) */}
         <div className="hidden md:flex items-center border border-gray-300 rounded-md overflow-hidden w-1/2">
           <input
@@ -94,7 +95,7 @@ const Navbar = () => {
         </div>
 
         {/* Right Side */}
-        <div className="flex items-center gap-6 text-gray-600">
+        <div className="flex items-center gap-4 md:gap-6 text-gray-600">
           {/* Contact Info */}
           <div className="text-right hidden md:block">
             <p className="text-xs text-gray-500">Customer Services</p>
@@ -102,7 +103,10 @@ const Navbar = () => {
           </div>
 
           {/* Wishlist */}
-          <Link to="/wishlist" className="hover:text-primary relative">
+          <Link
+            to="/wishlist"
+            className="hover:text-primary relative -mr-1 md:mr-0"
+          >
             <CiHeart size={30} />
           </Link>
 
