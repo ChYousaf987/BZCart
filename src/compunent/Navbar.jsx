@@ -103,7 +103,7 @@ const Navbar = () => {
 
           {/* Wishlist */}
           <Link to="/wishlist" className="hover:text-primary relative">
-            <CiHeart size={22} />
+            <CiHeart size={30} />
           </Link>
 
           {/* Cart */}
