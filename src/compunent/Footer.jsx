@@ -1,118 +1,103 @@
 import React from "react";
-import { FaWhatsapp, FaPhone } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTiktok,
+  FaLinkedinIn,
+  FaYoutube,
+  FaPhoneAlt,
+} from "react-icons/fa";
+import { FaLocationDot } from "react-icons/fa6";
 
 const Footer = () => {
   return (
-    <footer className="relative bg-dark text-light px-6 py-8 overflow-hidden font-">
-      {/* Decorative Circles */}
-      <div className="hidden md:flex absolute -top-24 -right-20 w-80 h-80 rounded-full bg-primary/10"></div>
-      <div className="hidden md:flex absolute -top-32 -right-28 w-96 h-96 rounded-full border border-primary/30"></div>
-
-      {/* Desktop Layout */}
-      <div className="md:w-[90%]  mx-auto hidden md:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 relative z-10">
-        {/* Contact Us */}
-        <div className="">
-          <h3 className="text-lg font-semibold mb-6">Contact Us</h3>
-          <div className="flex items-start gap-3 mb-4">
-            <FaWhatsapp className="text-xl mt-1 text-primary" />
-            <div>
-              <p className="font-medium">WhatsApp</p>
-              <p className="text-sm">000000000000000</p>
-            </div>
+    <footer className="bg-black text-white pt-10 pb-6 px-6 md:px-12 lg:px-20">
+      <div className="grid md:grid-cols-4 gap-10 border-b border-white/20 pb-10">
+        {/* Contact Details */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Contact Details</h3>
+          <div className="flex items-start gap-2 mb-3 text-sm">
+            <FaLocationDot className="text-primary mt-1" />
+            <p>156-157, Block 3, BYJCHS, Bahadurabad Karachi, Pakistan</p>
           </div>
-          <div className="flex items-start gap-3 mb-6">
-            <FaPhone className="text-xl mt-1 text-primary" />
-            <div>
-              <p className="font-medium">Call Us</p>
-              <p className="text-sm">000000000000000</p>
-            </div>
+          <div className="flex items-start gap-2 mb-3 text-sm">
+            <FaLocationDot className="text-primary mt-1" />
+            <p>Safa Mall, Ziarat Line, Malir Cantonment Karachi, Pakistan</p>
           </div>
-          <h3 className="text-lg font-semibold">Download App</h3>
-        </div>
+          <div className="flex items-start gap-2 mb-3 text-sm">
+            <FaPhoneAlt className="text-primary mt-1" />
+            <p>(021) 111-624-333</p>
+          </div>
+          <p className="text-sm mb-4">
+            Customer Support: 7 Days a Week, 9:00am - 10:00pm
+          </p>
 
-        {/* Most Popular Categories */}
-        <div className="mx-auto">
-          <h3 className="text-lg font-semibold border-b-2 border-primary inline-block mb-6">
-            Most Popular Categories
-          </h3>
-          <ul className="space-y-2 text-sm">
-            <li>• Staples</li>
-            <li>• Beverages</li>
-            <li>• Personal Care</li>
-            <li>• Home Care</li>
-            <li>• Baby Care</li>
-            <li>• Vegetables & Fruits</li>
-          </ul>
+          {/* Social Icons */}
+          <div className="flex gap-4 text-xl">
+            <FaFacebookF className="cursor-pointer hover:text-primary" />
+            <FaInstagram className="cursor-pointer hover:text-primary" />
+            <FaTiktok className="cursor-pointer hover:text-primary" />
+            <FaLinkedinIn className="cursor-pointer hover:text-primary" />
+            <FaYoutube className="cursor-pointer hover:text-primary" />
+          </div>
         </div>
 
         {/* Customer Services */}
-        <div className="mx-auto">
-          <h3 className="text-lg font-semibold border-b-2 border-primary inline-block mb-6">
-            Customer Services
-          </h3>
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Customer Services</h3>
           <ul className="space-y-2 text-sm">
-            <li>• About Us</li>
-            <li>• Terms & Conditions</li>
-            <li>• FAQ</li>
-            <li>• Privacy Policy</li>
-            <li>• E-waste Policy</li>
-            <li>• Cancellation & Return Policy</li>
+            <li>Contact Us and Location</li>
+            <li>Delivery Info</li>
+            <li>FAQs</li>
+            <li>Naheed-Loyalty</li>
           </ul>
+        </div>
+
+        {/* Information */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Information</h3>
+          <ul className="space-y-2 text-sm">
+            <li>About Us</li>
+            <li>Return & Refund</li>
+            <li>Privacy Policy</li>
+            <li>Terms & Conditions</li>
+          </ul>
+        </div>
+
+        {/* Newsletter */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">
+            Subscribe our Newsletter
+          </h3>
+          <p className="text-sm mb-3">Get the latest offers and promotions!</p>
+          <div className="flex mb-4">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="px-3 py-2 w-full rounded-l-lg text-black outline-none"
+            />
+            <button className="bg-primary px-4 py-2 rounded-r-lg font-medium">
+              Subscribe
+            </button>
+          </div>
+
+          {/* App Buttons */}
+          <div className="flex gap-4">
+            <img src="/googleplay.png" alt="Google Play" className="h-12" />
+            <img src="/appstore.png" alt="App Store" className="h-12" />
+          </div>
         </div>
       </div>
 
-      {/* Mobile Layout */}
-      <div className="max-w-7xl z-50 md:hidden mx-auto grid grid-cols-1 sm:grid-cols-2 gap-10 relative">
-        {/* Contact Us */}
-        <div>
-          <h3 className="text-lg font-semibold mb-6">Contact Us</h3>
-          <div className="flex items-start gap-3 mb-4">
-            <FaWhatsapp className="text-xl mt-1 text-primary" />
-            <div>
-              <p className="font-medium">WhatsApp</p>
-              <p className="text-sm">000000000000000</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 mb-6">
-            <FaPhone className="text-xl mt-1 text-primary" />
-            <div>
-              <p className="font-medium">Call Us</p>
-              <p className="text-sm">000000000000000</p>
-            </div>
-          </div>
-          <h3 className="text-lg font-semibold">Download App</h3>
-        </div>
-
-        <div className="flex gap-9">
-          {/* Most Popular Categories */}
-          <div>
-            <h3 className="text-lg font-semibold border-b-2 border-primary inline-block mb-6">
-              Popular Categories
-            </h3>
-            <ul className="space-y-2 text-sm">
-              <li>• Staples</li>
-              <li>• Beverages</li>
-              <li>• Personal Care</li>
-              <li>• Home Care</li>
-              <li>• Baby Care</li>
-              <li>• Vegetables & Fruits</li>
-            </ul>
-          </div>
-
-          {/* Customer Services */}
-          <div>
-            <h3 className="text-lg font-semibold border-b-2 border-primary inline-block mb-6">
-              Customer Services
-            </h3>
-            <ul className="space-y-2 text-sm">
-              <li>• About Us</li>
-              <li>• Terms & Conditions</li>
-              <li>• FAQ</li>
-              <li>• Privacy Policy</li>
-              <li>• E-waste Policy</li>
-              <li>• Cancellation</li>
-            </ul>
-          </div>
+      {/* Bottom Bar */}
+      <div className="flex flex-col md:flex-row justify-between items-center pt-6 text-sm">
+        <p>Copyright © 2025 BZCart. All rights reserved.</p>
+        <div className="flex gap-4 mt-4 md:mt-0">
+          <img src="/hbl.png" alt="HBL" className="h-6" />
+          <img src="/visa.png" alt="Visa" className="h-6" />
+          <img src="/mastercard.png" alt="Mastercard" className="h-6" />
+          <img src="/easypaisa.png" alt="Easypaisa" className="h-6" />
+          <img src="/cod.png" alt="Cash on Delivery" className="h-6" />
         </div>
       </div>
     </footer>

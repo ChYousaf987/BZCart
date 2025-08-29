@@ -1,58 +1,121 @@
 import React from "react";
-import Slider from "react-slick";
-import { Link } from "react-router-dom";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import { FaShippingFast, FaHeadset, FaShieldAlt, FaUndo } from "react-icons/fa";
 
-const CustomSlider = () => {
-  const slides = [
-    {
-      id: 1,
-      image: "/asd.webp",
-    },
-    {
-      id: 2,
-      image: "/zxc.jpg",
-    },
-    {
-      id: 3,
-      image:
-        "https://www.bzcart.store/cdn/shop/files/Picsart_25-07-30_18-44-30-234.jpg?v=1753884532",
-    },
-  ];
-
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 1000,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true, // 🔹 enable autoplay
-    autoplaySpeed: 2500, // 4 seconds
-    arrows: false, // show next/prev arrows
-    pauseOnHover: false, // 🔹 stop auto when hover
-  };
-
+const HeroSection = () => {
   return (
-    <div className="relative md:w-[100%] mx-auto md:px-6 md:pb-10 bg-[#FCF7F8] ">
-      <div className="md:w-[98%] md:h-[70vh] mx-auto px-2 md:px-0 md:rounded-3xl overflow-hidden">
-        <Slider {...settings}>
-          {slides.map((slide) => (
-            <div key={slide.id} className="relative ">
-              {/* Background */}
-              {slide.image && (
-                <img
-                  src={slide.image}
-                  alt="Slide background"
-                  className=" inset-0 object-cover md:w-full h-[30vh] md:h-full"
-                />
-              )}
+    <div className="font-sans bg-white">
+      {/* 🔹 Hero & Promo Banners */}
+      <div className="grid grid-cols-1 w-[95%] mx-auto md:grid-cols-3 gap-6 px-2 md:px-0 py-10">
+        {/* Left: Main Hero */}
+        <div
+          className="md:col-span-2 bg-primary rounded-2xl flex items-center p-8 text-white bg-cover bg-center min-h-[400px] md:min-h-[500px]"
+          style={{ backgroundImage: "url('/image.jpg')" }} // ✅ bigger image container
+        >
+          <div className="max-w-md space-y-4">
+            <h2 className="text-3xl md:text-5xl font-bold leading-snug">
+              Fresh & Healthy <br /> Organic Food
+            </h2>
+            <p className="text-base">
+              Sale up to{" "}
+              <span className="bg-orange-500 text-white px-2 py-1 rounded ml-2 text-sm">
+                30% OFF
+              </span>
+            </p>
+            <p className="text-sm text-gray-100">
+              Free shipping on all your order.
+            </p>
+            <button className="mt-4 bg-white text-primary px-6 py-2 rounded-full text-sm font-semibold hover:bg-gray-100 transition">
+              Shop Now →
+            </button>
+          </div>
+        </div>
+
+        {/* Right: Promo Boxes */}
+        <div className="space-y-6 flex flex-col">
+          {/* Summer Sale */}
+          <div
+            className="bg-gray-100 rounded-2xl p-6 relative flex-1 flex flex-col justify-center min-h-[200px] md:min-h-[240px] bg-cover bg-right"
+            style={{ backgroundImage: "url('/image-2.jpg')" }}
+          >
+            <h3 className="text-sm uppercase text-end font-semibold">
+              Summer Sale
+            </h3>
+            <p className="text-3xl font-bold text-end text-primary">75% OFF</p>
+            <p className="text-xs text-end text-gray-600">
+              Only Fruit & Vegetable
+            </p>
+            <button className="mt-3 text-end text-primary font-semibold text-sm hover:underline">
+              Shop Now →
+            </button>
+          </div>
+
+          {/* Special Deal */}
+          <div
+            className="relative bg-primary rounded-2xl p-6 flex-1 flex flex-col items-center justify-center text-center text-white bg-cover bg-center min-h-[200px] md:min-h-[240px]"
+            style={{ backgroundImage: "url('/image-1.jpg')" }}
+          >
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/50 rounded-2xl"></div>
+
+            {/* Content */}
+            <div className="relative z-10">
+              <h3 className="text-sm uppercase">Best Deal</h3>
+              <p className="text-xl font-bold">Special Products</p>
+              <p className="text-xl font-bold">Deal of the Month</p>
+              <button className="mt-3 text-primary bg-white px-4 py-1 rounded-full font-semibold text-sm hover:bg-gray-100">
+                Shop Now →
+              </button>
             </div>
-          ))}
-        </Slider>
+          </div>
+        </div>
+      </div>
+
+      {/* 🔹 Features Row */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-2 md:px-0 w-[95%] mx-auto pb-10">
+        {/* Free Shipping */}
+        <div className="flex items-center gap-3">
+          <FaShippingFast className="text-primary text-3xl" />
+          <div>
+            <h4 className="font-semibold">Free Shipping</h4>
+            <p className="text-xs text-gray-500">
+              Free shipping on all your order
+            </p>
+          </div>
+        </div>
+
+        {/* Customer Support */}
+        <div className="flex items-center gap-3">
+          <FaHeadset className="text-primary text-3xl" />
+          <div>
+            <h4 className="font-semibold">Customer Support 24/7</h4>
+            <p className="text-xs text-gray-500">Instant access to Support</p>
+          </div>
+        </div>
+
+        {/* Secure Payment */}
+        <div className="flex items-center gap-3">
+          <FaShieldAlt className="text-primary text-3xl" />
+          <div>
+            <h4 className="font-semibold">100% Secure Payment</h4>
+            <p className="text-xs text-gray-500">
+              We ensure your money is safe
+            </p>
+          </div>
+        </div>
+
+        {/* Money-Back Guarantee */}
+        <div className="flex items-center gap-3">
+          <FaUndo className="text-primary text-3xl" />
+          <div>
+            <h4 className="font-semibold">Money-Back Guarantee</h4>
+            <p className="text-xs text-gray-500">
+              30 Days Money-Back Guarantee
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default CustomSlider;
+export default HeroSection;

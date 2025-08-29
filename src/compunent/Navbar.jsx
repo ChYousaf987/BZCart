@@ -1,223 +1,234 @@
 import React, { useState, useEffect } from "react";
-import { FaShoppingCart, FaUser, FaBars, FaChevronDown, FaRegUser } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
-import { CiDeliveryTruck, CiLocationOn } from "react-icons/ci";
-import { RiDiscountPercentLine } from "react-icons/ri";
+import {
+  FaShoppingCart,
+  FaRegUser,
+  FaBars,
+  FaChevronDown,
+} from "react-icons/fa";
+import { CiHeart } from "react-icons/ci";
+import { SlHandbag } from "react-icons/sl";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../features/users/userSlice";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [active, setActive] = useState("");
-  const [openDropdown, setOpenDropdown] = useState(null);
+  const [categories, setCategories] = useState([]);
 
-  // Update active state on route change
+  // 🔹 Fetch categories
+  useEffect(() => {
+    axios
+      .get("http://localhost:3003/api/categories/categories")
+      .then((res) => {
+        const parent = res.data.filter((c) => !c.parent_category);
+        const formatted = parent.map((p) => ({
+          name: p.name,
+          _id: p._id,
+          sub: res.data
+            .filter((s) => s.parent_category?._id === p._id)
+            .map((s) => ({ name: s.name, _id: s._id })),
+        }));
+        setCategories(formatted);
+      })
+      .catch(() => toast.error("Failed to fetch categories"));
+  }, []);
 
-  // Category → route mapping
-  const categoryRoutes = {
-    "Shop All": "/cart",
-    Clothing: "/E_Liquids",
-    Watch: "/watch",
-    Shoes: "/watch",
-    "Home & Kitchen": "/watch",
-    "Beauty & Personal Care": "/watch",
-    "Sports & Outdoors": "/watch",
-    Groceries: "/watch",
-  };
-
-  const categories = [
-    { name: "Shop All", sub: ["Trending", "Best Sellers", "New Arrivals"] },
-    {
-      name: "Watch",
-      sub: ["Mobiles", "Laptops", "Headphones", "Cameras"],
-    },
-    { name: "Clothing", sub: ["Men", "Women", "Kids", "Accessories"] },
-    { name: "Shoes", sub: ["Sneakers", "Sandals", "Boots"] },
-    { name: "Home & Kitchen", sub: ["Furniture", "Appliances", "Cookware"] },
-    { name: "Beauty & Personal Care", sub: ["Makeup", "Skincare", "Haircare"] },
-    { name: "Sports & Outdoors", sub: ["Fitness", "Cycling", "Camping"] },
-    { name: "Groceries", sub: ["Fresh", "Snacks", "Drinks"] },
-    { name: "Home & Kitchen", sub: ["Furniture", "Appliances", "Cookware"] },
-    { name: "Beauty & Personal Care", sub: ["Makeup", "Skincare", "Haircare"] },
-    { name: "Sports & Outdoors", sub: ["Fitness", "Cycling", "Camping"] },
-    { name: "Groceries", sub: ["Fresh", "Snacks", "Drinks"] },
-  ];
-
-  const toggleDropdown = (cat) => {
-    setOpenDropdown(openDropdown === cat ? null : cat);
-  };
-
-  const scrollLeft = () => {
-    document.getElementById("category-scroll")?.scrollBy({
-      left: -200,
-      behavior: "smooth",
-    });
-  };
-
-  const scrollRight = () => {
-    document.getElementById("category-scroll")?.scrollBy({
-      left: 200,
-      behavior: "smooth",
-    });
+  // 🔹 Logout
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    localStorage.removeItem("myUser");
+    setIsMenuOpen(false);
+    toast.success("Logged out successfully!");
+    navigate("/");
   };
 
   return (
-    <div className="sticky top-0 z-20 shadow overflow-x-hidden font-public bg-white">
-      {/* Top Header */}
-      <header className="bg-light text-dark md:py-1 text-sm">
-        <div className=" hidden md:flex justify-between md:justify-between items-center w-[95%] mx-auto">
-          <div className="text-dark -sm">Welcome To BZCart.store</div>
-          <div className="flex gap-5">
-            <a
-              href="#"
-              className="flex items-center gap-2 text-sm hover:underline"
-            >
-              <CiLocationOn size={17} className="text-primary" />
-              Deliver to <span className="text-dark font-semibold">423651</span>
-            </a>
-            <div className="p-[0.8px] bg-dark/10"></div>
-            <a href="#" className="flex items-center gap-2 hover:underline">
-              <CiDeliveryTruck size={17} className="text-primary" />
-              Track your order
-            </a>
-            <div className="p-[0.8px] bg-dark/10"></div>
-            <a href="#" className="flex items-center gap-2 hover:underline">
-              <RiDiscountPercentLine size={17} className="text-primary" />
-              All Offers
-            </a>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Nav */}
-      <div className="flex flex-wrap items-center justify-between md:justify-between bg-white w-[95%] mx-auto">
-        <Link
-          to="/"
-          className="flex  -ms-5 md:-ms-9 items-center gap-4 h-[10vh] md:h-[10vh] overflow-hidden md:w-[20%]  w-[60%]"
-        >
-          <img src="./log.png" alt="Logoss" className="object-contain" />
-        </Link>
-        <div className="hidden md:flex items-center bg-primary/10 px-4 py-2 rounded-3xl">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5 text-primary"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-              d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
-            />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search more..."
-            className="bg-transparent w-96 px-2 outline-none text-dark placeholder-dark/50"
-          />
-        </div>
-        <div className="flex gap-10">
-          {/* Search Bar */}
-
-          {/* Right Menu */}
-          <div className="flex items-center whitespace-nowrap gap-2 md:gap-4 text-dark">
-            <Link to="/auth">
-              <button className="flex items-center gap-2 text-sm font-medium">
-                <FaRegUser size={20} className="text-primary" />
-                <span className="hidden sm:inline text-dark/70">Sign In</span>
-              </button>
-            </Link>
-            <div className="p-[0.8px] h-6 bg-dark/10"></div>
-            <Link
-              to="/Payment"
-              className="flex items-center gap-2 text-sm font-medium"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 text-primary"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2" // ← makes lines thicker
-              >
-                <path
-                  d="M11 7H3.577A2 2 0 0 0 1.64 9.497l2.051 8A2 2 0 0 0 5.63 19H16.37a2 2 0 0 0 1.937-1.503l2.052-8A2 2 0 0 0 18.422 7H11Zm0 0V1"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-
-              <span className="hidden sm:inline text-dark/70">Cart</span>
-            </Link>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden text-primary text-2xl p-2"
-            >
-              <FaBars />
-            </button>
+    <div className="sticky top-0 z-20 font-sans  shadow bg-white">
+      {/* 🔹 Top bar */}
+      <div className="bg-gray-100 text-gray-600 text-xs py-2  max-lg:hidden">
+        <div className="md:w-[95%] mx-auto px-2 md:px-0 flex justify-between ">
+          <p>Store Location: Lincoln - 344, Illinois, Chicago, USA</p>
+          <div className="flex gap-4">
+            <span className="cursor-pointer">Eng ▾</span>
+            <span className="cursor-pointer">USD ▾</span>
           </div>
         </div>
       </div>
 
-      {/* Category Bar Desktop */}
-      <div className="relative  border-b border-dark/10 hidden md:block w-[95%] mx-auto">
-        <div className="relative  mx-auto flex items-center">
-          {/* Left Arrow */}
-          <button
-            onClick={scrollLeft}
-            className="absolute left-0 z-10 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primary/90 transition -ml-2"
-          >
-            <FaChevronDown className="rotate-90 " size={16} />
+      {/* 🔹 Middle bar */}
+      <div className="flex justify-between md:w-[95%] mx-auto px-2 md:px-0 items-center py-4 bg-white border-b">
+        {/* Mobile menu button */}
+        <button
+          className="md:hidden text-gray-700"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          <FaBars size={22} />
+        </button>
+
+        {/* Logo */}
+        <Link to="/">
+          <img
+            src="/loggg.png"
+            alt="logo"
+            className="w-[150px] md:w-[200px] object-contain"
+          />
+        </Link>
+
+        {/* Search (Desktop only) */}
+        <div className="hidden md:flex items-center border border-gray-300 rounded-md overflow-hidden w-1/2">
+          <input
+            type="text"
+            placeholder="Search for products..."
+            className="px-3 py-2 w-full outline-none text-sm"
+          />
+          <button className="bg-primary text-white px-5 py-2 text-sm font-medium hover:bg-primary">
+            Search
           </button>
+        </div>
 
-          {/* Scrollable Categories */}
-          <div
-            id="category-scroll"
-            className="flex w-[95%] mx-auto gap-4 px-10 py-3 overflow-x-auto scrollbar-hide scroll-smooth"
-          >
-            {categories.map((cat, idx) => (
-              <div key={idx} className="relative flex-shrink-0">
-                {categoryRoutes[cat.name] ? (
+        {/* Right Side */}
+        <div className="flex items-center gap-6 text-gray-600">
+          {/* Contact Info */}
+          <div className="text-right hidden md:block">
+            <p className="text-xs text-gray-500">Customer Services</p>
+            <p className="font-semibold text-sm">(219) 555-0114</p>
+          </div>
+
+          {/* Wishlist */}
+          <Link to="/wishlist" className="hover:text-primary relative">
+            <CiHeart size={22} />
+          </Link>
+
+          {/* Cart */}
+          <div className="relative">
+            <Link to="/cart" className="hover:text-primary">
+              <SlHandbag size={22} />
+            </Link>
+            <span className="absolute -top-2 -right-2 bg-primary text-xs text-white rounded-full w-4 h-4 flex items-center justify-center">
+              2
+            </span>
+          </div>
+
+          {/* User */}
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 hover:text-primary"
+            >
+              <FaRegUser size={20} />
+            </button>
+          ) : (
+            <Link to="/auth" className="hover:text-primary">
+              <FaRegUser size={20} />
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {/* 🔹 Mobile Search */}
+      <div className="md:hidden px-4 pb-3">
+        <div className="flex items-center border border-gray-300 rounded-md overflow-hidden w-full">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="px-3 py-2 w-full outline-none text-sm"
+          />
+          <button className="bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary">
+            Search
+          </button>
+        </div>
+      </div>
+
+      {/* 🔹 Bottom Nav (Desktop) */}
+      <div className=" bg-black">
+        <div className="py-2 hidden md:flex  md:w-[95%] mx-auto px-2 md:px-0 text-white items-center gap-9">
+          {/* Categories Dropdown */}
+          <div className="relative group">
+            <button className="flex items-center gap-2 bg-primary px-4 py-2 text-sm font-medium">
+              <FaBars /> All Categories <FaChevronDown size={12} />
+            </button>
+
+            <div className="absolute left-0 top-full bg-white text-black shadow-lg hidden group-hover:block min-w-[220px] z-50">
+              {categories.map((cat) => (
+                <div key={cat._id} className="relative group/item">
                   <Link
-                    to={categoryRoutes[cat.name]}
-                    onClick={() => setActive(cat.name)}
-                    className={`flex items-center gap-2 px-3 py-2  rounded-full whitespace-nowrap text-sm transition-colors ${
-                      active === cat.name
-                        ? "bg-primary text-white"
-                        : "bg-primary/10 text-dark hover:bg-primary/20"
-                    }`}
+                    to={`/category/${cat._id}`}
+                    className="block px-4 py-2 hover:bg-gray-100"
                   >
-                    <span>{cat.name.toUpperCase()}</span>
+                    {cat.name}
                   </Link>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setActive(cat.name);
-                      toggleDropdown(cat.name);
-                    }}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap font-medium transition-colors ${
-                      active === cat.name
-                        ? "bg-primary text-white"
-                        : "bg-primary/10 text-dark hover:bg-primary/20"
-                    }`}
-                  >
-                    <span>{cat.name.toUpperCase()}</span>
-                    {cat.sub.length > 0 && <FaChevronDown size={12} />}
-                  </button>
-                )}
+                  {cat.sub.length > 0 && (
+                    <div className="absolute left-full top-0 bg-white shadow-lg hidden group-hover/item:block min-w-[180px]">
+                      {cat.sub.map((sub) => (
+                        <Link
+                          key={sub._id}
+                          to={`/category/${sub._id}`}
+                          className="block px-4 py-2 hover:bg-gray-100"
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
 
-                {openDropdown === cat.name && cat.sub.length > 0 && (
-                  <div className="absolute top-12 left-0 bg-white shadow-lg rounded-lg p-3 min-w-[180px] z-50">
-                    {cat.sub.map((subItem, i) => (
-                      <button
-                        key={i}
-                        className="block w-full text-left px-3 py-2 rounded-md hover:bg-light text-sm text-dark"
+          {/* Links */}
+          <div className="flex gap-6 text-sm font-medium ml-6">
+            <Link to="/" className="hover:text-primary">
+              Home
+            </Link>
+            <Link to="/shop" className="hover:text-primary">
+              Shop
+            </Link>
+            <Link to="/pages" className="hover:text-primary">
+              Pages
+            </Link>
+            <Link to="/blog" className="hover:text-primary">
+              Blog
+            </Link>
+            <Link to="/about" className="hover:text-primary">
+              About Us
+            </Link>
+            <Link to="/contact" className="hover:text-primary">
+              Contact Us
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* 🔹 Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-black text-white px-6 py-4 space-y-4">
+          <div>
+            <p className="font-semibold mb-2">Categories</p>
+            {categories.map((cat) => (
+              <div key={cat._id}>
+                <Link
+                  to={`/category/${cat._id}`}
+                  className="block py-1 hover:text-green-400"
+                >
+                  {cat.name}
+                </Link>
+                {cat.sub.length > 0 && (
+                  <div className="ml-4 text-sm text-gray-300">
+                    {cat.sub.map((sub) => (
+                      <Link
+                        key={sub._id}
+                        to={`/category/${sub._id}`}
+                        className="block py-1 hover:text-green-400"
                       >
-                        {subItem}
-                      </button>
+                        {sub.name}
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -225,64 +236,27 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Right Arrow */}
-          <button
-            onClick={scrollRight}
-            className="absolute right-0 z-10 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primary/90 transition -mr-2"
-          >
-            <FaChevronDown className="-rotate-90" size={16} />
-          </button>
-        </div>
-      </div>
-
-      {/* Category Bar Mobile */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white shadow-inner px-4 py-3 space-y-2">
-          {categories.map((cat, idx) => (
-            <div key={idx}>
-              {categoryRoutes[cat.name] ? (
-                <Link
-                  to={categoryRoutes[cat.name]}
-                  onClick={() => {
-                    setActive(cat.name);
-                    setIsMenuOpen(false);
-                  }}
-                  className="block w-full text-left px-3 py-2 rounded-md bg-primary/10 text-dark font-medium"
-                >
-                  {cat.name}
-                </Link>
-              ) : (
-                <>
-                  <button
-                    onClick={() => toggleDropdown(cat.name)}
-                    className="flex justify-between items-center w-full px-3 py-2 rounded-md bg-primary/10 text-dark font-medium"
-                  >
-                    {cat.name}
-                    {cat.sub.length > 0 && (
-                      <FaChevronDown
-                        size={12}
-                        className={`transition-transform ${
-                          openDropdown === cat.name ? "rotate-180" : ""
-                        }`}
-                      />
-                    )}
-                  </button>
-                  {openDropdown === cat.name && (
-                    <div className="pl-5 mt-1 space-y-1">
-                      {cat.sub.map((subItem, i) => (
-                        <button
-                          key={i}
-                          className="block w-full text-left px-3 py-1 rounded-md hover:bg-light text-sm text-dark"
-                        >
-                          {subItem}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          ))}
+          <div>
+            <p className="font-semibold mb-2">Menu</p>
+            <Link to="/" className="block py-1 hover:text-green-400">
+              Home
+            </Link>
+            <Link to="/shop" className="block py-1 hover:text-green-400">
+              Shop
+            </Link>
+            <Link to="/pages" className="block py-1 hover:text-green-400">
+              Pages
+            </Link>
+            <Link to="/blog" className="block py-1 hover:text-green-400">
+              Blog
+            </Link>
+            <Link to="/about" className="block py-1 hover:text-green-400">
+              About Us
+            </Link>
+            <Link to="/contact" className="block py-1 hover:text-green-400">
+              Contact Us
+            </Link>
+          </div>
         </div>
       )}
     </div>

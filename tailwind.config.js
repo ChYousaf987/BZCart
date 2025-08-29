@@ -11,11 +11,7 @@ module.exports = {
         light: "#F1F1F1",
       },
       fontFamily: {
-        montserrat: ["Montserrat", "sans-serif"],
-        geometric: ["Geometric 415", "sans-serif"],
-        cabin: ["Cabin", "sans-serif"],
-        public: ["'Public Sans'", "sans-serif"], // ✅ Google font
-        daraz: ["'Daraz Sans'", "sans-serif"], // ✅ custom font (self-hosted)
+        daraz: ["'Poppins'", "sans-serif"], // ✅ custom font (self-hosted)
       },
     },
   },
