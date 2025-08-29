@@ -3,7 +3,6 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 const ProductDetail = () => {
-  
   const [activeTab, setActiveTab] = useState("description");
 
   return (
@@ -32,27 +31,74 @@ const ProductDetail = () => {
               <img
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUoZnwdLPCdMo9P22x1tYmxLmGPZJR3O6eRA&s"
                 alt="main"
-                className="w-full h-[400px] object-contain rounded-md border"
+                className="w-full h-[500px] object-contain rounded-md border"
               />
             </div>
           </div>
 
           {/* Right Product Info */}
           <div>
-            <h1 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-semibold mb-2">
+              {" "}
               Philips Multigroom Series 3000 All-In-One Trimmer, 9-Piece,
-              MG3747/13
-            </h1>
-            <p className="text-xl text-red-600 font-bold mt-2">Rs. 15,000</p>
-            <p className="text-green-600 mt-1">In Stock</p>
-
-            <ul className="mt-4 space-y-2 text-gray-700">
-              <li>✔ Ships in: 1-3 Days</li>
-              <li>✔ 2 Years Brand Warranty</li>
-              <li>✔ Delivery: Nationwide</li>
-              <li>✔ Country of Origin: Indonesia</li>
-            </ul>
-
+              MG3747/13{" "}
+            </h2>{" "}
+            <p className="text-gray-500 text-sm mb-4">
+              {" "}
+              Be the first to review this product{" "}
+            </p>{" "}
+            <p className="text-2xl font-bold text-red-600 mb-2">
+              Rs. 15,000
+            </p>{" "}
+            <p className="text-green-600 mb-2">✔ In Stock</p>{" "}
+            <p className="mb-2">
+              {" "}
+              Ships In: <span className="font-semibold">1-3 Days</span>{" "}
+            </p>{" "}
+            <p className="mb-2">
+              {" "}
+              Warranty:{" "}
+              <span className="font-semibold">2 Years Brand Warranty</span>{" "}
+            </p>{" "}
+            <p className="mb-2">
+              {" "}
+              Delivery Area: <span className="font-semibold">
+                Nationwide
+              </span>{" "}
+            </p>{" "}
+            <p className="mb-2">
+              {" "}
+              Country of Origin:{" "}
+              <span className="font-semibold">Indonesia</span>{" "}
+            </p>{" "}
+            <p className="mb-6">
+              {" "}
+              Shipped By: <span className="font-semibold">Naheed</span>{" "}
+            </p>{" "}
+            {/* Highlights */}{" "}
+            <div className="mb-6">
+              {" "}
+              <h3 className="font-semibold text-lg mb-2">
+                Product Highlights:
+              </h3>{" "}
+              <ul className="list-disc pl-6 space-y-1 text-gray-700">
+                {" "}
+                <li>
+                  {" "}
+                  Includes nine attachments for beard, hair, and precision
+                  detailing{" "}
+                </li>{" "}
+                <li>
+                  {" "}
+                  Self-sharpening blades for long-lasting sharpness and
+                  skin-friendly grooming{" "}
+                </li>{" "}
+                <li>
+                  Up to 60 minutes of cordless runtime on a single charge
+                </li>{" "}
+                <li>Durable, water-resistant design for easy cleaning</li>{" "}
+              </ul>{" "}
+            </div>
             <button className="mt-6 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium">
               Add to Cart
             </button>
@@ -121,7 +167,7 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };
