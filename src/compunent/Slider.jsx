@@ -5,7 +5,7 @@ const HeroSection = () => {
   return (
     <div className="font-sans bg-white">
       {/* 🔹 Hero & Promo Banners */}
-      <div className="grid grid-cols-1 w-[95%] mx-auto md:grid-cols-3 gap-6 px-2 md:px-0 py-10">
+      <div className="grid grid-cols-1 w-[95%] mx-auto md:grid-cols-3 gap-6 px-2 md:px-0 pb-10 mt-3">
         {/* Left: Main Hero */}
         <div
           className="md:col-span-2 bg-primary rounded-2xl flex items-center p-8 text-white bg-cover bg-center min-h-[400px] md:min-h-[500px]"
