@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { FaHeadset, FaMoneyBillAlt, FaTruck, FaUndo } from "react-icons/fa";
 
 const ProductDetail = () => {
   const [activeTab, setActiveTab] = useState("description");
@@ -104,7 +105,46 @@ const ProductDetail = () => {
             </button>
           </div>
         </div>
-
+        {/* Right Sidebar - Features */}{" "}
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-4 gap-6">
+          {" "}
+          <div className="flex items-center gap-3 p-4 border rounded shadow-sm">
+            {" "}
+            <FaTruck className="text-red-600 text-xl" />{" "}
+            <div>
+              {" "}
+              <h4 className="font-semibold">Fast Shipping</h4>{" "}
+              <p className="text-sm text-gray-600">Shipped In 1-3 Days</p>{" "}
+            </div>{" "}
+          </div>{" "}
+          <div className="flex items-center gap-3 p-4 border rounded shadow-sm">
+            {" "}
+            <FaUndo className="text-red-600 text-xl" />{" "}
+            <div>
+              {" "}
+              <h4 className="font-semibold">Free Returns</h4>{" "}
+              <p className="text-sm text-gray-600">Free 7 Days Return</p>{" "}
+            </div>{" "}
+          </div>{" "}
+          <div className="flex items-center gap-3 p-4 border rounded shadow-sm">
+            {" "}
+            <FaMoneyBillAlt className="text-red-600 text-xl" />{" "}
+            <div>
+              {" "}
+              <h4 className="font-semibold">Payment On Delivery</h4>{" "}
+              <p className="text-sm text-gray-600">Cash On Delivery Option</p>{" "}
+            </div>{" "}
+          </div>{" "}
+          <div className="flex items-center gap-3 p-4 border rounded shadow-sm">
+            {" "}
+            <FaHeadset className="text-red-600 text-xl" />{" "}
+            <div>
+              {" "}
+              <h4 className="font-semibold">Customer Support</h4>{" "}
+              <p className="text-sm text-gray-600">Phone and Email</p>{" "}
+            </div>{" "}
+          </div>{" "}
+        </div>
         {/* Tabs Section */}
         <div className="mt-10">
           {/* Tab Buttons */}
