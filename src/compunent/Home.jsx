@@ -8,13 +8,38 @@ import Essential from "./Essential";
 import PromoBanner from "./PromoBanner";
 import Footer from "./Footer";
 
+
+
+
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <p className="text-center text-red-500">
+          Something went wrong. Please try again.
+        </p>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+
+
+
 const Home = () => {
   return (
     <>
       <div className="relative font-daraz bg-[#]">
         <Navbar />
         <Slider />
+        <ErrorBoundary>
         <ProductDeals />
+        </ErrorBoundary>
         <TopCategories />
         <Essential />
         <TopBrands />

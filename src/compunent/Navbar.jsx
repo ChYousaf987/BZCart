@@ -25,7 +25,7 @@ const Navbar = () => {
   // 🔹 Fetch categories
   useEffect(() => {
     axios
-      .get("http://localhost:3003/api/categories/categories")
+      .get("http://72.60.104.192:3003/api/categories/categories")
       .then((res) => {
         const parent = res.data.filter((c) => !c.parent_category);
         const formatted = parent.map((p) => ({

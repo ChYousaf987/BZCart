@@ -1,5 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { FaPlus, FaTrash } from "react-icons/fa";
+import {
+  fetchCart,
+  addToCart,
+  removeFromCart,
+} from "../features/cart/cartSlice";
 
 const colorNames = [
   "Red",
@@ -12,67 +19,102 @@ const colorNames = [
 ];
 
 const Cartss = () => {
-  // Dummy cart items (frontend only)
-  const [cart, setCart] = useState([
-    {
-      _id: "1",
-      product_name: "Smart Watch",
-      product_discounted_price: 3500,
-      product_images:
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      selected_image:
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      flavor: "Mint",
-      category: { name: "Devices" },
-      quantity: 1,
-    },
-    {
-      _id: "2",
-      product_name: "Running Shoes",
-      product_discounted_price: 5000,
-      product_images:
-        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
-      selected_image:
-        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
-      flavor: "N/A",
-      category: { name: "Shoes" },
-      quantity: 2,
-    },
-  ]);
-
+  const dispatch = useDispatch();
+  const { items: cart, loading, error } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
   const [shippingAddress, setShippingAddress] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchCart());
+    } else {
+      toast.error("Please log in to view your cart", { position: "top-right" });
+    }
+  }, [dispatch, user]);
+
   // Increase quantity
-  const handleAddItem = (id) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item._id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
+  const handleAddItem = (item) => {
+    if (!item.product_id) {
+      toast.error("Invalid product data", { position: "top-right" });
+      return;
+    }
+    dispatch(
+      addToCart({
+        prod_id: item.product_id._id,
+        selected_image: item.selected_image,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        toast.success("Quantity updated!", { position: "top-right" });
+      })
+      .catch((err) => {
+        toast.error(err || "Failed to update quantity", {
+          position: "top-right",
+        });
+      });
   };
 
   // Decrease / remove item
-  const handleRemoveItem = (id) => {
-    setCart((prev) =>
-      prev
-        .map((item) =>
-          item._id === id ? { ...item, quantity: item.quantity - 1 } : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
+  const handleRemoveItem = (item) => {
+    if (!item.product_id) {
+      toast.error("Invalid product data", { position: "top-right" });
+      return;
+    }
+    dispatch(
+      removeFromCart({
+        prod_id: item.product_id._id,
+        selected_image: item.selected_image,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        toast.success("Item removed!", { position: "top-right" });
+      })
+      .catch((err) => {
+        toast.error(err || "Failed to remove item", { position: "top-right" });
+      });
   };
 
   // Total items & price
-  const totalItems = () => cart.reduce((t, item) => t + item.quantity, 0);
-  const calculateTotal = () =>
-    cart.reduce(
-      (sum, item) => sum + item.product_discounted_price * item.quantity,
-      0
-    );
+  const totalItems = () =>
+    Array.isArray(cart)
+      ? cart.reduce((t, item) => t + (item.quantity || 1), 0)
+      : 0;
 
-  if (cart.length === 0) {
+  const calculateTotal = () =>
+    Array.isArray(cart)
+      ? cart.reduce(
+          (sum, item) =>
+            sum +
+            (item.product_id?.product_discounted_price || 0) *
+              (item.quantity || 1),
+          0
+        )
+      : 0;
+
+  if (loading) {
+    return (
+      <div className="text-center p-4 bg-light min-h-screen">
+        <h3 className="font-bold text-2xl mb-2 text-dark">Loading Cart...</h3>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center p-4 bg-light min-h-screen">
+        <h3 className="font-bold text-2xl mb-2 text-dark">
+          Error Loading Cart
+        </h3>
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
+
+  if (!Array.isArray(cart) || cart.length === 0) {
     return (
       <div className="text-center p-4 bg-light min-h-screen">
         <h3 className="font-bold text-2xl mb-2 text-dark">
@@ -93,42 +135,46 @@ const Cartss = () => {
             <span className="text-xl font-medium">({totalItems()} items)</span>
           </h2>
           <div className="bg-white p-4 rounded-xl space-y-4 shadow">
-            {cart.map((item) => {
+            {cart.map((item, index) => {
               const isVapeOrPod =
-                item.category?.name?.includes("Disposables") ||
-                item.category?.name?.includes("Devices");
-              const colorIndex = item.product_images.indexOf(
-                item.selected_image
-              );
+                item.product_id?.category?.name?.includes("Disposables") ||
+                item.product_id?.category?.name?.includes("Devices");
+              const colorIndex =
+                item.product_id?.product_images?.indexOf(item.selected_image) ||
+                -1;
               return (
                 <div
-                  key={item._id}
+                  key={`${item.product_id?._id || index}-${
+                    item.selected_image
+                  }`}
                   className="flex items-center justify-between bg-light p-4 rounded-xl"
                 >
                   <div className="flex items-center gap-4">
                     <img
-                      src={item.selected_image}
-                      alt={item.product_name}
+                      src={
+                        item.selected_image || "https://via.placeholder.com/150"
+                      }
+                      alt={item.product_id?.product_name || "Product"}
                       className="w-20 h-20 rounded-xl object-cover"
+                      loading="lazy"
                     />
                     <div>
                       <h4 className="font-semibold text-lg text-dark">
-                        {item.product_name}
+                        {item.product_id?.product_name || "Unknown Product"}
                         {isVapeOrPod && colorIndex !== -1 && (
                           <span className="text-sm text-dark/60 ml-2">
                             ({colorNames[colorIndex] || "Selected Color"})
                           </span>
                         )}
                       </h4>
-                     
                       <p className="text-primary font-bold mt-1">
-                        Rs. {item.product_discounted_price}
+                        Rs. {item.product_id?.product_discounted_price || 0}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => handleRemoveItem(item._id)}
+                      onClick={() => handleRemoveItem(item)}
                       className="bg-primary/10 text-primary rounded-full p-2"
                     >
                       <FaTrash size={12} />
@@ -137,7 +183,7 @@ const Cartss = () => {
                       {item.quantity}
                     </span>
                     <button
-                      onClick={() => handleAddItem(item._id)}
+                      onClick={() => handleAddItem(item)}
                       className="bg-primary/10 text-primary rounded-full p-2"
                     >
                       <FaPlus size={12} />
@@ -191,13 +237,20 @@ const Cartss = () => {
 
             {cart.map((item) => (
               <div
-                key={item._id}
+                key={`${item.product_id?._id || item._id}-${
+                  item.selected_image
+                }`}
                 className="flex justify-between text-sm text-dark"
               >
                 <span>
-                  {item.quantity} x {item.product_name}
+                  {item.quantity} x{" "}
+                  {item.product_id?.product_name || "Unknown Product"}
                 </span>
-                <span>Rs. {item.product_discounted_price * item.quantity}</span>
+                <span>
+                  Rs.{" "}
+                  {(item.product_id?.product_discounted_price || 0) *
+                    item.quantity}
+                </span>
               </div>
             ))}
 

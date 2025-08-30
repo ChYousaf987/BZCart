@@ -21,7 +21,7 @@ const Success = () => {
       }
 
       try {
-        await axios.post("http://localhost:3003/api/orders/success", {
+        await axios.post("http://72.60.104.192:3003/api/orders/success", {
           session_id: sessionId,
         });
         toast.success("Payment successful! Order created.");

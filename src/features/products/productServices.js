@@ -1,4 +1,4 @@
-const BASE_URL = "https://api.cloudandroots.com/api/products";
+const BASE_URL = "http://72.60.104.192:3003/api/products";
 
 export const createProduct = async (productData) => {
   const response = await fetch(`${BASE_URL}/create-product`, {

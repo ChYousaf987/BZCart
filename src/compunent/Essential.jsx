@@ -1,67 +1,55 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { fetchProducts } from "../features/products/productSlice";
 
 const Essential = () => {
-  const categories = [
-    {
-      name: "Lorem ipsum",
-      image:
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      title: "up to 50% off",
-    },
-    {
-      name: "Lorem ipsum",
-      image:
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      title: "up to 50% off",
-    },
-    {
-      name: "Lorem ipsum",
-      image:
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      title: "up to 50% off",
-    },
-    {
-      name: "Lorem ipsum",
-      image:
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      title: "up to 50% off",
-    },
-    {
-      name: "Lorem ipsum",
-      image:
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      title: "up to 50% off",
-    },
-    {
-      name: "Lorem ipsum",
-      image:
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      title: "up to 50% off",
-    },
-    {
-      name: "Lorem ipsum",
-      image:
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      title: "up to 50% off",
-    },
-    {
-      name: "Lorem ipsum",
-      image:
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      title: "up to 50% off",
-    },
-  ];
+  const dispatch = useDispatch();
+  const { products, loading, error } = useSelector((state) => state.products);
+
+  useEffect(() => {
+    dispatch(fetchProducts())
+      .unwrap()
+      .then((data) => {
+        console.log("Essential - Fetched products:", data);
+      })
+      .catch((err) => {
+        console.error("Essential - Fetch error:", err);
+      });
+  }, [dispatch]);
+
+  // Find the second category dynamically
+  const secondCategory = useMemo(() => {
+    if (products.length === 0) return "";
+    // Get unique categories
+    const uniqueCategories = [
+      ...new Set(products.map((item) => item.category?.name).filter(Boolean)),
+    ];
+    // Select the second category (index 1), or fallback to empty string
+    return uniqueCategories[1] || "";
+  }, [products]);
+
+  // Filter products for the second category
+  const filteredProducts = useMemo(() => {
+    if (!secondCategory) return [];
+    return products.filter((item) => {
+      const categoryName = item.category?.name || "";
+      return categoryName.toLowerCase() === secondCategory.toLowerCase();
+    });
+  }, [products, secondCategory]);
 
   return (
-    <div className="md:w-[90%] mx-auto px-2 md:px-0 py-12">
+    <div className="md:w-[95%] mx-auto px-2 md:px-0 py-12">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-lg md:text-2xl font-bold border-b-2 text-gray-500 border-[#f06621] inline-block pb-1">
-          Shop From <span className="text-[#f06621]">Essentials</span>
+          Shop From{" "}
+          <span className="text-[#f06621]">
+            {secondCategory || "Essentials"}
+          </span>
         </h2>
         <Link
-          to="/cart"
+          to="/products"
           className="text-[#f06621] text-sm sm:text-base font-semibold hover:underline transition"
         >
           View All →
@@ -69,28 +57,45 @@ const Essential = () => {
       </div>
 
       {/* Responsive Grid / Scrollable Row */}
-      <div className="flex overflow-x-auto md:overflow-hidden gap-6 sm:gap-10 pb-4 snap-x snap-mandatory scrollbar-hide">
-        {categories.map((category, index) => (
-          <div
-            key={index}
-            className="flex flex-col items-center text-center bg-transparent"
-          >
-            <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-3xl border border-[#f06621] bg-[#fbf6f4] mt-2 p-1 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-105">
-              <img
-                src={category.image}
-                alt={category.name}
-                className="w-full h-full object-cover rounded-full"
-              />
+      {filteredProducts.length === 0 ? (
+        <p className="text-center w-full">
+          No products found for {secondCategory || "any category"}
+        </p>
+      ) : (
+        <div className="flex overflow-x-auto md:overflow-hidden gap-6 sm:gap-10 pb-4 snap-x snap-mandatory scrollbar-hide">
+          {filteredProducts.map((product, index) => (
+            <div
+              key={`${product._id}-${index}`}
+              className="flex flex-col items-center text-center bg-transparent"
+            >
+              <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-3xl border border-[#f06621] bg-[#fbf6f4] mt-2 p-1 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-105">
+                <img
+                  src={
+                    product.product_images?.[0] ||
+                    "https://via.placeholder.com/150"
+                  }
+                  alt={product.product_name || "Product"}
+                  className="w-full h-full object-cover rounded-full"
+                  loading="lazy"
+                />
+              </div>
+              <p className="mt-3 text-xs sm:text-sm font-medium hover:text-[#f06621] transition">
+                {product.product_name || "Unknown Product"}
+              </p>
+              <p className="text-xs sm:text-sm md:text-base font-bold hover:text-[#f06621] transition">
+                {product.product_discounted_price && product.product_base_price
+                  ? `Up to ${Math.round(
+                      ((product.product_base_price -
+                        product.product_discounted_price) /
+                        product.product_base_price) *
+                        100
+                    )}% off`
+                  : "No discount"}
+              </p>
             </div>
-            <p className="mt-3 text-xs sm:text-sm font-medium hover:text-[#f06621] transition">
-              {category.name}
-            </p>
-            <p className="text-xs sm:text-sm md:text-base font-bold hover:text-[#f06621] transition">
-              {category.title}
-            </p>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

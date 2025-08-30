@@ -1,10 +1,9 @@
 import axios from "axios";
 
+const API_URL = "http://72.60.104.192:3003/api/users";
+
 export const regUser = async (data) => {
-  const response = await axios.post(
-    "https://api.cloudandroots.com/api/users/register-user",
-    data
-  );
+  const response = await axios.post(`${API_URL}/register-user`, data);
 
   if (response.data) {
     localStorage.setItem("myUser", JSON.stringify(response.data));
@@ -14,10 +13,7 @@ export const regUser = async (data) => {
 };
 
 export const logUser = async (data) => {
-  const response = await axios.post(
-    "https://api.cloudandroots.com/api/users/login-user",
-    data
-  );
+  const response = await axios.post(`${API_URL}/login-user`, data);
 
   if (response.data) {
     localStorage.setItem("myUser", JSON.stringify(response.data));
@@ -37,11 +33,11 @@ export const verifyOTP = async (otpData, token) => {
     },
   };
 
-  const response = await axios.post(
-    `https://api.cloudandroots.com/api/users/verify-otp`,
-    otpData,
-    config
-  );
+  const response = await axios.post(`${API_URL}/verify-otp`, otpData, config);
+
+  if (response.data) {
+    localStorage.setItem("myUser", JSON.stringify(response.data));
+  }
 
   return response.data;
 };

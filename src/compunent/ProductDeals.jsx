@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { fetchProducts } from "../features/products/productSlice";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-// 🔹 Custom Next Arrow
+// Custom Next Arrow
 const NextArrow = ({ onClick }) => (
   <button
     onClick={onClick}
@@ -15,7 +17,7 @@ const NextArrow = ({ onClick }) => (
   </button>
 );
 
-// 🔹 Custom Prev Arrow
+// Custom Prev Arrow
 const PrevArrow = ({ onClick }) => (
   <button
     onClick={onClick}
@@ -26,78 +28,44 @@ const PrevArrow = ({ onClick }) => (
 );
 
 const ProductDeals = () => {
-  const products = [
-    {
-      _id: "1",
-      product_name: "Mango E-Liquid",
-      product_base_price: 2500,
-      product_discounted_price: 1999,
-      product_images: [
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      ],
-      product_catagory: ["e-liquid"],
-      rating: 4.5,
-    },
-    {
-      _id: "2",
-      product_name: "Strawberry Ice E-Liquid",
-      product_base_price: 2800,
-      product_discounted_price: 2200,
-      product_images: [
-        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
-      ],
-      product_catagory: ["e-liquid"],
-      rating: 4.2,
-    },
-    {
-      _id: "3",
-      product_name: "Blueberry Blast",
-      product_base_price: 2000,
-      product_discounted_price: 1800,
-      product_images: [
-        "https://static.vecteezy.com/system/resources/previews/053/366/782/non_2x/collection-of-full-body-a-business-suit-mock-up-isolated-on-a-transparency-background-png.png",
-      ],
-      product_catagory: ["e-liquid"],
-      rating: 4,
-    },
-    {
-      _id: "1",
-      product_name: "Mango E-Liquid",
-      product_base_price: 2500,
-      product_discounted_price: 1999,
-      product_images: [
-        "https://api.ecom.longines.com/media/catalog/product/w/a/watch-collection-longines-primaluna-moonphase-l8-126-5-71-7-ed61b2-thumbnail.png?w=2560",
-      ],
-      product_catagory: ["e-liquid"],
-      rating: 4.5,
-    },
-    {
-      _id: "2",
-      product_name: "Strawberry Ice E-Liquid",
-      product_base_price: 2800,
-      product_discounted_price: 2200,
-      product_images: [
-        "https://png.pngtree.com/png-vector/20240727/ourmid/pngtree-leather-purses-fashion-in-transparent-background-png-image_13247885.png",
-      ],
-      product_catagory: ["e-liquid"],
-      rating: 4.2,
-    },
-    {
-      _id: "3",
-      product_name: "Blueberry Blast",
-      product_base_price: 2000,
-      product_discounted_price: 1800,
-      product_images: [
-        "https://static.vecteezy.com/system/resources/previews/053/366/782/non_2x/collection-of-full-body-a-business-suit-mock-up-isolated-on-a-transparency-background-png.png",
-      ],
-      product_catagory: ["e-liquid"],
-      rating: 4,
-    },
-  ];
+  const dispatch = useDispatch();
+  const { products, loading, error } = useSelector((state) => state.products);
 
-  const eliquidProducts = products.filter((item) =>
-    item.product_catagory?.some((cat) => cat.toLowerCase().includes("e-liquid"))
-  );
+  useEffect(() => {
+    dispatch(fetchProducts())
+      .unwrap()
+      .then((data) => {
+        console.log("ProductDeals - Fetched products:", data);
+      })
+      .catch((err) => {
+        console.error("ProductDeals - Fetch error:", err);
+      });
+  }, [dispatch]);
+
+  // Find the first category dynamically
+  const firstCategory = useMemo(() => {
+    if (products.length === 0) return "";
+    const categoryName = products[0]?.category?.name || "";
+    console.log("ProductDeals - First category:", categoryName);
+    return categoryName;
+  }, [products]);
+
+  // Filter products for the first category
+  const filteredProducts = useMemo(() => {
+    if (!firstCategory) return [];
+    return products.filter((item) => {
+      const categoryName = item.category?.name || "";
+      const matchesCategory =
+        categoryName.toLowerCase() === firstCategory.toLowerCase();
+      console.log(
+        `Product ${item.product_name || item._id}: Category`,
+        categoryName,
+        `Matches ${firstCategory}:`,
+        matchesCategory
+      );
+      return matchesCategory;
+    });
+  }, [products, firstCategory]);
 
   const getDiscountPercent = (base, discounted) => {
     if (!base || !discounted || base <= 0) return null;
@@ -109,7 +77,7 @@ const ProductDeals = () => {
     dots: false,
     infinite: true,
     speed: 800,
-    slidesToShow: 5,
+    slidesToShow: Math.min(filteredProducts.length, 5),
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2000,
@@ -120,7 +88,7 @@ const ProductDeals = () => {
     responsive: [
       {
         breakpoint: 1024,
-        settings: { slidesToShow: 3 },
+        settings: { slidesToShow: Math.min(filteredProducts.length, 3) },
       },
       {
         breakpoint: 640,
@@ -133,7 +101,9 @@ const ProductDeals = () => {
     <div className="md:w-[95%] mx-auto px-2 md:px-0 py-12 relative">
       <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-dark border-b-2 border-primary inline-block pb-1">
-          <span className="text-primary">Popular Categories</span>
+          <span className="text-primary">
+            {firstCategory ? `${firstCategory} Deals` : "Popular Categories"}
+          </span>
         </h2>
         <Link
           to="/eliquids"
@@ -143,19 +113,22 @@ const ProductDeals = () => {
         </Link>
       </div>
 
-      {eliquidProducts.length === 0 ? (
-        <p className="text-center w-full">No E-Liquids found</p>
+      {filteredProducts.length === 0 ? (
+        <p className="text-center w-full">
+          No products found for {firstCategory || "any category"}
+        </p>
       ) : (
         <Slider {...settings}>
-          {eliquidProducts.map((product) => {
+          {filteredProducts.map((product, index) => {
             const discountPercent = getDiscountPercent(
               product.product_base_price,
               product.product_discounted_price
             );
             const rating = product.rating || 4;
+            const categoryName = product.category?.name || "Unknown";
 
             return (
-              <div key={product._id} className="px-2">
+              <div key={`${product._id}-${index}`} className="px-2">
                 <div className="group bg-white rounded-2xl border shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
                   {discountPercent !== null && (
                     <div className="absolute top-2 right-2 bg-primary text-white text-xs font-semibold px-2 py-1 rounded-bl-lg z-10">
@@ -166,19 +139,21 @@ const ProductDeals = () => {
                     <div className="p-4 h-48 flex items-center justify-center bg-light">
                       <img
                         src={
-                          product.product_images[0] ||
+                          product.product_images?.[0] ||
                           "https://via.placeholder.com/150"
                         }
-                        alt={product.product_name}
+                        alt={product.product_name || "Product"}
                         className="object-contain max-h-full transition-transform duration-300 group-hover:scale-105"
+                        loading="lazy"
                       />
                     </div>
                     <div className="px-5 py-4 border-t bg-primary/5">
                       <h3 className="font-semibold text-dark text-sm mb-1 line-clamp-1 hover:text-primary transition-colors duration-200">
-                        {product.product_name}
+                        {product.product_name || "Unknown Product"}
                       </h3>
-
-                      {/* Rating Stars */}
+                      <p className="text-dark/70 text-xs mb-1 capitalize">
+                        {categoryName}
+                      </p>
                       <div className="flex items-center text-yellow-500 text-sm mb-1">
                         {[...Array(5)].map((_, i) => (
                           <svg
@@ -227,4 +202,4 @@ const ProductDeals = () => {
   );
 };
 
-export default ProductDeals;
+export default React.memo(ProductDeals);

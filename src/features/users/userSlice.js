@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { logUser, regUser, verifyOTP } from "./userService";
+import { logUser, regUser, verifyOTP, logout } from "./userService";
 
 const isUser = JSON.parse(localStorage.getItem("myUser"));
 
@@ -12,7 +12,7 @@ const initialState = {
 };
 
 export const registerMyUser = createAsyncThunk(
-  "register-user",
+  "auth/register",
   async (data, thunkAPI) => {
     try {
       return await regUser(data);
@@ -23,7 +23,7 @@ export const registerMyUser = createAsyncThunk(
 );
 
 export const loginMyUser = createAsyncThunk(
-  "login-user",
+  "auth/login",
   async (data, thunkAPI) => {
     try {
       return await logUser(data);
@@ -34,7 +34,7 @@ export const loginMyUser = createAsyncThunk(
 );
 
 export const verifyOTPData = createAsyncThunk(
-  "verify-OTP",
+  "auth/verifyOTP",
   async (otpData, thunkAPI) => {
     try {
       let token = thunkAPI.getState().auth.user.token;
@@ -45,7 +45,12 @@ export const verifyOTPData = createAsyncThunk(
   }
 );
 
-export const myUserSlice = createSlice({
+export const logoutUser = createAsyncThunk("auth/logout", async () => {
+  await logout();
+  return null;
+});
+
+export const userSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
@@ -54,10 +59,6 @@ export const myUserSlice = createSlice({
       state.userError = false;
       state.userSuccess = false;
       state.userMessage = "";
-    },
-    logoutUser: (state) => {
-      state.user = null;
-      localStorage.removeItem("myUser");
     },
   },
   extraReducers: (builder) => {
@@ -100,9 +101,15 @@ export const myUserSlice = createSlice({
         state.userLoading = false;
         state.userSuccess = true;
         state.user = action.payload;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.user = null;
+        state.userSuccess = false;
+        state.userError = false;
+        state.userMessage = "";
       });
   },
 });
 
-export default myUserSlice.reducer;
-export const { userReset, logoutUser } = myUserSlice.actions;
+export const { userReset } = userSlice.actions;
+export default userSlice.reducer;

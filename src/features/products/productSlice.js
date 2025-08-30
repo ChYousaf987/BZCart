@@ -6,7 +6,7 @@ export const fetchProductById = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `https://api.cloudandroots.com/api/products/product/${id}`,
+        `http://72.60.104.192:3003/api/products/product/${id}`,
         { timeout: 5000 }
       );
       return response.data;
@@ -28,7 +28,7 @@ export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("https://api.cloudandroots.com/api/products/products");
+      const response = await axios.get("http://72.60.104.192:3003/api/products/products");
       return response.data;
     } catch (err) {
       console.error("fetchProducts error:", err);
@@ -44,7 +44,7 @@ export const fetchProductsByCategory = createAsyncThunk(
   async (categoryId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `https://api.cloudandroots.com/api/products/category/${categoryId}`
+        `http://72.60.104.192:3003/api/products/category/${categoryId}`
       );
       return response.data;
     } catch (err) {
@@ -61,7 +61,7 @@ export const fetchReviews = createAsyncThunk(
   async (productId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `https://api.cloudandroots.com/api/products/reviews/${productId}`,
+        `http://72.60.104.192:3003/api/products/reviews/${productId}`,
         { timeout: 5000 }
       );
       return response.data;
@@ -94,7 +94,7 @@ export const submitReview = createAsyncThunk(
       };
       console.log("submitReview - Sending request with body:", payload);
       const response = await axios.post(
-        `https://api.cloudandroots.com/api/products/reviews/${productId}`,
+        `http://72.60.104.192:3003/api/products/reviews/${productId}`,
         payload,
         { timeout: 5000 }
       );

@@ -10,35 +10,19 @@ export const addToCart = createAsyncThunk(
       if (!user?._id) {
         throw new Error("Please log in to add items to cart");
       }
-      const { prod_id, selected_image, nicotine_strength, flavor } = cartItem;
-      if (!prod_id || !selected_image || !flavor) {
-        console.log("addToCart - Invalid fields:", {
-          prod_id,
-          selected_image,
-          nicotine_strength,
-          flavor,
-        });
-        throw new Error(
-          "Product ID, selected image, and flavor must be provided"
-        );
-      }
-      if (isNaN(Number(nicotine_strength))) {
-        console.log(
-          "addToCart - Invalid nicotine_strength:",
-          nicotine_strength
-        );
-        throw new Error("Nicotine strength must be a valid number");
+      const { prod_id, selected_image } = cartItem;
+      if (!prod_id || !selected_image) {
+        console.log("addToCart - Invalid fields:", { prod_id, selected_image });
+        throw new Error("Product ID and selected image must be provided");
       }
       const payload = {
         product_id: prod_id,
         selected_image,
-        nicotine_strength: Number(nicotine_strength),
-        flavor: flavor.trim(),
         user_id: user._id,
       };
       console.log("addToCart - Sending request with body:", payload);
       const response = await axios.post(
-        "https://api.cloudandroots.com/api/products/cart",
+        "http://72.60.104.192:3003/api/products/cart",
         payload,
         { timeout: 5000 }
       );
@@ -68,7 +52,7 @@ export const fetchCart = createAsyncThunk(
         throw new Error("Please log in to view your cart");
       }
       const response = await axios.get(
-        "https://api.cloudandroots.com/api/products/cart",
+        "http://72.60.104.192:3003/api/products/cart",
         {
           headers: { Authorization: `Bearer ${user.token}` },
           timeout: 5000,
@@ -86,41 +70,25 @@ export const fetchCart = createAsyncThunk(
 
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
-  async (
-    { prod_id, selected_image, nicotine_strength, flavor },
-    { rejectWithValue }
-  ) => {
+  async ({ prod_id, selected_image }, { rejectWithValue }) => {
     try {
       const user = JSON.parse(localStorage.getItem("myUser"));
       console.log("removeFromCart - User from localStorage:", user);
       if (!user?.token) {
         throw new Error("Please log in to remove items from cart");
       }
-      if (!prod_id || !selected_image || !flavor) {
+      if (!prod_id || !selected_image) {
         console.log("removeFromCart - Invalid fields:", {
           prod_id,
           selected_image,
-          nicotine_strength,
-          flavor,
         });
-        throw new Error(
-          "Product ID, selected image, and flavor must be provided"
-        );
-      }
-      if (isNaN(Number(nicotine_strength))) {
-        console.log(
-          "removeFromCart - Invalid nicotine_strength:",
-          nicotine_strength
-        );
-        throw new Error("Nicotine strength must be a valid number");
+        throw new Error("Product ID and selected image must be provided");
       }
       const response = await axios.post(
-        "https://api.cloudandroots.com/api/products/cart/remove",
+        "http://72.60.104.192:3003/api/products/cart/remove",
         {
           product_id: prod_id,
           selected_image,
-          nicotine_strength: Number(nicotine_strength),
-          flavor,
         },
         { headers: { Authorization: `Bearer ${user.token}` }, timeout: 5000 }
       );
@@ -144,7 +112,7 @@ export const clearCart = createAsyncThunk(
         throw new Error("Please log in to clear cart");
       }
       const response = await axios.delete(
-        "https://api.cloudandroots.com/api/products/cart/clear",
+        "http://72.60.104.192:3003/api/products/cart/clear",
         {
           headers: { Authorization: `Bearer ${user.token}` },
           timeout: 5000,
