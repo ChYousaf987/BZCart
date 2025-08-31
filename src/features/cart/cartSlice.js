@@ -22,7 +22,7 @@ export const addToCart = createAsyncThunk(
       };
       console.log("addToCart - Sending request with body:", payload);
       const response = await axios.post(
-        "http://72.60.104.192:3003/api/products/cart",
+        "https://bzbackend.online/api/products/cart",
         payload,
         { timeout: 5000 }
       );
@@ -52,7 +52,7 @@ export const fetchCart = createAsyncThunk(
         throw new Error("Please log in to view your cart");
       }
       const response = await axios.get(
-        "http://72.60.104.192:3003/api/products/cart",
+        "https://bzbackend.online/api/products/cart",
         {
           headers: { Authorization: `Bearer ${user.token}` },
           timeout: 5000,
@@ -85,7 +85,7 @@ export const removeFromCart = createAsyncThunk(
         throw new Error("Product ID and selected image must be provided");
       }
       const response = await axios.post(
-        "http://72.60.104.192:3003/api/products/cart/remove",
+        "https://bzbackend.online/api/products/cart/remove",
         {
           product_id: prod_id,
           selected_image,
@@ -112,7 +112,7 @@ export const clearCart = createAsyncThunk(
         throw new Error("Please log in to clear cart");
       }
       const response = await axios.delete(
-        "http://72.60.104.192:3003/api/products/cart/clear",
+        "https://bzbackend.online/api/products/cart/clear",
         {
           headers: { Authorization: `Bearer ${user.token}` },
           timeout: 5000,

@@ -20,9 +20,7 @@ const CategoryProducts = () => {
     dispatch(fetchProductsByCategory(categoryId));
     // Fetch category details
     axios
-      .get(
-        `https://api.cloudandroots.com/api/categories/category/${categoryId}`
-      )
+      .get(`https://bzbackend.online/api/categories/category/${categoryId}`)
       .then((response) => setCategory(response.data))
       .catch(() => toast.error("Failed to fetch category details"));
   }, [dispatch, categoryId]);

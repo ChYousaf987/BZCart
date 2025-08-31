@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://72.60.104.192:3003/api/users";
+const API_URL = "https://bzbackend.online/api/users";
 
 export const regUser = async (data) => {
   const response = await axios.post(`${API_URL}/register-user`, data);
