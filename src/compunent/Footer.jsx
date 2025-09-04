@@ -6,6 +6,7 @@ import {
   FaLinkedinIn,
   FaYoutube,
   FaPhoneAlt,
+  FaEnvelope,
 } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 
@@ -18,13 +19,21 @@ const Footer = () => {
           <h3 className="text-lg font-semibold mb-4">Contact Details</h3>
           <div className="flex items-start gap-2 mb-3 text-sm">
             <FaLocationDot className="text-primary mt-1" />
-            <p>DINGA TEHSIL KHARIAN DISTRICT GUJRAT, PAKISTAN</p>
+            <p> Dinga, Tehsil Kharian District Gujrat, Punjab –Pakistan</p>
           </div>
 
           <div className="flex items-start gap-2 mb-3 text-sm">
             <FaPhoneAlt className="text-primary mt-1" />
             <p>03297609190</p>
           </div>
+          {/* Email */}
+          <div className="flex items-start gap-2 mb-3 text-sm">
+            <FaEnvelope className="text-primary mt-1" />
+            <a href="mailto:info@bzcart.store" className="hover:underline">
+              info@bzcart.store
+            </a>
+          </div>
+
           <p className="text-sm mb-4">
             Customer Support: 7 Days a Week, 9:00am - 10:00pm
           </p>
@@ -73,7 +82,7 @@ const Footer = () => {
             <li>Contact Us and Location</li>
             <li>Delivery Info</li>
             <li>FAQs</li>
-            <li>Naheed-Loyalty</li>
+            <li>BZCart-Loyalty</li>
           </ul>
         </div>
 

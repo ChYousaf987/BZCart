@@ -25,6 +25,11 @@ const CategoryProducts = () => {
       .catch(() => toast.error("Failed to fetch category details"));
   }, [dispatch, categoryId]);
 
+  const getDiscountPercent = (base, discounted) => {
+    if (!base || !discounted || base <= 0) return null;
+    return Math.round(((base - discounted) / base) * 100);
+  };
+
   if (relatedLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -45,67 +50,115 @@ const CategoryProducts = () => {
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
       <Navbar />
       <Toaster position="top-right" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">
-          {category?.name || "Category"} Products
+      <div className="md:w-[95%] mx-auto px-4 sm:px-6 lg:px-8 py-12 font-cabin">
+        <h2 className="text-3xl font-extrabold text-gray-900 mb-10 text-center">
+          {category?.name || "Category"}{" "}
+          <span className="text-primary">Products</span>
         </h2>
+
         {relatedProducts.length === 0 ? (
-          <p className="text-gray-600">No products found in this category.</p>
+          <p className="text-gray-600 text-center">
+            No products found in this category.
+          </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {relatedProducts.map((product) => (
-              <Link
-                key={product._id}
-                to={`/product/${product._id}`}
-                className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1"
-              >
-                <div className="aspect-square bg-gray-50 relative flex items-center justify-center p-4">
-                  <img
-                    src={
-                      product.product_images?.[0] ||
-                      "https://via.placeholder.com/150"
-                    }
-                    alt={product.product_name}
-                    className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6">
+            {relatedProducts.map((product) => {
+              const discountPercent = getDiscountPercent(
+                product.product_base_price,
+                product.product_discounted_price
+              );
+              const rating = product.rating || 4;
+              const categoryName = product.category?.name || "Unknown";
+
+              return (
+                <div
+                  key={product._id}
+                  className="group bg-white rounded-2xl border shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden"
+                >
+                  {/* Discount Badge */}
+                  {discountPercent !== null && (
+                    <div className="absolute top-2 right-2 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                      {discountPercent}% OFF
+                    </div>
+                  )}
+
+                  {/* SOLD OUT Badge */}
                   {product.product_stock <= 0 && (
-                    <span className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                    <span className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                       SOLD OUT
                     </span>
                   )}
-                </div>
-                <div className="p-5">
-                  <h3 className="text-gray-900 font-bold group-hover:text-indigo-600 line-clamp-2 mb-2">
-                    {product.product_name}
-                  </h3>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-gray-900 font-bold">
-                        Rs. {product.product_discounted_price}
+
+                  {/* Product Image */}
+                  <Link to={`/product/${product._id}`}>
+                    <div className="p-4 h-48 flex items-center justify-center bg-gray-50">
+                      <img
+                        src={
+                          product.product_images?.[0] ||
+                          "https://via.placeholder.com/150"
+                        }
+                        alt={product.product_name || "Product"}
+                        className="object-contain max-h-full transition-transform duration-300 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+                  </Link>
+
+                  {/* Product Info */}
+                  <div className="px-5 py-4 bg-orange-50">
+                    <h3 className="font-semibold text-dark text-sm mb-1 line-clamp-1 hover:text-primary transition-colors duration-200">
+                      {product.product_name || "Unknown Product"}
+                    </h3>
+                    <p className="text-dark/70 text-xs mb-2 capitalize">
+                      {categoryName}
+                    </p>
+
+                    {/* Rating */}
+                    <div className="flex items-center text-yellow-500 text-sm mb-2">
+                      {[...Array(5)].map((_, i) => (
+                        <svg
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < Math.floor(rating)
+                              ? "fill-current"
+                              : "fill-none stroke-current"
+                          }`}
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg>
+                      ))}
+                      <span className="text-dark/70 text-xs ml-2">
+                        ({rating})
                       </span>
+                    </div>
+
+                    {/* Price */}
+                    <div className="flex items-center gap-2 text-sm mb-1">
                       {product.product_discounted_price <
                         product.product_base_price && (
-                        <span className="ml-2 text-sm text-gray-500 line-through">
+                        <span className="line-through text-gray-400">
                           Rs. {product.product_base_price}
                         </span>
                       )}
-                    </div>
-                    <div className="flex items-center">
-                      <svg
-                        className="w-4 h-4 text-yellow-400"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.286 3.966c.3.921-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.197-1.539-1.118l1.285-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.951-.69l1.286-3.967z" />
-                      </svg>
-                      <span className="ml-1 text-sm text-gray-600">
-                        {(product.rating || 4).toFixed(1)}
+                      <span className="font-semibold text-dark text-lg">
+                        Rs. {product.product_discounted_price || "N/A"}
                       </span>
                     </div>
+
+                    {/* Save amount */}
+                    {product.product_base_price >
+                      product.product_discounted_price && (
+                      <p className="text-green-600 text-xs">
+                        Save - Rs.{" "}
+                        {product.product_base_price -
+                          product.product_discounted_price}
+                      </p>
+                    )}
                   </div>
                 </div>
-              </Link>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

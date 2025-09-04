@@ -42,25 +42,30 @@ const ProductDeals = () => {
       });
   }, [dispatch]);
 
-  // Find the first category dynamically
+  // Find the first category dynamically (name and ID)
   const firstCategory = useMemo(() => {
-    if (products.length === 0) return "";
-    const categoryName = products[0]?.category?.name || "";
-    console.log("ProductDeals - First category:", categoryName);
-    return categoryName;
+    if (products.length === 0) return { name: "", id: "" };
+    const category = products[0]?.category;
+    const categoryName = category?.name || "";
+    const categoryId = category?._id || category || "";
+    console.log("ProductDeals - First category:", {
+      name: categoryName,
+      id: categoryId,
+    });
+    return { name: categoryName, id: categoryId };
   }, [products]);
 
   // Filter products for the first category
   const filteredProducts = useMemo(() => {
-    if (!firstCategory) return [];
+    if (!firstCategory.name) return [];
     return products.filter((item) => {
       const categoryName = item.category?.name || "";
       const matchesCategory =
-        categoryName.toLowerCase() === firstCategory.toLowerCase();
+        categoryName.toLowerCase() === firstCategory.name.toLowerCase();
       console.log(
         `Product ${item.product_name || item._id}: Category`,
         categoryName,
-        `Matches ${firstCategory}:`,
+        `Matches ${firstCategory.name}:`,
         matchesCategory
       );
       return matchesCategory;
@@ -98,15 +103,17 @@ const ProductDeals = () => {
   };
 
   return (
-    <div className="md:w-[95%] mx-auto px-2 md:px-0 py-12 relative">
+    <div className="md:w-[95%] mx-auto px-2 md:px-0 py-6 relative">
       <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-dark border-b-2 border-primary inline-block pb-1">
           <span className="text-primary">
-            {firstCategory ? `${firstCategory} Deals` : "Popular Categories"}
+            {firstCategory.name
+              ? `${firstCategory.name} Deals`
+              : "Popular Categories"}
           </span>
         </h2>
         <Link
-          to="/eliquids"
+          to={firstCategory.id ? `/category/${firstCategory.id}` : "/products"}
           className="text-primary font-medium text-sm hover:underline"
         >
           View All →
@@ -115,7 +122,7 @@ const ProductDeals = () => {
 
       {filteredProducts.length === 0 ? (
         <p className="text-center w-full">
-          No products found for {firstCategory || "any category"}
+          No products found for {firstCategory.name || "any category"}
         </p>
       ) : (
         <Slider {...settings}>
@@ -136,7 +143,10 @@ const ProductDeals = () => {
                     </div>
                   )}
                   <Link to={`/product/${product._id}`}>
-                    <div className="p-4 h-48 flex items-center justify-center bg-light">
+                    <div
+                      className="p-4 h-48 flex items-center justify-center"
+                      style={{ backgroundColor: product.bg_color || "#f3f4f6" }}
+                    >
                       <img
                         src={
                           product.product_images?.[0] ||

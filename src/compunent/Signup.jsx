@@ -68,14 +68,11 @@ export default function Signup({ setIsSignIn }) {
       <div
         className="w-full md:w-1/2 relative text-white flex flex-col justify-center items-center p-8 rounded-t-2xl md:rounded-tl-2xl md:rounded-bl-2xl bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url('./logg.png')",
+          backgroundImage: "url('./logo.png')",
         }}
       >
         {/* Gradient overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/80 to-dark/80 rounded-t-2xl md:rounded-tl-2xl md:rounded-bl-2xl" />
-
-        
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/95 to-dark/95 rounded-t-2xl md:rounded-tl-2xl md:rounded-bl-2xl" />
 
         <h2 className="text-2xl font-bold mb-3 mt-10 z-10">Welcome Back!</h2>
         <p className="text-center max-w-xs mb-4 z-10">

@@ -8,9 +8,6 @@ import Essential from "./Essential";
 import PromoBanner from "./PromoBanner";
 import Footer from "./Footer";
 
-
-
-
 class ErrorBoundary extends React.Component {
   state = { hasError: false };
   static getDerivedStateFromError() {
@@ -28,20 +25,17 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-
-
-
 const Home = () => {
   return (
     <>
       <div className="relative font-daraz bg-[#]">
         <Navbar />
         <Slider />
-        <ErrorBoundary>
-        <ProductDeals />
-        </ErrorBoundary>
         <TopCategories />
         <Essential />
+        <ErrorBoundary>
+          <ProductDeals />
+        </ErrorBoundary>
         <TopBrands />
         <PromoBanner />
         <Footer />

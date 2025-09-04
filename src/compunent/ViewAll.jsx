@@ -7,16 +7,11 @@ import { fetchProducts } from "../features/products/productSlice";
 const ViewAll = () => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.products);
-  const { user } = useSelector((state) => state.auth);
 
   // Fetch products on component mount
   useEffect(() => {
-    if (user) {
-      dispatch(fetchProducts());
-    } else {
-      toast.error("Please log in to view products", { position: "top-right" });
-    }
-  }, [dispatch, user]);
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
   // Function to calculate discount percentage
   const calculateDiscountPercentage = (basePrice, discountedPrice) => {
@@ -86,11 +81,17 @@ const ViewAll = () => {
                     >
                       {/* Image */}
                       <Link to={`/product/${item._id}`} className="relative">
-                        <img
-                          src={item.product_images[0]}
-                          alt={item.product_name}
-                          className="h-48 md:h-64 w-full object-contain bg-light p-6 transition-transform duration-500 group-hover:scale-105"
-                        />
+                        <div
+                          style={{
+                            backgroundColor: item.bg_color || "#f3f4f6",
+                          }}
+                        >
+                          <img
+                            src={item.product_images[0]}
+                            alt={item.product_name}
+                            className="h-48 md:h-64 w-full object-contain p-6 transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
                         {discountPercentage > 0 && (
                           <span className="absolute top-2 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
                             -{discountPercentage}%

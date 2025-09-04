@@ -1,13 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
-import {
-  fetchCart,
-  removeFromCart,
-  addToCart,
-} from "../features/cart/cartSlice";
+import { FaPlus, FaTrash } from "react-icons/fa";
+import { fetchCart, addToCart, removeFromCart, createOrder } from "../features/cart/cartSlice";
+import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 const colorNames = [
   "Red",
@@ -21,38 +18,30 @@ const colorNames = [
 
 const Carts = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { items: cart, loading, error } = useSelector((state) => state.cart);
-  const { user } = useSelector((state) => state.auth);
+  const [fullName, setFullName] = useState("");
+  const [shippingAddress, setShippingAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [guestId] = useState(localStorage.getItem("guestId") || `guest_${uuidv4()}`);
 
   useEffect(() => {
-    if (user) {
-      dispatch(fetchCart());
-    } else {
-      toast.error("Please log in to view your cart", { position: "top-right" });
-    }
-  }, [dispatch, user]);
+    localStorage.setItem("guestId", guestId); // Persist guestId in localStorage
+    dispatch(fetchCart({ guestId }));
+  }, [dispatch, guestId]);
 
-  const totalItems = () =>
-    Array.isArray(cart)
-      ? cart.reduce((total, item) => total + (item.quantity || 1), 0)
-      : 0;
-
-  const calculateCost = () =>
-    Array.isArray(cart)
-      ? cart.reduce(
-          (sum, item) =>
-            sum +
-            (item.product_id?.product_discounted_price || 0) *
-              (item.quantity || 1),
-          0
-        )
-      : 0;
-
+  // Increase quantity
   const handleAddItem = (item) => {
+    if (!item.product_id) {
+      toast.error("Invalid product data", { position: "top-right" });
+      return;
+    }
     dispatch(
       addToCart({
         prod_id: item.product_id._id,
         selected_image: item.selected_image,
+        guestId,
       })
     )
       .unwrap()
@@ -66,11 +55,17 @@ const Carts = () => {
       });
   };
 
+  // Decrease / remove item
   const handleRemoveItem = (item) => {
+    if (!item.product_id) {
+      toast.error("Invalid product data", { position: "top-right" });
+      return;
+    }
     dispatch(
       removeFromCart({
         prod_id: item.product_id._id,
         selected_image: item.selected_image,
+        guestId,
       })
     )
       .unwrap()
@@ -82,20 +77,68 @@ const Carts = () => {
       });
   };
 
+  // Handle checkout
+  const handleCheckout = () => {
+    if (!fullName || !shippingAddress || !email || !phoneNumber) {
+      toast.error("Please fill in all fields", { position: "top-right" });
+      return;
+    }
+
+    const orderData = {
+      products: cart.map((item) => ({
+        product_id: item.product_id._id,
+        quantity: item.quantity,
+        selected_image: item.selected_image,
+      })),
+      total_amount: calculateTotal(),
+      shipping_address: shippingAddress,
+      order_email: email,
+      phone_number: phoneNumber,
+      full_name: fullName,
+      guestId,
+    };
+
+    dispatch(createOrder(orderData))
+      .unwrap()
+      .then(() => {
+        toast.success("Order placed successfully!", { position: "top-right" });
+        localStorage.removeItem("guestId"); // Clear guestId after order
+        navigate("/");
+      })
+      .catch((err) => {
+        toast.error(err || "Failed to place order", { position: "top-right" });
+      });
+  };
+
+  // Total items & price
+  const totalItems = () =>
+    Array.isArray(cart)
+      ? cart.reduce((t, item) => t + (item.quantity || 1), 0)
+      : 0;
+
+  const calculateTotal = () =>
+    Array.isArray(cart)
+      ? cart.reduce(
+          (sum, item) =>
+            sum +
+            (item.product_id?.product_discounted_price || 0) *
+              (item.quantity || 1),
+          0
+        )
+      : 0;
+
   if (loading) {
     return (
-      <div className="text-center py-20 font-montserrat">
-        <h3 className="text-3xl font-extrabold text-dark mb-3">
-          Loading Cart...
-        </h3>
+      <div className="text-center p-4 bg-light">
+        <h3 className="font-bold text-2xl mb-2 text-dark">Loading Cart...</h3>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-20 font-montserrat">
-        <h3 className="text-3xl font-extrabold text-dark mb-3">
+      <div className="text-center p-4 bg-light">
+        <h3 className="font-bold text-2xl mb-2 text-dark">
           Error Loading Cart
         </h3>
         <p className="text-red-500">{error}</p>
@@ -105,99 +148,159 @@ const Carts = () => {
 
   if (!Array.isArray(cart) || cart.length === 0) {
     return (
-      <div className="text-center py-20 font-montserrat">
-        <h3 className="text-3xl font-extrabold text-dark mb-3">
-          Your Cart is Empty 🛒
+      <div className="text-center p-4 bg-light">
+        <h3 className="font-bold text-2xl mb-2 text-dark">
+          Your Cart is Empty
         </h3>
-        <p className="text-dark/70">
-          Looks like you haven’t added anything yet!
-        </p>
+        <p className="text-dark/70">Explore our products to fill your cart!</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12 font-montserrat">
-      <h3 className="text-3xl font-extrabold text-dark mb-10">
-        Your Cart{" "}
-        <span className="text-lg font-medium text-dark/60">
-          ({totalItems()} items)
-        </span>
-      </h3>
-
-      <div className="space-y-6">
-        {cart.map((item) => {
-          const colorIndex =
-            item.product_id?.product_images?.indexOf(item.selected_image) || -1;
-          const isVapeOrPod =
-            item.product_id?.category?.name === "Disposables" ||
-            item.product_id?.category?.name === "Devices";
-
-          return (
-            <div
-              key={`${item.product_id?._id}-${item.selected_image}`}
-              className="flex items-center gap-6 bg-white/80 backdrop-blur-md border border-gray-100 p-5 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
-            >
-              <div className="w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-gradient-to-br from-light to-white p-2">
-                <img
-                  src={item.selected_image}
-                  alt="Product"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="flex-1">
-                <h6 className="text-lg font-bold text-dark">
-                  {item.product_id?.product_name}
-                </h6>
-                {isVapeOrPod && colorIndex !== -1 && (
-                  <p className="text-sm text-dark/60">
-                    Color: {colorNames[colorIndex]}
-                  </p>
-                )}
-                <p className="text-primary font-semibold mt-1">
-                  Rs. {item.product_id?.product_discounted_price || 0}
-                </p>
-                <div className="flex items-center gap-3 mt-3">
-                  <button
-                    onClick={() => handleRemoveItem(item)}
-                    className="bg-primary/10 hover:bg-primary/20 text-primary p-2 rounded-full transition"
-                  >
-                    {item.quantity > 1 ? (
-                      <FaMinus size={12} />
-                    ) : (
-                      <FaTrash size={12} />
-                    )}
-                  </button>
-                  <div className="w-8 h-8 flex items-center justify-center bg-light rounded-lg text-dark font-semibold">
-                    {item.quantity}
+    <div className="bg-light font-montserrat">
+      <div className="flex flex-col gap-6 p-4">
+        {/* Cart Items */}
+        <div className="w-full">
+          <h2 className="text-3xl font-bold mb-4 text-dark">
+            ← Cart{" "}
+            <span className="text-xl font-medium">({totalItems()} items)</span>
+          </h2>
+          <div className="bg-white p-4 rounded-xl space-y-4 shadow">
+            {cart.map((item, index) => {
+              const isVapeOrPod =
+                item.product_id?.category?.name?.includes("Disposables") ||
+                item.product_id?.category?.name?.includes("Devices");
+              const colorIndex =
+                item.product_id?.product_images?.indexOf(item.selected_image) ||
+                -1;
+              return (
+                <div
+                  key={`${item.product_id?._id || index}-${item.selected_image}`}
+                  className="flex items-center justify-between bg-light p-4 rounded-xl"
+                >
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={item.selected_image || "https://via.placeholder.com/150"}
+                      alt={item.product_id?.product_name || "Product"}
+                      className="w-20 h-20 rounded-xl object-cover"
+                      loading="lazy"
+                    />
+                    <div>
+                      <h4 className="font-semibold text-lg text-dark">
+                        {item.product_id?.product_name || "Unknown Product"}
+                        {isVapeOrPod && colorIndex !== -1 && (
+                          <span className="text-sm text-dark/60 ml-2">
+                            ({colorNames[colorIndex] || "Selected Color"})
+                          </span>
+                        )}
+                      </h4>
+                      <p className="text-primary font-bold mt-1">
+                        Rs. {item.product_id?.product_discounted_price || 0}
+                      </p>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => handleAddItem(item)}
-                    className="bg-primary/10 hover:bg-primary/20 text-primary p-2 rounded-full transition"
-                  >
-                    <FaPlus size={12} />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleRemoveItem(item)}
+                      className="bg-primary/10 text-primary rounded-full p-2"
+                    >
+                      <FaTrash size={12} />
+                    </button>
+                    <span className="font-medium text-dark">{item.quantity}</span>
+                    <button
+                      onClick={() => handleAddItem(item)}
+                      className="bg-primary/10 text-primary rounded-full p-2"
+                    >
+                      <FaPlus size={12} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
+        </div>
 
-      <div className="mt-10 p-6 rounded-2xl bg-gradient-to-r from-primary to-orange-500 text-white shadow-lg">
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-lg font-medium">Total Items:</span>
-          <span className="font-bold">{totalItems()}</span>
+        {/* Checkout Summary */}
+        <div className="w-full">
+          <div className="bg-white p-4 rounded-xl shadow">
+            <h3 className="text-lg font-bold mb-4 text-dark">Total</h3>
+
+            <div className="mb-4">
+              <label className="block text-dark mb-2">Full Name</label>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full border border-dark/20 rounded-lg p-2"
+                placeholder="Enter full name"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-dark mb-2">Email Address</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border border-dark/20 rounded-lg p-2"
+                placeholder="Enter email address"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-dark mb-2">Phone Number</label>
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="w-full border border-dark/20 rounded-lg p-2"
+                placeholder="Enter phone number"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-dark mb-2">Shipping Address</label>
+              <input
+                type="text"
+                value={shippingAddress}
+                onChange={(e) => setShippingAddress(e.target.value)}
+                className="w-full border border-dark/20 rounded-lg p-2"
+                placeholder="Enter shipping address"
+              />
+            </div>
+
+            <p className="text-sm text-dark/70 mb-2">
+              Estimated Delivery Time: <strong>45 Mins</strong>
+            </p>
+
+            {cart.map((item) => (
+              <div
+                key={`${item.product_id?._id || item._id}-${item.selected_image}`}
+                className="flex justify-between text-sm text-dark"
+              >
+                <span>
+                  {item.quantity} x{" "}
+                  {item.product_id?.product_name || "Unknown Product"}
+                </span>
+                <span>
+                  Rs. {(item.product_id?.product_discounted_price || 0) * item.quantity}
+                </span>
+              </div>
+            ))}
+
+            <hr className="my-4" />
+            <div className="flex justify-between text-xl font-bold text-dark">
+              <span>Due Payment</span>
+              <span>Rs. {calculateTotal()}</span>
+            </div>
+
+            <button
+              onClick={handleCheckout}
+              disabled={!fullName || !shippingAddress || !email || !phoneNumber}
+              className="w-full mt-4 bg-primary hover:bg-primary/90 text-white py-2 rounded-lg font-semibold disabled:bg-gray-400"
+            >
+              PLACE ORDER
+            </button>
+          </div>
         </div>
-        <div className="flex justify-between items-center mb-6">
-          <span className="text-lg font-medium">Total Price:</span>
-          <span className="text-2xl font-extrabold">Rs. {calculateCost()}</span>
-        </div>
-        <Link to="/payment">
-          <button className="w-full py-3 bg-white text-primary font-bold rounded-xl shadow-md hover:shadow-xl transition">
-            Proceed to Checkout
-          </button>
-        </Link>
       </div>
     </div>
   );

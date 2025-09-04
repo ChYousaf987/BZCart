@@ -3,38 +3,21 @@ import axios from "axios";
 
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async (cartItem, { rejectWithValue }) => {
+  async ({ prod_id, selected_image, guestId }, { rejectWithValue }) => {
     try {
-      const user = JSON.parse(localStorage.getItem("myUser"));
-      console.log("addToCart - User from localStorage:", user);
-      if (!user?._id) {
-        throw new Error("Please log in to add items to cart");
-      }
-      const { prod_id, selected_image } = cartItem;
-      if (!prod_id || !selected_image) {
-        console.log("addToCart - Invalid fields:", { prod_id, selected_image });
-        throw new Error("Product ID and selected image must be provided");
-      }
       const payload = {
         product_id: prod_id,
         selected_image,
-        user_id: user._id,
+        guestId,
       };
-      console.log("addToCart - Sending request with body:", payload);
       const response = await axios.post(
         "https://bzbackend.online/api/products/cart",
         payload,
         { timeout: 5000 }
       );
-      console.log("addToCart - Response:", response.data);
       return response.data;
     } catch (err) {
       console.error("addToCart error:", err.response?.data || err.message);
-      if (err.response?.status === 500) {
-        return rejectWithValue(
-          "Server error occurred while adding to cart. Please try again later."
-        );
-      }
       return rejectWithValue(
         err.response?.data?.message || "Failed to add item to cart"
       );
@@ -44,19 +27,11 @@ export const addToCart = createAsyncThunk(
 
 export const fetchCart = createAsyncThunk(
   "cart/fetchCart",
-  async (_, { rejectWithValue }) => {
+  async ({ guestId }, { rejectWithValue }) => {
     try {
-      const user = JSON.parse(localStorage.getItem("myUser"));
-      console.log("fetchCart - User from localStorage:", user);
-      if (!user?.token) {
-        throw new Error("Please log in to view your cart");
-      }
       const response = await axios.get(
-        "https://bzbackend.online/api/products/cart",
-        {
-          headers: { Authorization: `Bearer ${user.token}` },
-          timeout: 5000,
-        }
+        `https://bzbackend.online/api/products/cart?guestId=${guestId}`,
+        { timeout: 5000 }
       );
       return response.data;
     } catch (err) {
@@ -70,27 +45,12 @@ export const fetchCart = createAsyncThunk(
 
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
-  async ({ prod_id, selected_image }, { rejectWithValue }) => {
+  async ({ prod_id, selected_image, guestId }, { rejectWithValue }) => {
     try {
-      const user = JSON.parse(localStorage.getItem("myUser"));
-      console.log("removeFromCart - User from localStorage:", user);
-      if (!user?.token) {
-        throw new Error("Please log in to remove items from cart");
-      }
-      if (!prod_id || !selected_image) {
-        console.log("removeFromCart - Invalid fields:", {
-          prod_id,
-          selected_image,
-        });
-        throw new Error("Product ID and selected image must be provided");
-      }
       const response = await axios.post(
         "https://bzbackend.online/api/products/cart/remove",
-        {
-          product_id: prod_id,
-          selected_image,
-        },
-        { headers: { Authorization: `Bearer ${user.token}` }, timeout: 5000 }
+        { product_id: prod_id, selected_image, guestId },
+        { timeout: 5000 }
       );
       return response.data;
     } catch (err) {
@@ -102,27 +62,20 @@ export const removeFromCart = createAsyncThunk(
   }
 );
 
-export const clearCart = createAsyncThunk(
-  "cart/clearCart",
-  async (_, { rejectWithValue }) => {
+export const createOrder = createAsyncThunk(
+  "cart/createOrder",
+  async (orderData, { rejectWithValue }) => {
     try {
-      const user = JSON.parse(localStorage.getItem("myUser"));
-      console.log("clearCart - User from localStorage:", user);
-      if (!user?.token) {
-        throw new Error("Please log in to clear cart");
-      }
-      const response = await axios.delete(
-        "https://bzbackend.online/api/products/cart/clear",
-        {
-          headers: { Authorization: `Bearer ${user.token}` },
-          timeout: 5000,
-        }
+      const response = await axios.post(
+        "https://bzbackend.online/api/orders/create-order",
+        orderData,
+        { timeout: 5000 }
       );
       return response.data;
     } catch (err) {
-      console.error("clearCart error:", err.response?.data || err.message);
+      console.error("createOrder error:", err.response?.data || err.message);
       return rejectWithValue(
-        err.response?.data?.message || "Failed to clear cart"
+        err.response?.data?.message || "Failed to create order"
       );
     }
   }
@@ -160,7 +113,7 @@ const cartSlice = createSlice({
         state.loading = false;
         state.items = action.payload;
       })
-      .addCase(fetchCart.rejected, (state, action) => {
+      .addCase(fetchCart.rejected, ( state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -176,15 +129,15 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(clearCart.pending, (state) => {
+      .addCase(createOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(clearCart.fulfilled, (state, action) => {
+      .addCase(createOrder.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+        state.items = []; // Clear cart after order is placed
       })
-      .addCase(clearCart.rejected, (state, action) => {
+      .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

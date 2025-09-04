@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { FaPlus, FaTrash } from "react-icons/fa";
-import {
-  fetchCart,
-  addToCart,
-  removeFromCart,
-} from "../features/cart/cartSlice";
+import { fetchCart, addToCart, removeFromCart, createOrder } from "../features/cart/cartSlice";
+import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 const colorNames = [
   "Red",
@@ -20,19 +18,17 @@ const colorNames = [
 
 const Cartss = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { items: cart, loading, error } = useSelector((state) => state.cart);
-  const { user } = useSelector((state) => state.auth);
+  const [fullName, setFullName] = useState("");
   const [shippingAddress, setShippingAddress] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [guestId] = useState(`guest_${uuidv4()}`); // Generate guest ID for non-logged-in users
 
   useEffect(() => {
-    if (user) {
-      dispatch(fetchCart());
-    } else {
-      toast.error("Please log in to view your cart", { position: "top-right" });
-    }
-  }, [dispatch, user]);
+    dispatch(fetchCart({ guestId }));
+  }, [dispatch, guestId]);
 
   // Increase quantity
   const handleAddItem = (item) => {
@@ -44,6 +40,7 @@ const Cartss = () => {
       addToCart({
         prod_id: item.product_id._id,
         selected_image: item.selected_image,
+        guestId,
       })
     )
       .unwrap()
@@ -67,6 +64,7 @@ const Cartss = () => {
       removeFromCart({
         prod_id: item.product_id._id,
         selected_image: item.selected_image,
+        guestId,
       })
     )
       .unwrap()
@@ -75,6 +73,38 @@ const Cartss = () => {
       })
       .catch((err) => {
         toast.error(err || "Failed to remove item", { position: "top-right" });
+      });
+  };
+
+  // Handle checkout
+  const handleCheckout = () => {
+    if (!fullName || !shippingAddress || !email || !phoneNumber) {
+      toast.error("Please fill in all fields", { position: "top-right" });
+      return;
+    }
+
+    const orderData = {
+      products: cart.map((item) => ({
+        product_id: item.product_id._id,
+        quantity: item.quantity,
+        selected_image: item.selected_image,
+      })),
+      total_amount: calculateTotal(),
+      shipping_address: shippingAddress,
+      order_email: email,
+      phone_number: phoneNumber,
+      full_name: fullName,
+      guestId,
+    };
+
+    dispatch(createOrder(orderData))
+      .unwrap()
+      .then(() => {
+        toast.success("Order placed successfully!", { position: "top-right" });
+        navigate("/"); // Redirect to orders page
+      })
+      .catch((err) => {
+        toast.error(err || "Failed to place order", { position: "top-right" });
       });
   };
 
@@ -144,16 +174,12 @@ const Cartss = () => {
                 -1;
               return (
                 <div
-                  key={`${item.product_id?._id || index}-${
-                    item.selected_image
-                  }`}
+                  key={`${item.product_id?._id || index}-${item.selected_image}`}
                   className="flex items-center justify-between bg-light p-4 rounded-xl"
                 >
                   <div className="flex items-center gap-4">
                     <img
-                      src={
-                        item.selected_image || "https://via.placeholder.com/150"
-                      }
+                      src={item.selected_image || "https://via.placeholder.com/150"}
                       alt={item.product_id?.product_name || "Product"}
                       className="w-20 h-20 rounded-xl object-cover"
                       loading="lazy"
@@ -179,9 +205,7 @@ const Cartss = () => {
                     >
                       <FaTrash size={12} />
                     </button>
-                    <span className="font-medium text-dark">
-                      {item.quantity}
-                    </span>
+                    <span className="font-medium text-dark">{item.quantity}</span>
                     <button
                       onClick={() => handleAddItem(item)}
                       className="bg-primary/10 text-primary rounded-full p-2"
@@ -200,6 +224,16 @@ const Cartss = () => {
           <div className="bg-white p-4 rounded-xl shadow">
             <h3 className="text-lg font-bold mb-4 text-dark">Total</h3>
 
+            <div className="mb-4">
+              <label className="block text-dark mb-2">Full Name</label>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full border border-dark/20 rounded-lg p-2"
+                placeholder="Enter full name"
+              />
+            </div>
             <div className="mb-4">
               <label className="block text-dark mb-2">Email Address</label>
               <input
@@ -237,9 +271,7 @@ const Cartss = () => {
 
             {cart.map((item) => (
               <div
-                key={`${item.product_id?._id || item._id}-${
-                  item.selected_image
-                }`}
+                key={`${item.product_id?._id || item._id}-${item.selected_image}`}
                 className="flex justify-between text-sm text-dark"
               >
                 <span>
@@ -247,9 +279,7 @@ const Cartss = () => {
                   {item.product_id?.product_name || "Unknown Product"}
                 </span>
                 <span>
-                  Rs.{" "}
-                  {(item.product_id?.product_discounted_price || 0) *
-                    item.quantity}
+                  Rs. {(item.product_id?.product_discounted_price || 0) * item.quantity}
                 </span>
               </div>
             ))}
@@ -261,11 +291,11 @@ const Cartss = () => {
             </div>
 
             <button
-              onClick={() => alert("Checkout simulation only!")}
-              disabled={!shippingAddress || !email || !phoneNumber}
+              onClick={handleCheckout}
+              disabled={!fullName || !shippingAddress || !email || !phoneNumber}
               className="w-full mt-4 bg-primary hover:bg-primary/90 text-white py-2 rounded-lg font-semibold disabled:bg-gray-400"
             >
-              CONTINUE TO CHECKOUT
+              PLACE ORDER
             </button>
           </div>
         </div>

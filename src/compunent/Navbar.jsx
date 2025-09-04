@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import {
   FaShoppingCart,
   FaRegUser,
+  FaSignOutAlt,
   FaBars,
   FaChevronDown,
+  FaUserAltSlash,
 } from "react-icons/fa";
 import { CiHeart } from "react-icons/ci";
 import { SlHandbag } from "react-icons/sl";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../features/users/userSlice";
+import { fetchCart } from "../features/cart/cartSlice"; // Import fetchCart
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -18,11 +21,14 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { searchLoading, searchError } = useSelector((state) => state.products);
+  const { items: cartItems } = useSelector((state) => state.cart);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // 🔹 Fetch categories
+  // Fetch categories
   useEffect(() => {
     axios
       .get("https://bzbackend.online/api/categories/categories")
@@ -40,31 +46,47 @@ const Navbar = () => {
       .catch(() => toast.error("Failed to fetch categories"));
   }, []);
 
-  // 🔹 Logout
+  // Fetch cart when user is logged in
+  useEffect(() => {
+    if (user?.token) {
+      dispatch(fetchCart());
+    }
+  }, [user, dispatch]);
+
+  // Handle search
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+    } else {
+      toast.error("Please enter a search term");
+    }
+  };
+
+  // Logout
   const handleLogout = () => {
-    dispatch(logoutUser());
-    localStorage.removeItem("myUser");
-    setIsMenuOpen(false);
-    toast.success("Logged out successfully!");
-    navigate("/");
+    const confirmLogout = window.confirm("Are you sure you want to logout?");
+    if (confirmLogout) {
+      dispatch(logoutUser());
+      localStorage.removeItem("myUser");
+      setIsMenuOpen(false);
+      toast.success("Logged out successfully!");
+      navigate("/");
+    }
   };
 
   return (
-    <div className="sticky top-0 z-20 font-sans  shadow bg-white">
-      {/* 🔹 Top bar */}
-      <div className="bg-gray-100 text-gray-600 text-xs py-2  max-lg:hidden">
-        <div className="md:w-[95%] mx-auto px-2 md:px-0 flex justify-between ">
-          <p>Store Location: Lincoln - 344, Illinois, Chicago, USA</p>
+    <div className="sticky top-0 z-20 font-sans shadow bg-white">
+      <div className="bg-gray-100 text-gray-600 text-xs py-2 max-lg:hidden">
+        <div className="md:w-[95%] mx-auto px-2 md:px-0 flex justify-between">
+          <p>Dinga, Tehsil Kharian District Gujrat, Punjab –Pakistan</p>
           <div className="flex gap-4">
             <span className="cursor-pointer">Eng ▾</span>
-            <span className="cursor-pointer">USD ▾</span>
+            <span className="cursor-pointer">PKR ▾</span>
           </div>
         </div>
       </div>
 
-      {/* 🔹 Middle bar */}
       <div className="flex justify-between md:w-[95%] mx-auto px-2 md:px-0 items-center py-4 bg-white border-b">
-        {/* Mobile menu button */}
         <div className="flex items-center gap-2">
           <button
             className="md:hidden text-gray-700"
@@ -72,8 +94,6 @@ const Navbar = () => {
           >
             <FaBars size={22} />
           </button>
-
-          {/* Logo */}
           <Link to="/">
             <img
               src="/loggg.png"
@@ -82,83 +102,84 @@ const Navbar = () => {
             />
           </Link>
         </div>
-        {/* Search (Desktop only) */}
-        <div className="hidden md:flex items-center border border-gray-300 rounded-md overflow-hidden w-1/2">
+
+        <form
+          onSubmit={handleSearch}
+          className="hidden md:flex items-center border border-gray-300 rounded-md overflow-hidden w-1/2"
+        >
           <input
             type="text"
             placeholder="Search for products..."
             className="px-3 py-2 w-full outline-none text-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button className="bg-primary text-white px-5 py-2 text-sm font-medium hover:bg-primary">
-            Search
+          <button
+            type="submit"
+            className="bg-primary text-white px-5 py-2 text-sm font-medium hover:bg-primary"
+            disabled={searchLoading}
+          >
+            {searchLoading ? "Searching..." : "Search"}
           </button>
-        </div>
+        </form>
 
-        {/* Right Side */}
         <div className="flex items-center gap-4 md:gap-6 text-gray-600">
-          {/* Contact Info */}
           <div className="text-right hidden md:block">
             <p className="text-xs text-gray-500">Customer Services</p>
-            <p className="font-semibold text-sm">(219) 555-0114</p>
+            <p className="font-semibold text-sm">+92 329-7609190</p>
           </div>
 
-          {/* Wishlist */}
-          <Link
-            to="/wishlist"
-            className="hover:text-primary relative -mr-1 md:mr-0"
-          >
-            <CiHeart size={30} />
-          </Link>
-
-          {/* Cart */}
           <div className="relative">
             <Link to="/cart" className="hover:text-primary">
               <SlHandbag size={22} />
             </Link>
             <span className="absolute -top-2 -right-2 bg-primary text-xs text-white rounded-full w-4 h-4 flex items-center justify-center">
-              2
+              {cartItems.length}
             </span>
           </div>
-
-          {/* User */}
           {user ? (
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 hover:text-primary"
             >
-              <FaRegUser size={20} />
+              <FaUserAltSlash size={25} /> {/* Show logout icon */}
             </button>
           ) : (
             <Link to="/auth" className="hover:text-primary">
-              <FaRegUser size={20} />
+              <FaRegUser size={20} /> {/* Show login icon */}
             </Link>
           )}
         </div>
       </div>
 
-      {/* 🔹 Mobile Search */}
       <div className="md:hidden px-4 mt-2 pb-3">
-        <div className="flex items-center border border-gray-300 rounded-md overflow-hidden w-full">
+        <form
+          onSubmit={handleSearch}
+          className="flex items-center border border-gray-300 rounded-md overflow-hidden w-full"
+        >
           <input
             type="text"
             placeholder="Search..."
             className="px-3 py-2 w-full outline-none text-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button className="bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary">
-            Search
+          <button
+            type="submit"
+            className="bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary"
+            disabled={searchLoading}
+          >
+            {searchLoading ? "Searching..." : "Search"}
           </button>
-        </div>
+        </form>
       </div>
 
-      {/* 🔹 Bottom Nav (Desktop) */}
-      <div className=" bg-black">
-        <div className="py-2 hidden md:flex  md:w-[95%] mx-auto px-2 md:px-0 text-white items-center gap-9">
-          {/* Categories Dropdown */}
+      <div className="bg-black">
+        <div className="py-2 hidden md:flex md:w-[95%] mx-auto px-2 md:px-0 text-white items-center gap-9">
           <div className="relative group">
-            <button className="flex items-center gap-2 bg-primary px-4 py-2 text-sm font-medium">
+            <button className="flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm font-medium">
               <FaBars /> All Categories <FaChevronDown size={12} />
             </button>
-
             <div className="absolute left-0 top-full bg-white text-black shadow-lg hidden group-hover:block min-w-[220px] z-50">
               {categories.map((cat) => (
                 <div key={cat._id} className="relative group/item">
@@ -185,21 +206,17 @@ const Navbar = () => {
               ))}
             </div>
           </div>
-
-          {/* Links */}
           <div className="flex gap-6 text-sm font-medium ml-6">
             <Link to="/" className="hover:text-primary">
               Home
             </Link>
-            <Link to="/shop" className="hover:text-primary">
+            <Link to="/cart" className="hover:text-primary">
               Shop
             </Link>
-            <Link to="/pages" className="hover:text-primary">
+            <Link to="/#" className="hover:text-primary">
               Pages
             </Link>
-            <Link to="/blog" className="hover:text-primary">
-              Blog
-            </Link>
+            
             <Link to="/about" className="hover:text-primary">
               About Us
             </Link>
@@ -210,7 +227,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* 🔹 Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-black text-white px-6 py-4 space-y-4">
           <div>
@@ -239,21 +255,18 @@ const Navbar = () => {
               </div>
             ))}
           </div>
-
           <div>
             <p className="font-semibold mb-2">Menu</p>
             <Link to="/" className="block py-1 hover:text-green-400">
               Home
             </Link>
-            <Link to="/shop" className="block py-1 hover:text-green-400">
+            <Link to="/cart" className="block py-1 hover:text-green-400">
               Shop
             </Link>
             <Link to="/pages" className="block py-1 hover:text-green-400">
               Pages
             </Link>
-            <Link to="/blog" className="block py-1 hover:text-green-400">
-              Blog
-            </Link>
+           
             <Link to="/about" className="block py-1 hover:text-green-400">
               About Us
             </Link>
