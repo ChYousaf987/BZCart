@@ -11,10 +11,8 @@ const Essential = () => {
     dispatch(fetchProducts())
       .unwrap()
       .then((data) => {
-        console.log("Essential - Fetched products:", data);
       })
       .catch((err) => {
-        console.error("Essential - Fetch error:", err);
       });
   }, [dispatch]);
 
@@ -36,7 +34,6 @@ const Essential = () => {
     ].map((str) => JSON.parse(str));
     // Select the second category (index 1)
     const category = uniqueCategories[1] || { name: "", id: "" };
-    console.log("Essential - Second category:", category);
     return category;
   }, [products]);
 

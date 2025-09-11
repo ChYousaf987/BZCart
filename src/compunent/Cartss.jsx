@@ -2,9 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { FaPlus, FaTrash } from "react-icons/fa";
-import { fetchCart, addToCart, removeFromCart, createOrder } from "../features/cart/cartSlice";
+import {
+  fetchCart,
+  addToCart,
+  removeFromCart,
+  createOrder,
+} from "../features/cart/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import Loader from "./Loader";
 
 const colorNames = [
   "Red",
@@ -20,15 +26,31 @@ const Cartss = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { items: cart, loading, error } = useSelector((state) => state.cart);
+
   const [fullName, setFullName] = useState("");
   const [shippingAddress, setShippingAddress] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [guestId] = useState(`guest_${uuidv4()}`); // Generate guest ID for non-logged-in users
+  const [phoneError, setPhoneError] = useState(""); // local phone validation state
+
+  const [guestId] = useState(
+    localStorage.getItem("guestId") || `guest_${uuidv4()}`
+  );
 
   useEffect(() => {
+    localStorage.setItem("guestId", guestId);
     dispatch(fetchCart({ guestId }));
   }, [dispatch, guestId]);
+
+  // Validate phone number
+  const validatePhone = (value) => {
+    const phoneRegex = /^[0-9]{9,12}$/; // 10–15 digits only
+    if (!phoneRegex.test(value)) {
+      setPhoneError("Invalid phone number");
+    } else {
+      setPhoneError("");
+    }
+  };
 
   // Increase quantity
   const handleAddItem = (item) => {
@@ -44,14 +66,12 @@ const Cartss = () => {
       })
     )
       .unwrap()
-      .then(() => {
-        toast.success("Quantity updated!", { position: "top-right" });
-      })
-      .catch((err) => {
+      .then(() => toast.success("Quantity updated!", { position: "top-right" }))
+      .catch((err) =>
         toast.error(err || "Failed to update quantity", {
           position: "top-right",
-        });
-      });
+        })
+      );
   };
 
   // Decrease / remove item
@@ -68,18 +88,18 @@ const Cartss = () => {
       })
     )
       .unwrap()
-      .then(() => {
-        toast.success("Item removed!", { position: "top-right" });
-      })
-      .catch((err) => {
-        toast.error(err || "Failed to remove item", { position: "top-right" });
-      });
+      .then(() => toast.success("Item removed!", { position: "top-right" }))
+      .catch((err) =>
+        toast.error(err || "Failed to remove item", { position: "top-right" })
+      );
   };
 
   // Handle checkout
   const handleCheckout = () => {
-    if (!fullName || !shippingAddress || !email || !phoneNumber) {
-      toast.error("Please fill in all fields", { position: "top-right" });
+    if (!fullName || !shippingAddress || !email || !phoneNumber || phoneError) {
+      toast.error("Please fill in all fields correctly", {
+        position: "top-right",
+      });
       return;
     }
 
@@ -101,11 +121,12 @@ const Cartss = () => {
       .unwrap()
       .then(() => {
         toast.success("Order placed successfully!", { position: "top-right" });
-        navigate("/"); // Redirect to orders page
+        localStorage.removeItem("guestId");
+        navigate("/");
       })
-      .catch((err) => {
-        toast.error(err || "Failed to place order", { position: "top-right" });
-      });
+      .catch((err) =>
+        toast.error(err || "Failed to place order", { position: "top-right" })
+      );
   };
 
   // Total items & price
@@ -125,15 +146,10 @@ const Cartss = () => {
         )
       : 0;
 
-  if (loading) {
-    return (
-      <div className="text-center p-4 bg-light min-h-screen">
-        <h3 className="font-bold text-2xl mb-2 text-dark">Loading Cart...</h3>
-      </div>
-    );
-  }
+  if (loading) return <Loader />;
 
-  if (error) {
+  // Only show real cart errors (not phone validation)
+  if (error && !error.includes("phone")) {
     return (
       <div className="text-center p-4 bg-light min-h-screen">
         <h3 className="font-bold text-2xl mb-2 text-dark">
@@ -174,12 +190,16 @@ const Cartss = () => {
                 -1;
               return (
                 <div
-                  key={`${item.product_id?._id || index}-${item.selected_image}`}
+                  key={`${item.product_id?._id || index}-${
+                    item.selected_image
+                  }`}
                   className="flex items-center justify-between bg-light p-4 rounded-xl"
                 >
                   <div className="flex items-center gap-4">
                     <img
-                      src={item.selected_image || "https://via.placeholder.com/150"}
+                      src={
+                        item.selected_image || "https://via.placeholder.com/150"
+                      }
                       alt={item.product_id?.product_name || "Product"}
                       className="w-20 h-20 rounded-xl object-cover"
                       loading="lazy"
@@ -205,7 +225,9 @@ const Cartss = () => {
                     >
                       <FaTrash size={12} />
                     </button>
-                    <span className="font-medium text-dark">{item.quantity}</span>
+                    <span className="font-medium text-dark">
+                      {item.quantity}
+                    </span>
                     <button
                       onClick={() => handleAddItem(item)}
                       className="bg-primary/10 text-primary rounded-full p-2"
@@ -249,10 +271,18 @@ const Cartss = () => {
               <input
                 type="tel"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="w-full border border-dark/20 rounded-lg p-2"
+                onChange={(e) => {
+                  setPhoneNumber(e.target.value);
+                  validatePhone(e.target.value);
+                }}
+                className={`w-full border rounded-lg p-2 ${
+                  phoneError ? "border-red-500" : "border-dark/20"
+                }`}
                 placeholder="Enter phone number"
               />
+              {phoneError && (
+                <p className="text-red-500 text-sm mt-1">{phoneError}</p>
+              )}
             </div>
             <div className="mb-4">
               <label className="block text-dark mb-2">Shipping Address</label>
@@ -271,7 +301,9 @@ const Cartss = () => {
 
             {cart.map((item) => (
               <div
-                key={`${item.product_id?._id || item._id}-${item.selected_image}`}
+                key={`${item.product_id?._id || item._id}-${
+                  item.selected_image
+                }`}
                 className="flex justify-between text-sm text-dark"
               >
                 <span>
@@ -279,7 +311,9 @@ const Cartss = () => {
                   {item.product_id?.product_name || "Unknown Product"}
                 </span>
                 <span>
-                  Rs. {(item.product_id?.product_discounted_price || 0) * item.quantity}
+                  Rs.{" "}
+                  {(item.product_id?.product_discounted_price || 0) *
+                    item.quantity}
                 </span>
               </div>
             ))}
@@ -292,7 +326,13 @@ const Cartss = () => {
 
             <button
               onClick={handleCheckout}
-              disabled={!fullName || !shippingAddress || !email || !phoneNumber}
+              disabled={
+                !fullName ||
+                !shippingAddress ||
+                !email ||
+                !phoneNumber ||
+                phoneError
+              }
               className="w-full mt-4 bg-primary hover:bg-primary/90 text-white py-2 rounded-lg font-semibold disabled:bg-gray-400"
             >
               PLACE ORDER

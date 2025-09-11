@@ -7,7 +7,15 @@ export const createSlide = async (slideData) => {
   formData.append("buttonText", slideData.buttonText);
   formData.append("image", slideData.image); // Required main image
   if (slideData.link) formData.append("link", slideData.link);
-  if (slideData.background) formData.append("background", slideData.background); // Optional background image
+  if (slideData.bgColor) formData.append("bgColor", slideData.bgColor);
+  if (slideData.titleColor) formData.append("titleColor", slideData.titleColor);
+  if (slideData.subtitleColor)
+    formData.append("subtitleColor", slideData.subtitleColor);
+  if (slideData.buttonBgColor)
+    formData.append("buttonBgColor", slideData.buttonBgColor);
+  if (slideData.buttonTextColor)
+    formData.append("buttonTextColor", slideData.buttonTextColor);
+  if (slideData.size) formData.append("size", slideData.size);
 
   const response = await fetch(`${BASE_URL}/create-slide`, {
     method: "POST",
@@ -52,7 +60,15 @@ export const updateSlide = async (id, slideData) => {
   if (slideData.buttonText) formData.append("buttonText", slideData.buttonText);
   if (slideData.image) formData.append("image", slideData.image); // Optional for updates
   if (slideData.link) formData.append("link", slideData.link);
-  if (slideData.background) formData.append("background", slideData.background); // Optional background image
+  if (slideData.bgColor) formData.append("bgColor", slideData.bgColor);
+  if (slideData.titleColor) formData.append("titleColor", slideData.titleColor);
+  if (slideData.subtitleColor)
+    formData.append("subtitleColor", slideData.subtitleColor);
+  if (slideData.buttonBgColor)
+    formData.append("buttonBgColor", slideData.buttonBgColor);
+  if (slideData.buttonTextColor)
+    formData.append("buttonTextColor", slideData.buttonTextColor);
+  if (slideData.size) formData.append("size", slideData.size);
 
   const response = await fetch(`${BASE_URL}/slide/${id}`, {
     method: "PUT",

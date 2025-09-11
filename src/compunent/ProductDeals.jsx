@@ -35,10 +35,8 @@ const ProductDeals = () => {
     dispatch(fetchProducts())
       .unwrap()
       .then((data) => {
-        console.log("ProductDeals - Fetched products:", data);
       })
       .catch((err) => {
-        console.error("ProductDeals - Fetch error:", err);
       });
   }, [dispatch]);
 
@@ -48,10 +46,7 @@ const ProductDeals = () => {
     const category = products[0]?.category;
     const categoryName = category?.name || "";
     const categoryId = category?._id || category || "";
-    console.log("ProductDeals - First category:", {
-      name: categoryName,
-      id: categoryId,
-    });
+   
     return { name: categoryName, id: categoryId };
   }, [products]);
 
@@ -62,12 +57,6 @@ const ProductDeals = () => {
       const categoryName = item.category?.name || "";
       const matchesCategory =
         categoryName.toLowerCase() === firstCategory.name.toLowerCase();
-      console.log(
-        `Product ${item.product_name || item._id}: Category`,
-        categoryName,
-        `Matches ${firstCategory.name}:`,
-        matchesCategory
-      );
       return matchesCategory;
     });
   }, [products, firstCategory]);

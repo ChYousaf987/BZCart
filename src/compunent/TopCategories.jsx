@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { PulseLoader } from "react-spinners";
+import Loader from "./Loader";
 
 const TopCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -29,9 +30,7 @@ const TopCategories = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <PulseLoader color="#2563eb" size={15} />
-      </div>
+     <Loader/>
     );
   }
 

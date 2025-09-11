@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Navbar from "./Navbar";
@@ -18,6 +18,7 @@ import {
 } from "../features/products/productSlice";
 import { addToCart } from "../features/cart/cartSlice";
 import { v4 as uuidv4 } from "uuid";
+import Loader from "./Loader";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -120,11 +121,7 @@ const SingleProduct = () => {
   };
 
   if (loading) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-lg text-gray-500">Loading product...</p>
-      </div>
-    );
+    return <Loader />;
   }
 
   if (error || !product) {
@@ -134,6 +131,27 @@ const SingleProduct = () => {
       </div>
     );
   }
+
+  const handleBuyNow = () => {
+    dispatch(
+      addToCart({
+        prod_id: id,
+        selected_image: selectedImage || product.product_images[0],
+        guestId: user ? undefined : guestId,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        toast.success("Redirecting to checkout...", { position: "top-right" });
+        // Navigate to cart/checkout page
+        window.location.href = "/payment"; // or "/checkout" if you make a separate page
+      })
+      .catch((err) => {
+        toast.error(err || "Failed to proceed with Buy Now", {
+          position: "top-right",
+        });
+      });
+  };
 
   return (
     <>
@@ -248,6 +266,21 @@ const SingleProduct = () => {
               <span className="font-semibold">2 Years Brand Warranty</span>
             </p>
 
+            <button
+              onClick={handleAddToCart}
+              className="mt-4 w-full bg-primary hover:bg-[#bd470c] text-white py-3 rounded-lg font-medium disabled:bg-gray-400"
+              disabled={product.product_stock <= 0}
+            >
+              {product.product_stock > 0 ? "Add to Cart" : "Out of Stock"}
+            </button>
+            <button
+              onClick={handleBuyNow}
+              className="mt-4 w-full bg-primary hover:bg-[#bd470c] text-white py-3 rounded-lg font-medium disabled:bg-gray-400"
+              disabled={product.product_stock <= 0}
+            >
+              Buy Now
+            </button>
+
             <div className="mb-6">
               <h3 className="font-semibold text-lg mb-2">
                 Product Highlights:
@@ -261,13 +294,7 @@ const SingleProduct = () => {
               </ul>
             </div>
 
-            <button
-              onClick={handleAddToCart}
-              className="mt-4 w-full bg-primary hover:bg-[#bd470c] text-white py-3 rounded-lg font-medium disabled:bg-gray-400"
-              disabled={product.product_stock <= 0}
-            >
-              {product.product_stock > 0 ? "Add to Cart" : "Out of Stock"}
-            </button>
+            
           </div>
         </div>
 

@@ -24,6 +24,12 @@ const Navbar = () => {
   const { searchLoading, searchError } = useSelector((state) => state.products);
   const { items: cartItems } = useSelector((state) => state.cart);
 
+  // Debug: Log user object to inspect its structure
+  useEffect(() => {
+    if (user) {
+    }
+  }, [user]);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -72,6 +78,19 @@ const Navbar = () => {
       toast.success("Logged out successfully!");
       navigate("/");
     }
+  };
+
+  // Get user display name from available fields
+  const getUserDisplayName = () => {
+    if (!user) return null;
+    return (
+      user.name ||
+      user.username ||
+      user.fullName ||
+      user.firstName ||
+      user.email ||
+      "User"
+    ).slice(0, 15); // Limit to 15 characters with fallback
   };
 
   return (
@@ -130,7 +149,7 @@ const Navbar = () => {
           </div>
 
           <div className="relative">
-            <Link to="/cart" className="hover:text-primary">
+            <Link to="/payment" className="hover:text-primary">
               <SlHandbag size={22} />
             </Link>
             <span className="absolute -top-2 -right-2 bg-primary text-xs text-white rounded-full w-4 h-4 flex items-center justify-center">
@@ -142,7 +161,7 @@ const Navbar = () => {
               onClick={handleLogout}
               className="flex items-center gap-2 hover:text-primary"
             >
-              <FaUserAltSlash size={25} /> {/* Show logout icon */}
+              {getUserDisplayName()} <FaSignOutAlt size={20} />
             </button>
           ) : (
             <Link to="/auth" className="hover:text-primary">
@@ -216,7 +235,7 @@ const Navbar = () => {
             <Link to="/#" className="hover:text-primary">
               Pages
             </Link>
-            
+
             <Link to="/about" className="hover:text-primary">
               About Us
             </Link>
@@ -266,7 +285,7 @@ const Navbar = () => {
             <Link to="/pages" className="block py-1 hover:text-green-400">
               Pages
             </Link>
-           
+
             <Link to="/about" className="block py-1 hover:text-green-400">
               About Us
             </Link>

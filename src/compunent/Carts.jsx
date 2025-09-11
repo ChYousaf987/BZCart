@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { fetchCart, addToCart, removeFromCart, createOrder } from "../features/cart/cartSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import Loader from "./Loader";
 
 const colorNames = [
   "Red",
@@ -128,11 +129,7 @@ const Carts = () => {
       : 0;
 
   if (loading) {
-    return (
-      <div className="text-center p-4 bg-light">
-        <h3 className="font-bold text-2xl mb-2 text-dark">Loading Cart...</h3>
-      </div>
-    );
+    return <Loader />;
   }
 
   if (error) {
@@ -176,12 +173,16 @@ const Carts = () => {
                 -1;
               return (
                 <div
-                  key={`${item.product_id?._id || index}-${item.selected_image}`}
+                  key={`${item.product_id?._id || index}-${
+                    item.selected_image
+                  }`}
                   className="flex items-center justify-between bg-light p-4 rounded-xl"
                 >
                   <div className="flex items-center gap-4">
                     <img
-                      src={item.selected_image || "https://via.placeholder.com/150"}
+                      src={
+                        item.selected_image || "https://via.placeholder.com/150"
+                      }
                       alt={item.product_id?.product_name || "Product"}
                       className="w-20 h-20 rounded-xl object-cover"
                       loading="lazy"
@@ -207,7 +208,9 @@ const Carts = () => {
                     >
                       <FaTrash size={12} />
                     </button>
-                    <span className="font-medium text-dark">{item.quantity}</span>
+                    <span className="font-medium text-dark">
+                      {item.quantity}
+                    </span>
                     <button
                       onClick={() => handleAddItem(item)}
                       className="bg-primary/10 text-primary rounded-full p-2"
@@ -222,84 +225,23 @@ const Carts = () => {
         </div>
 
         {/* Checkout Summary */}
-        <div className="w-full">
-          <div className="bg-white p-4 rounded-xl shadow">
-            <h3 className="text-lg font-bold mb-4 text-dark">Total</h3>
-
-            <div className="mb-4">
-              <label className="block text-dark mb-2">Full Name</label>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full border border-dark/20 rounded-lg p-2"
-                placeholder="Enter full name"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-dark mb-2">Email Address</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-dark/20 rounded-lg p-2"
-                placeholder="Enter email address"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-dark mb-2">Phone Number</label>
-              <input
-                type="tel"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="w-full border border-dark/20 rounded-lg p-2"
-                placeholder="Enter phone number"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-dark mb-2">Shipping Address</label>
-              <input
-                type="text"
-                value={shippingAddress}
-                onChange={(e) => setShippingAddress(e.target.value)}
-                className="w-full border border-dark/20 rounded-lg p-2"
-                placeholder="Enter shipping address"
-              />
-            </div>
-
-            <p className="text-sm text-dark/70 mb-2">
-              Estimated Delivery Time: <strong>45 Mins</strong>
-            </p>
-
-            {cart.map((item) => (
-              <div
-                key={`${item.product_id?._id || item._id}-${item.selected_image}`}
-                className="flex justify-between text-sm text-dark"
-              >
-                <span>
-                  {item.quantity} x{" "}
-                  {item.product_id?.product_name || "Unknown Product"}
-                </span>
-                <span>
-                  Rs. {(item.product_id?.product_discounted_price || 0) * item.quantity}
-                </span>
-              </div>
-            ))}
-
-            <hr className="my-4" />
-            <div className="flex justify-between text-xl font-bold text-dark">
-              <span>Due Payment</span>
-              <span>Rs. {calculateTotal()}</span>
-            </div>
-
-            <button
-              onClick={handleCheckout}
-              disabled={!fullName || !shippingAddress || !email || !phoneNumber}
-              className="w-full mt-4 bg-primary hover:bg-primary/90 text-white py-2 rounded-lg font-semibold disabled:bg-gray-400"
-            >
-              PLACE ORDER
-            </button>
+        
+        <div className="mt-10 p-6 rounded-2xl bg-gradient-to-r from-primary to-orange-500 text-white shadow-lg">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-lg font-medium">Total Items:</span>
+            <span className="font-bold">{totalItems()}</span>
           </div>
+          <div className="flex justify-between items-center mb-6">
+            <span className="text-lg font-medium">Total Price:</span>
+            <span className="text-2xl font-extrabold">
+              Rs. {calculateTotal()}
+            </span>
+          </div>
+          <Link to="/payment">
+            <button className="w-full py-3 bg-white text-primary font-bold rounded-xl shadow-md hover:shadow-xl transition">
+              Proceed to Checkout
+            </button>
+          </Link>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaShippingFast, FaHeadset, FaShieldAlt, FaUndo } from "react-icons/fa";
 import { fetchSlides } from "../features/slides/slideSlice";
+import Loader from "./Loader";
 
 const HeroSection = () => {
   const dispatch = useDispatch();
@@ -14,32 +15,32 @@ const HeroSection = () => {
   }, [dispatch]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        Loading...
-      </div>
-    );
+    return <Loader />;
   }
 
   if (error) {
     return <div className="text-center text-red-500 text-xl">{error}</div>;
   }
 
-  // Sort slides to ensure large banner comes first, then medium
+  // Sort slides to ensure large banner comes first, then medium, then small
   const sortedSlides = [...slides].sort((a, b) => {
     if (a.size === "large") return -1;
     if (b.size === "large") return 1;
+    if (a.size === "medium" && b.size === "small") return -1;
+    if (b.size === "medium" && a.size === "small") return 1;
     return 0;
   });
 
-  // Extract large and medium slides
+  // Extract large, medium, and small slides
   const largeSlide = sortedSlides.find((slide) => slide.size === "large");
   const mediumSlides = sortedSlides
     .filter((slide) => slide.size === "medium")
     .slice(0, 2);
+  const smallSlides = sortedSlides
+    .filter((slide) => slide.size === "small")
+    .slice(0, 2);
 
-  console.log("Large Slide:", largeSlide); // Debug: Log large slide
-  console.log("Medium Slides:", mediumSlides); // Debug: Log medium slides
+// Debug: Log small slides
 
   return (
     <div className="font-sans bg-white">
@@ -58,23 +59,37 @@ const HeroSection = () => {
           >
             <div className="max-w-md space-y-4">
               {largeSlide.title && (
-                <h2 className="text-3xl md:text-5xl font-bold leading-snug">
+                <h2
+                  className="text-3xl md:text-5xl font-bold leading-snug"
+                  style={{ color: largeSlide.titleColor || "#ffffff" }}
+                >
                   {largeSlide.title}
                 </h2>
               )}
-              {largeSlide.title && (
-                <h2 className="text-xl  font-bold leading-snug">
+              {largeSlide.subtitle && (
+                <h2
+                  className="text-xl font-bold leading-snug"
+                  style={{ color: largeSlide.subtitleColor || "#ffffff" }}
+                >
                   {largeSlide.subtitle}
                 </h2>
               )}
-              
               {largeSlide.subtitle?.includes("shipping") && (
-                <p className="text-sm text-gray-100">{largeSlide.subtitle}</p>
+                <p
+                  className="text-sm text-gray-100"
+                  style={{ color: largeSlide.subtitleColor || "#ffffff" }}
+                >
+                  {largeSlide.subtitle}
+                </p>
               )}
               {largeSlide.buttonText && (
                 <a
                   href={largeSlide.link || "/products"}
-                  className="mt-4 inline-block bg-white text-primary px-6 py-2 rounded-full text-sm font-semibold hover:bg-gray-100 transition"
+                  className="mt-4 inline-block px-6 py-2 rounded-full text-sm font-semibold hover:bg-gray-100 transition"
+                  style={{
+                    backgroundColor: largeSlide.buttonBgColor || "#ffffff",
+                    color: largeSlide.buttonTextColor || "#28a745",
+                  }}
                 >
                   {largeSlide.buttonText}
                 </a>
@@ -83,12 +98,14 @@ const HeroSection = () => {
           </div>
         )}
 
-        {/* Right: Promo Boxes (Medium Banners) */}
+        {/* Right: Promo Boxes (Medium and Small Banners) */}
         <div className="space-y-6 flex flex-col">
-          {mediumSlides.map((slide, index) => (
+          {mediumSlides.concat(smallSlides).map((slide, index) => (
             <div
               key={index}
-              className={`rounded-2xl p-6 relative flex-1 flex flex-col justify-center min-h-[200px] md:min-h-[240px] bg-cover bg-right ${
+              className={`rounded-2xl p-6 relative flex-1 flex flex-col justify-center ${
+                slide.size === "small" ? "min-h-[150px]" : "min-h-[200px]"
+              } md:min-h-[240px] bg-cover bg-right ${
                 index === 1 ? "bg-primary text-white" : "bg-gray-100"
               }`}
               style={{
@@ -110,25 +127,39 @@ const HeroSection = () => {
                 }`}
               >
                 {slide.title && (
-                  <h3 className="text-sm uppercase">{slide.title}</h3>
+                  <h3
+                    className="text-sm uppercase"
+                    style={{ color: slide.titleColor || "#000000" }}
+                  >
+                    {slide.title}
+                  </h3>
                 )}
                 {index === 0 ? (
                   <>
                     {slide.subtitle && (
-                      <p className="text-3xl font-bold text-primary">
+                      <p
+                        className="text-3xl font-bold text-primary"
+                        style={{ color: slide.subtitleColor || "#28a745" }}
+                      >
                         {slide.subtitle}
                       </p>
                     )}
                     {!slide.subtitle && (
-                      <p className="text-3xl font-bold text-primary hidden">
+                      <p
+                        className="text-3xl font-bold text-primary hidden"
+                        style={{ color: slide.subtitleColor || "#28a745" }}
+                      >
                         75% OFF
                       </p>
                     )}
-                    
                     {slide.buttonText && (
                       <a
                         href={slide.link || "/products"}
-                        className="mt-3 block text-primary font-semibold text-sm hover:underline"
+                        className="mt-3 block text-sm font-semibold hover:underline"
+                        style={{
+                          backgroundColor: slide.buttonBgColor || "transparent",
+                          color: slide.buttonTextColor || "#28a745",
+                        }}
                       >
                         {slide.buttonText} →
                       </a>
@@ -137,17 +168,29 @@ const HeroSection = () => {
                 ) : (
                   <>
                     {slide.subtitle && (
-                      <p className="text-xl font-bold">{slide.subtitle}</p>
+                      <p
+                        className="text-xl font-bold"
+                        style={{ color: slide.subtitleColor || "#ffffff" }}
+                      >
+                        {slide.subtitle}
+                      </p>
                     )}
                     {!slide.subtitle && (
-                      <p className="text-xl font-bold hidden">
+                      <p
+                        className="text-xl font-bold hidden"
+                        style={{ color: slide.subtitleColor || "#ffffff" }}
+                      >
                         Special Products
                       </p>
                     )}
                     {slide.buttonText && (
                       <a
                         href={slide.link || "/products"}
-                        className="mt-3 text-primary bg-white px-4 py-1 rounded-full font-semibold text-sm hover:bg-gray-100"
+                        className="mt-3 px-4 py-1 rounded-full font-semibold text-sm hover:bg-gray-100"
+                        style={{
+                          backgroundColor: slide.buttonBgColor || "#ffffff",
+                          color: slide.buttonTextColor || "#28a745",
+                        }}
                       >
                         {slide.buttonText} →
                       </a>

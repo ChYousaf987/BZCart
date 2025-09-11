@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
 import { fetchProductsByCategory } from "../features/products/productSlice";
-import { PulseLoader } from "react-spinners";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import Loader from "./Loader"; // 🔹 Import custom loader
 
 const CategoryProducts = () => {
   const { categoryId } = useParams();
@@ -31,11 +31,7 @@ const CategoryProducts = () => {
   };
 
   if (relatedLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <PulseLoader color="#2563eb" />
-      </div>
-    );
+    return <Loader />; // 🔹 Use custom loader instead of PulseLoader
   }
 
   if (relatedError) {

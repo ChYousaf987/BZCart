@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Login from "./Login";
 import Signup from "./Signup";
 
@@ -9,31 +8,18 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-light font-cabin p-4 md:p-8 overflow-hidden">
       <div className="relative w-full max-w-[80rem] h-auto shadow-xl rounded-2xl bg-white overflow-hidden flex flex-col md:flex-row">
-        <AnimatePresence mode="wait">
+        {/* Container with transition */}
+        <div className="w-full transition-all duration-500 ease-in-out">
           {isSignIn ? (
-            <motion.div
-              key="signin"
-              initial={{ x: "-100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "100%", opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="w-full"
-            >
+            <div className="animate-slideInLeft">
               <Login setIsSignIn={setIsSignIn} />
-            </motion.div>
+            </div>
           ) : (
-            <motion.div
-              key="signup"
-              initial={{ x: "100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="w-full"
-            >
+            <div className="animate-slideInRight">
               <Signup setIsSignIn={setIsSignIn} />
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { fetchProducts } from "../features/products/productSlice";
+import Loader from "./Loader";
 
 const ViewAll = () => {
   const dispatch = useDispatch();
@@ -40,18 +41,14 @@ const ViewAll = () => {
   }, {});
 
   return (
-    <div className="mx-auto md:px-2 py-12 font-cabin">
+    <div className="md:w-[95%] mx-auto px-4 sm:px-0 py-12 font-cabin">
       {/* Section Title */}
       <h2 className="text-4xl font-extrabold text-dark mb-12 text-center">
         Our <span className="text-primary">Products</span>
       </h2>
 
       {/* Loading State */}
-      {loading && (
-        <div className="text-center">
-          <p className="text-lg text-gray-500">Loading products...</p>
-        </div>
-      )}
+      {loading && <Loader />}
 
       {/* Error State */}
       {error && (
@@ -66,6 +63,7 @@ const ViewAll = () => {
             <div key={categoryName} className="mb-12">
               <h3 className="text-2xl font-bold text-dark mb-6 capitalize">
                 {categoryName}
+                <div className="px-2 py-[1px] bg-primary w-24"></div>
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 {groupedProducts[categoryName].map((item) => {
