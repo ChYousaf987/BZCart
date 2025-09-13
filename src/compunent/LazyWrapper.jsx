@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Loader from "./Loader";
 
-const LazyWrapper = ({ children, height = "400px" }) => {
+const LazyWrapper = ({ children, height = "250px" }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef();
 

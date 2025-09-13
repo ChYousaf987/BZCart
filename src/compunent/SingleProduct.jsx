@@ -144,7 +144,7 @@ const SingleProduct = () => {
       .then(() => {
         toast.success("Redirecting to checkout...", { position: "top-right" });
         // Navigate to cart/checkout page
-        window.location.href = "/payment"; // or "/checkout" if you make a separate page
+        window.location.href = "/paymentMethod"; // or "/checkout" if you make a separate page
       })
       .catch((err) => {
         toast.error(err || "Failed to proceed with Buy Now", {

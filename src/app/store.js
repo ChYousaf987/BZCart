@@ -5,13 +5,15 @@ import productReducer from "../features/products/productSlice"; // Adjust the pa
 import cartReducer from "../features/cart/cartSlice"; // Import cart reducer
 import slideReducer from "../features/slides/slideSlice";
 import brandReducer from "../features/brands/brandSlice";
+import dealReducer from "../features/deals/dealSlice";
 
 export const store = configureStore({
   reducer: {
     auth: userReducer,
-    products: productReducer, 
-    cart: cartReducer, 
-     slides: slideReducer,
-        brands: brandReducer,
+    products: productReducer,
+    cart: cartReducer,
+    slides: slideReducer,
+    brands: brandReducer,
+    deals: dealReducer,
   },
 });

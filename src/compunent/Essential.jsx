@@ -2,6 +2,8 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchProducts } from "../features/products/productSlice";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const Essential = () => {
   const dispatch = useDispatch();
@@ -10,16 +12,12 @@ const Essential = () => {
   useEffect(() => {
     dispatch(fetchProducts())
       .unwrap()
-      .then((data) => {
-      })
-      .catch((err) => {
-      });
+      .catch(() => {});
   }, [dispatch]);
 
   // Find the second category dynamically (name and ID)
   const secondCategory = useMemo(() => {
     if (products.length === 0) return { name: "", id: "" };
-    // Get unique categories
     const uniqueCategories = [
       ...new Set(
         products
@@ -32,9 +30,7 @@ const Essential = () => {
           .filter(Boolean)
       ),
     ].map((str) => JSON.parse(str));
-    // Select the second category (index 1)
-    const category = uniqueCategories[1] || { name: "", id: "" };
-    return category;
+    return uniqueCategories[1] || { name: "", id: "" };
   }, [products]);
 
   // Filter products for the second category
@@ -47,32 +43,55 @@ const Essential = () => {
   }, [products, secondCategory]);
 
   return (
-    <div className="md:w-[95%] mx-auto px-2 md:px-0 py-6">
+    <div className="md:w-[95%] mx-auto px-2 md:px-0 pt-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-lg md:text-2xl font-bold border-b-2 text-gray-500 border-[#f06621] inline-block pb-1">
           Shop From{" "}
           <span className="text-[#f06621]">
-            {secondCategory.name || "Essentials"}
+            {loading ? (
+              <Skeleton width={100} />
+            ) : (
+              secondCategory.name || "Essentials"
+            )}
           </span>
         </h2>
-        <Link
-          to={
-            secondCategory.id ? `/category/${secondCategory.id}` : "/products"
-          }
-          className="text-[#f06621] text-sm sm:text-base font-semibold hover:underline transition"
-        >
-          View All →
-        </Link>
+        {loading ? (
+          <Skeleton width={70} height={20} />
+        ) : (
+          <Link
+            to={
+              secondCategory.id ? `/category/${secondCategory.id}` : "/products"
+            }
+            className="text-[#f06621] text-sm sm:text-base font-semibold hover:underline transition"
+          >
+            View All →
+          </Link>
+        )}
       </div>
 
-      {/* Responsive Grid / Scrollable Row */}
-      {filteredProducts.length === 0 ? (
+      {/* Product Grid / Scrollable Row */}
+      {loading ? (
+        <div className="flex overflow-x-auto gap-6 sm:gap-10 snap-x snap-mandatory">
+          {Array(6)
+            .fill()
+            .map((_, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center text-center bg-transparent"
+              >
+                <Skeleton height={144} width={144} className="rounded-3xl" />
+                <Skeleton width={100} height={20} className="mt-3" />
+                <Skeleton width={60} height={18} />
+              </div>
+            ))}
+        </div>
+      ) : filteredProducts.length === 0 ? (
         <p className="text-center w-full">
           No products found for {secondCategory.name || "any category"}
         </p>
       ) : (
-        <div className="flex overflow-x-auto md:overflow-hidden gap-6 sm:gap-10 pb-4 snap-x snap-mandatory scrollbar-hide">
+        <div className="flex overflow-x-auto md:overflow-hidden gap-6 sm:gap-10 snap-x snap-mandatory scrollbar-hide">
           {filteredProducts.map((product, index) => (
             <Link
               to={`/product/${product._id}`}

@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchProducts } from "../features/products/productSlice";
-import Loader from "./Loader";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const TopBrands = () => {
   const dispatch = useDispatch();
@@ -12,25 +13,17 @@ const TopBrands = () => {
     error,
   } = useSelector((state) => state.products || {});
 
-  // show 16 initially (4 rows of 4). This value is safe even if products.length < 16.
   const [visibleCount, setVisibleCount] = useState(8);
   const loadMoreRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchProducts())
       .unwrap()
-      .then((data) => {
-      })
-      .catch((err) => {
-      });
+      .catch(() => {});
   }, [dispatch]);
 
-  // Re-create observer whenever visibleCount or products length changes.
   useEffect(() => {
-    // if all products are already visible, no need to observe
     if (visibleCount >= products.length) return;
-
-    // only proceed if browser supports IntersectionObserver
     if (!("IntersectionObserver" in window)) return;
 
     const el = loadMoreRef.current;
@@ -42,18 +35,11 @@ const TopBrands = () => {
           setVisibleCount((prev) => Math.min(prev + 16, products.length));
         }
       },
-      {
-        root: null,
-        rootMargin: "200px", // trigger earlier (200px before)
-        threshold: 0.1, // 10% visible
-      }
+      { rootMargin: "200px", threshold: 0.1 }
     );
 
     observer.observe(el);
-
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, [visibleCount, products.length]);
 
   const handleLoadMore = () => {
@@ -81,7 +67,18 @@ const TopBrands = () => {
       </div>
 
       {loading ? (
-        <Loader />
+        // 🔥 Skeleton Grid Loader
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
+          {Array(8)
+            .fill(0)
+            .map((_, i) => (
+              <div key={i} className="bg-white rounded-2xl border p-3">
+                <Skeleton height={150} className="rounded-lg mb-3" />
+                <Skeleton width="80%" height={16} className="mb-2" />
+                <Skeleton width="60%" height={14} />
+              </div>
+            ))}
+        </div>
       ) : error ? (
         <p className="text-center w-full text-red-500">{error}</p>
       ) : products.length === 0 ? (
@@ -110,7 +107,7 @@ const TopBrands = () => {
                   {/* Product Image */}
                   <Link to={`/product/${product._id}`}>
                     <div
-                      className="p- h md:h-48 flex items-center justify-center"
+                      className="md:h-48 flex items-center justify-center"
                       style={{ backgroundColor: product.bg_color || "#f3f4f6" }}
                     >
                       <img
@@ -156,10 +153,10 @@ const TopBrands = () => {
                       <span className="line-through text-gray-400">
                         Rs. {product.product_base_price || "N/A"}
                       </span>
+                    </div>
                       <span className="font-semibold text-black">
                         Rs. {product.product_discounted_price || "N/A"}
                       </span>
-                    </div>
                     {product.product_base_price &&
                       product.product_discounted_price && (
                         <p className="text-green-600 text-xs mt-1">
@@ -176,19 +173,16 @@ const TopBrands = () => {
             ))}
           </div>
 
-          {/* Infinite Scroll Trigger & Fallback Load Button */}
+          {/* Load More */}
           {visibleCount < products.length && (
-            <>
-              {/* Fallback/manual load button (useful for old browsers) */}
-              <div className="w-full flex justify-center mt-2">
-                <button
-                  onClick={handleLoadMore}
-                  className="px-4 py-2 bg-[#f06621] text-white rounded-md hover:bg-[#d85b11] transition"
-                >
-                  View More
-                </button>
-              </div>
-            </>
+            <div className="w-full flex justify-center mt-2" ref={loadMoreRef}>
+              <button
+                onClick={handleLoadMore}
+                className="px-4 py-2 bg-[#f06621] text-white rounded-md hover:bg-[#d85b11] transition"
+              >
+                View More
+              </button>
+            </div>
           )}
         </>
       )}

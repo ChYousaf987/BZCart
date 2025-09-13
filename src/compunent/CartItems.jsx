@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaPlus, FaTrash, FaArrowRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import {
   fetchCart,
   addToCart,
   removeFromCart,
 } from "../features/cart/cartSlice";
 import { v4 as uuidv4 } from "uuid";
-import Loader from "./Loader";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const colorNames = [
   "Red",
@@ -22,6 +24,7 @@ const colorNames = [
 
 const CartItems = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { items: cart, loading, error } = useSelector((state) => state.cart);
 
   const [guestId] = useState(
@@ -78,11 +81,37 @@ const CartItems = () => {
       ? cart.reduce((t, item) => t + (item.quantity || 1), 0)
       : 0;
 
-  if (loading) return <Loader />;
+  const totalPrice = () =>
+    Array.isArray(cart)
+      ? cart.reduce(
+          (t, item) =>
+            t +
+            (item.quantity || 1) *
+              (item.product_id?.product_discounted_price || 0),
+          0
+        )
+      : 0;
+
+  if (loading) {
+    return (
+      <div className="md:w-[65%] mx-auto p-6 bg-light min-h-screen">
+        <h2 className="text-3xl font-bold mb-4 text-dark">Loading Cart...</h2>
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="flex items-center gap-4 mb-4">
+            <Skeleton width={80} height={80} />
+            <div className="flex-1">
+              <Skeleton width="60%" height={20} />
+              <Skeleton width="40%" height={20} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   if (error) {
     return (
-      <div className="text-center p-4 bg-light min-h-screen">
+      <div className="text-center p-6 bg-light min-h-screen">
         <h3 className="font-bold text-2xl mb-2 text-dark">
           Error Loading Cart
         </h3>
@@ -93,7 +122,7 @@ const CartItems = () => {
 
   if (!Array.isArray(cart) || cart.length === 0) {
     return (
-      <div className="text-center p-4 bg-light min-h-screen">
+      <div className="text-center p-6 bg-light min-h-screen">
         <h3 className="font-bold text-2xl mb-2 text-dark">
           Your Cart is Empty
         </h3>
@@ -103,28 +132,32 @@ const CartItems = () => {
   }
 
   return (
-    <div className="md:w-[65%] mx-auto p-4 bg-light min-h-screen">
-      <h2 className="text-3xl font-bold mb-4 text-dark">
-        ← Cart{" "}
-        <span className="text-xl font-medium">({totalItems()} items)</span>
+    <div className="md:w-[70%] mx-auto md:p-4 bg-light ">
+      <h2 className="text-3xl font-bold mb-6 text-dark">
+        🛒 Your Cart{" "}
+        <span className="text-xl font-medium text-primary">
+          ({totalItems()} items)
+        </span>
       </h2>
-      <div className="bg-white p-4 rounded-xl space-y-4 shadow">
+
+      <div className="bg-white p-5 rounded-xl shadow space-y-4">
         {cart.map((item, index) => {
           const isVapeOrPod =
             item.product_id?.category?.name?.includes("Disposables") ||
             item.product_id?.category?.name?.includes("Devices");
           const colorIndex =
             item.product_id?.product_images?.indexOf(item.selected_image) || -1;
+
           return (
             <div
               key={`${item.product_id?._id || index}-${item.selected_image}`}
-              className="flex items-center justify-between bg-light p-4 rounded-xl"
+              className="flex items-center justify-between border-b last:border-0 pb-4 mb-4"
             >
               <div className="flex items-center gap-4">
                 <img
                   src={item.selected_image || "https://via.placeholder.com/150"}
                   alt={item.product_id?.product_name || "Product"}
-                  className="w-20 h-20 rounded-xl object-cover"
+                  className="w-20 h-20 rounded-lg object-cover border"
                   loading="lazy"
                 />
                 <div>
@@ -141,17 +174,18 @@ const CartItems = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => handleRemoveItem(item)}
-                  className="bg-primary/10 text-primary rounded-full p-2"
+                  className="bg-red-100 text-red-600 rounded-full p-2 hover:bg-red-200 transition"
                 >
                   <FaTrash size={12} />
                 </button>
                 <span className="font-medium text-dark">{item.quantity}</span>
                 <button
                   onClick={() => handleAddItem(item)}
-                  className="bg-primary/10 text-primary rounded-full p-2"
+                  className="bg-green-100 text-green-600 rounded-full p-2 hover:bg-green-200 transition"
                 >
                   <FaPlus size={12} />
                 </button>
@@ -159,6 +193,19 @@ const CartItems = () => {
             </div>
           );
         })}
+      </div>
+
+      {/* Cart Summary */}
+      <div className="mt-6 p-5  bg-white rounded-xl shadow flex flex-col md:hidden justify-between items-center gap-4">
+        <h3 className="text-lg font-bold text-dark">
+          Total: <span className="text-primary">Rs. {totalPrice()}</span>
+        </h3>
+        <button
+          onClick={() => navigate("/paymentMethod")}
+          className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition"
+        >
+          Proceed to Payment <FaArrowRight />
+        </button>
       </div>
     </div>
   );

@@ -10,6 +10,9 @@ import CategoryProducts from "./compunent/CategoryProducts";
 import CategoriesPage from "./compunent/CategoriesPage";
 import ContactPage from "./compunent/ContactPage";
 import TrackOrder from "./compunent/TrackOrder";
+import PaymentMethod from "./compunent/PaymentMethod";
+import SingleDeal from "./compunent/SingleDeal";
+import AllDeals from "./compunent/AllDeals";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -32,10 +35,13 @@ const App = () => {
       <Route path="/auth" element={<Auth />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/payment" element={<Payment />} />
+      <Route path="/paymentMethod" element={<PaymentMethod />} />
       <Route path="/track-order/:id" element={<TrackOrder />} />
+      <Route path="/deal/:id" element={<SingleDeal />} /> {/* New route */}
       <Route path="/product/:id" element={<SingleProduct />} />
       <Route path="/category/:categoryId" element={<CategoryProducts />} />
       <Route path="/categories" element={<CategoriesPage />} />
+      <Route path="/deals" element={<AllDeals />} /> {/* New route */}
       <Route path="/Contact" element={<ContactPage />} />
     </Routes>
   );

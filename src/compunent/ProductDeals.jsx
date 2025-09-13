@@ -1,9 +1,11 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { fetchProducts } from "../features/products/productSlice";
+import { fetchDeals } from "../features/deals/dealSlice";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -27,43 +29,19 @@ const PrevArrow = ({ onClick }) => (
   </button>
 );
 
-const ProductDeals = () => {
+const Deals = () => {
   const dispatch = useDispatch();
-  const { products, loading, error } = useSelector((state) => state.products);
+  const { deals, loading, error } = useSelector((state) => state.deals);
 
   useEffect(() => {
-    dispatch(fetchProducts())
+    dispatch(fetchDeals())
       .unwrap()
-      .then((data) => {
-      })
-      .catch((err) => {
-      });
+      .catch(() => {});
   }, [dispatch]);
 
-  // Find the first category dynamically (name and ID)
-  const firstCategory = useMemo(() => {
-    if (products.length === 0) return { name: "", id: "" };
-    const category = products[0]?.category;
-    const categoryName = category?.name || "";
-    const categoryId = category?._id || category || "";
-   
-    return { name: categoryName, id: categoryId };
-  }, [products]);
-
-  // Filter products for the first category
-  const filteredProducts = useMemo(() => {
-    if (!firstCategory.name) return [];
-    return products.filter((item) => {
-      const categoryName = item.category?.name || "";
-      const matchesCategory =
-        categoryName.toLowerCase() === firstCategory.name.toLowerCase();
-      return matchesCategory;
-    });
-  }, [products, firstCategory]);
-
-  const getDiscountPercent = (base, discounted) => {
-    if (!base || !discounted || base <= 0) return null;
-    return Math.round(((base - discounted) / base) * 100);
+  const getDiscountPercent = (original, deal) => {
+    if (!original || !deal || original <= 0) return null;
+    return Math.round(((original - deal) / original) * 100);
   };
 
   // react-slick settings
@@ -71,7 +49,7 @@ const ProductDeals = () => {
     dots: false,
     infinite: true,
     speed: 800,
-    slidesToShow: Math.min(filteredProducts.length, 5),
+    slidesToShow: Math.min(deals.length, 5),
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2000,
@@ -82,73 +60,90 @@ const ProductDeals = () => {
     responsive: [
       {
         breakpoint: 1024,
-        settings: { slidesToShow: Math.min(filteredProducts.length, 3) },
+        settings: { slidesToShow: Math.min(deals.length, 3) },
       },
-      {
-        breakpoint: 640,
-        settings: { slidesToShow: 1 },
-      },
+      { breakpoint: 640, settings: { slidesToShow: 1 } },
     ],
   };
 
   return (
     <div className="md:w-[95%] mx-auto px-2 md:px-0 py-6 relative">
+      {/* Header */}
       <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-dark border-b-2 border-primary inline-block pb-1">
           <span className="text-primary">
-            {firstCategory.name
-              ? `${firstCategory.name} Deals`
-              : "Popular Categories"}
+            {loading ? <Skeleton width={120} /> : "Hot Deals"}
           </span>
         </h2>
-        <Link
-          to={firstCategory.id ? `/category/${firstCategory.id}` : "/products"}
-          className="text-primary font-medium text-sm hover:underline"
-        >
-          View All →
-        </Link>
+        {loading ? (
+          <Skeleton width={70} height={20} />
+        ) : (
+          <Link
+            to="/deals"
+            className="text-primary font-medium text-sm hover:underline"
+          >
+            View All →
+          </Link>
+        )}
       </div>
 
-      {filteredProducts.length === 0 ? (
-        <p className="text-center w-full">
-          No products found for {firstCategory.name || "any category"}
-        </p>
+      {/* Deal Slider */}
+      {loading ? (
+        <Slider {...settings}>
+          {Array(5)
+            .fill()
+            .map((_, index) => (
+              <div key={index} className="px-2">
+                <div className="bg-white rounded-2xl border shadow-md p-3">
+                  <Skeleton height={150} className="rounded-xl" />
+                  <Skeleton width={`80%`} height={20} className="mt-2" />
+                  <Skeleton width={`60%`} height={15} />
+                  <Skeleton width={`40%`} height={15} />
+                </div>
+              </div>
+            ))}
+        </Slider>
+      ) : deals.length === 0 ? (
+        <p className="text-center w-full">No deals found</p>
       ) : (
         <Slider {...settings}>
-          {filteredProducts.map((product, index) => {
+          {deals.map((deal, index) => {
             const discountPercent = getDiscountPercent(
-              product.product_base_price,
-              product.product_discounted_price
+              deal.original_price,
+              deal.deal_price
             );
-            const rating = product.rating || 4;
-            const categoryName = product.category?.name || "Unknown";
+            const rating = deal.rating || 4;
+            const categoryName = deal.category?.name || "Unknown";
 
             return (
-              <div key={`${product._id}-${index}`} className="px-2">
+              <div key={`${deal._id}-${index}`} className="px-2">
                 <div className="group bg-white rounded-2xl border shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
                   {discountPercent !== null && (
                     <div className="absolute top-2 right-2 bg-primary text-white text-xs font-semibold px-2 py-1 rounded-bl-lg z-10">
                       {discountPercent}% OFF
                     </div>
                   )}
-                  <Link to={`/product/${product._id}`}>
+                  <Link
+                    to={`/deal/${deal._id}`}
+                    aria-label={`View details for ${deal.deal_name}`}
+                  >
                     <div
-                      className="p-4 h-48 flex items-center justify-center"
-                      style={{ backgroundColor: product.bg_color || "#f3f4f6" }}
+                      className="md:p-4  flex items-center justify-center"
+                      style={{ backgroundColor: deal.bg_color || "#0851e3" }}
                     >
                       <img
                         src={
-                          product.product_images?.[0] ||
+                          deal.deal_images?.[0] ||
                           "https://via.placeholder.com/150"
                         }
-                        alt={product.product_name || "Product"}
+                        alt={deal.deal_name || "Deal"}
                         className="object-contain max-h-full transition-transform duration-300 group-hover:scale-105"
                         loading="lazy"
                       />
                     </div>
-                    <div className="px-5 py-4 border-t bg-primary/5">
+                    <div className="px-2 md:px-5 py-2 border-t bg-primary/5">
                       <h3 className="font-semibold text-dark text-sm mb-1 line-clamp-1 hover:text-primary transition-colors duration-200">
-                        {product.product_name || "Unknown Product"}
+                        {deal.deal_name || "Unknown Deal"}
                       </h3>
                       <p className="text-dark/70 text-xs mb-1 capitalize">
                         {categoryName}
@@ -173,23 +168,21 @@ const ProductDeals = () => {
                       </div>
                     </div>
                   </Link>
-                  <div className="px-5 pb-4 bg-primary/5">
+                  <div className="px-2 md:px-5 pb-3 bg-primary/5">
                     <div className="flex items-center gap-2 text-sm">
                       <span className="line-through text-gray-400">
-                        Rs. {product.product_base_price || "N/A"}
+                        Rs. {deal.original_price || "N/A"}
                       </span>
                       <span className="font-semibold text-dark">
-                        Rs. {product.product_discounted_price || "N/A"}
+                        Rs. {deal.deal_price || "N/A"}
                       </span>
                     </div>
-                    {product.product_base_price &&
-                      product.product_discounted_price && (
-                        <p className="text-green-600 text-xs mt-1">
-                          Save - Rs.{" "}
-                          {product.product_base_price -
-                            product.product_discounted_price}
-                        </p>
-                      )}
+                    {deal.original_price && deal.deal_price && (
+                      <p className="text-green-600 text-xs mt-1">
+                        Save - Rs.{" "}
+                        {(deal.original_price - deal.deal_price).toFixed(2)}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -201,4 +194,4 @@ const ProductDeals = () => {
   );
 };
 
-export default React.memo(ProductDeals);
+export default React.memo(Deals);
