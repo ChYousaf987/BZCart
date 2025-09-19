@@ -23,8 +23,12 @@ const TopBrands = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (visibleCount >= products.length) return;
-    if (!("IntersectionObserver" in window)) return;
+    if (visibleCount >= products.length || loading || error) return;
+    if (!("IntersectionObserver" in window)) {
+      // Fallback for browsers without IntersectionObserver
+      setVisibleCount((prev) => Math.min(prev + 8, products.length));
+      return;
+    }
 
     const el = loadMoreRef.current;
     if (!el) return;
@@ -32,19 +36,18 @@ const TopBrands = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          setVisibleCount((prev) => Math.min(prev + 16, products.length));
+          setVisibleCount((prev) => {
+            const newCount = Math.min(prev + 8, products.length);
+            return newCount;
+          });
         }
       },
-      { rootMargin: "200px", threshold: 0.1 }
+      { root: null, rootMargin: "100px", threshold: 0.1 }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [visibleCount, products.length]);
-
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 16, products.length));
-  };
+  }, [visibleCount, products.length, loading, error]);
 
   const getDiscountPercent = (base, discounted) => {
     if (!base || !discounted || base <= 0) return null;
@@ -67,7 +70,7 @@ const TopBrands = () => {
       </div>
 
       {loading ? (
-        // 🔥 Skeleton Grid Loader
+        // Skeleton Grid Loader
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
           {Array(8)
             .fill(0)
@@ -154,9 +157,9 @@ const TopBrands = () => {
                         Rs. {product.product_base_price || "N/A"}
                       </span>
                     </div>
-                      <span className="font-semibold text-black">
-                        Rs. {product.product_discounted_price || "N/A"}
-                      </span>
+                    <span className="font-semibold text-black">
+                      Rs. {product.product_discounted_price || "N/A"}
+                    </span>
                     {product.product_base_price &&
                       product.product_discounted_price && (
                         <p className="text-green-600 text-xs mt-1">
@@ -173,16 +176,9 @@ const TopBrands = () => {
             ))}
           </div>
 
-          {/* Load More */}
+          {/* Invisible trigger for loading more */}
           {visibleCount < products.length && (
-            <div className="w-full flex justify-center mt-2" ref={loadMoreRef}>
-              <button
-                onClick={handleLoadMore}
-                className="px-4 py-2 bg-[#f06621] text-white rounded-md hover:bg-[#d85b11] transition"
-              >
-                View More
-              </button>
-            </div>
+            <div ref={loadMoreRef} className="h-10"></div>
           )}
         </>
       )}

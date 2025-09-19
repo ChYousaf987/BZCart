@@ -28,7 +28,7 @@ export default function Signup({ setIsSignIn }) {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, userLoading, userError, userMessage, userSuccess } =
+  const { user, tempUser, userLoading, userError, userMessage, userSuccess } =
     useSelector((state) => state.auth);
 
   const handleChange = (e) =>
@@ -46,7 +46,18 @@ export default function Signup({ setIsSignIn }) {
   };
 
   useEffect(() => {
-    if (userSuccess && user && !showOtpInput) {
+    if (userError) {
+      toast.error(userMessage, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      dispatch(userReset());
+    }
+    if (userSuccess && tempUser && !showOtpInput) {
+      toast.success("OTP sent to your email!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       setShowOtpInput(true);
       dispatch(userReset());
     } else if (userSuccess && user && showOtpInput) {
@@ -60,7 +71,16 @@ export default function Signup({ setIsSignIn }) {
       navigate("/");
       dispatch(userReset());
     }
-  }, [userSuccess, user, showOtpInput, navigate, dispatch]);
+  }, [
+    userSuccess,
+    userError,
+    userMessage,
+    user,
+    tempUser,
+    showOtpInput,
+    navigate,
+    dispatch,
+  ]);
 
   return (
     <div className="flex flex-col md:flex-row w-full font-cabin">
@@ -71,9 +91,7 @@ export default function Signup({ setIsSignIn }) {
           backgroundImage: "url('./logo.png')",
         }}
       >
-        {/* Gradient overlay for readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary/95 to-dark/95 rounded-t-2xl md:rounded-tl-2xl md:rounded-bl-2xl" />
-
         <h2 className="text-2xl font-bold mb-3 mt-10 z-10">Welcome Back!</h2>
         <p className="text-center max-w-xs mb-4 z-10">
           Already have an account? Sign in to continue with Referra!
@@ -97,7 +115,7 @@ export default function Signup({ setIsSignIn }) {
         )}
         {userSuccess && showOtpInput && (
           <p className="text-green-500 text-sm mb-4">
-            Email verified successfully!
+            Enter the OTP to complete registration
           </p>
         )}
 

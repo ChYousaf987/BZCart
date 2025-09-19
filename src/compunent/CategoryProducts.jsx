@@ -87,7 +87,10 @@ const CategoryProducts = () => {
 
                   {/* Product Image */}
                   <Link to={`/product/${product._id}`}>
-                    <div className="p-4 h-48 flex items-center justify-center bg-gray-50">
+                    <div
+                      className="md:h-48 flex items-center justify-center"
+                      style={{ backgroundColor: product.bg_color || "#f3f4f6" }}
+                    >
                       <img
                         src={
                           product.product_images?.[0] ||
@@ -98,59 +101,53 @@ const CategoryProducts = () => {
                         loading="lazy"
                       />
                     </div>
+
+                    {/* Product Info */}
+                    <div className="px-2 py-2 md:py-4 border-t bg-orange-50">
+                      <h3 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1 hover:text-[#f06621] transition-colors duration-200">
+                        {product.product_name || "Unknown Product"}
+                      </h3>
+                      <div className="flex items-center text-yellow-400 text-sm mb-1">
+                        {[...Array(5)].map((_, i) => (
+                          <svg
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < Math.floor(product.rating || 4)
+                                ? "fill-current"
+                                : "fill-none stroke-current"
+                            }`}
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                          </svg>
+                        ))}
+                        <span className="text-gray-600 text-xs ml-2">
+                          ({product.rating || 4})
+                        </span>
+                      </div>
+                    </div>
                   </Link>
 
-                  {/* Product Info */}
-                  <div className="px-5 py-4 bg-orange-50">
-                    <h3 className="font-semibold text-dark text-sm mb-1 line-clamp-1 hover:text-primary transition-colors duration-200">
-                      {product.product_name || "Unknown Product"}
-                    </h3>
-                    <p className="text-dark/70 text-xs mb-2 capitalize">
-                      {categoryName}
-                    </p>
-
-                    {/* Rating */}
-                    <div className="flex items-center text-yellow-500 text-sm mb-2">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < Math.floor(rating)
-                              ? "fill-current"
-                              : "fill-none stroke-current"
-                          }`}
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                      ))}
-                      <span className="text-dark/70 text-xs ml-2">
-                        ({rating})
+                  {/* Price Info */}
+                  <div className="px-2 pb-4 bg-orange-50">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="line-through text-gray-400">
+                        Rs. {product.product_base_price || "N/A"}
                       </span>
                     </div>
-
-                    {/* Price */}
-                    <div className="flex items-center gap-2 text-sm mb-1">
-                      {product.product_discounted_price <
-                        product.product_base_price && (
-                        <span className="line-through text-gray-400">
-                          Rs. {product.product_base_price}
-                        </span>
-                      )}
-                      <span className="font-semibold text-dark text-lg">
-                        Rs. {product.product_discounted_price || "N/A"}
-                      </span>
-                    </div>
-
-                    {/* Save amount */}
-                    {product.product_base_price >
+                    <span className="font-semibold text-black">
+                      Rs. {product.product_discounted_price || "N/A"}
+                    </span>
+                    {product.product_base_price &&
                       product.product_discounted_price && (
-                      <p className="text-green-600 text-xs">
-                        Save - Rs.{" "}
-                        {product.product_base_price -
-                          product.product_discounted_price}
-                      </p>
-                    )}
+                        <p className="text-green-600 text-xs mt-1">
+                          Save - Rs.{" "}
+                          {(
+                            product.product_base_price -
+                            product.product_discounted_price
+                          ).toFixed(2)}
+                        </p>
+                      )}
                   </div>
                 </div>
               );

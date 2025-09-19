@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const BASE_URL ="http://localhost:3003";
+const BASE_URL = "https://bzbackend.online";
 
 export const fetchDeals = createAsyncThunk("deals/fetchDeals", async () => {
   const response = await axios.get(`${BASE_URL}/api/deals`);

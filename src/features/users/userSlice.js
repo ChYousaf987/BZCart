@@ -2,9 +2,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { logUser, regUser, verifyOTP, logout } from "./userService";
 
 const isUser = JSON.parse(localStorage.getItem("myUser"));
+const isTempUser = JSON.parse(localStorage.getItem("tempUser"));
 
 const initialState = {
   user: isUser ? isUser : null,
+  tempUser: isTempUser ? isTempUser : null, // Track temporary user
   userLoading: false,
   userMessage: "",
   userError: false,
@@ -37,10 +39,13 @@ export const verifyOTPData = createAsyncThunk(
   "auth/verifyOTP",
   async (otpData, thunkAPI) => {
     try {
-      let token = thunkAPI.getState().auth.user.token;
+      let token = thunkAPI.getState().auth.tempUser?.token; // Use tempUser token
+      if (!token) throw new Error("No temporary user token found");
       return await verifyOTP(otpData, token);
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
     }
   }
 );
@@ -74,7 +79,7 @@ export const userSlice = createSlice({
       .addCase(registerMyUser.fulfilled, (state, action) => {
         state.userLoading = false;
         state.userSuccess = true;
-        state.user = action.payload;
+        state.tempUser = action.payload; // Store temporary user
       })
       .addCase(loginMyUser.pending, (state) => {
         state.userLoading = true;
@@ -88,6 +93,7 @@ export const userSlice = createSlice({
         state.userLoading = false;
         state.userSuccess = true;
         state.user = action.payload;
+        state.tempUser = null; // Clear temporary user
       })
       .addCase(verifyOTPData.pending, (state) => {
         state.userLoading = true;
@@ -100,10 +106,12 @@ export const userSlice = createSlice({
       .addCase(verifyOTPData.fulfilled, (state, action) => {
         state.userLoading = false;
         state.userSuccess = true;
-        state.user = action.payload;
+        state.user = action.payload; // Set permanent user
+        state.tempUser = null; // Clear temporary user
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
+        state.tempUser = null; // Clear both
         state.userSuccess = false;
         state.userError = false;
         state.userMessage = "";

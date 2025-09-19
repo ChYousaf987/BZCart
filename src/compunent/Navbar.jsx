@@ -1,3 +1,4 @@
+// Navbar.jsx
 import React, { useState, useEffect } from "react";
 import {
   FaShoppingCart,
@@ -5,14 +6,13 @@ import {
   FaSignOutAlt,
   FaBars,
   FaChevronDown,
-  FaUserAltSlash,
 } from "react-icons/fa";
-import { CiHeart } from "react-icons/ci";
 import { SlHandbag } from "react-icons/sl";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../features/users/userSlice";
-import { fetchCart } from "../features/cart/cartSlice"; // Import fetchCart
+import { fetchCart } from "../features/cart/cartSlice";
+import { setSearchTerm } from "../features/products/productSlice";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -21,18 +21,10 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { searchLoading, searchError } = useSelector((state) => state.products);
   const { items: cartItems } = useSelector((state) => state.cart);
-
-  // Debug: Log user object to inspect its structure
-  useEffect(() => {
-    if (user) {
-    }
-  }, [user]);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setLocalSearchTerm] = useState("");
 
   // Fetch categories
   useEffect(() => {
@@ -59,12 +51,24 @@ const Navbar = () => {
     }
   }, [user, dispatch]);
 
-  // Handle search
+  // Handle input change - real-time search
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setLocalSearchTerm(value);
+    dispatch(setSearchTerm(value)); // Dispatch immediately for real-time filtering
+  };
+
+  // Handle form submit - optional navigation and validation
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
-    } else {
+    if (!searchTerm.trim()) {
       toast.error("Please enter a search term");
+      dispatch(setSearchTerm(""));
+      return;
+    }
+    // If on a different page, navigate to home to show results
+    if (location.pathname !== "/") {
+      navigate("/");
     }
   };
 
@@ -80,7 +84,7 @@ const Navbar = () => {
     }
   };
 
-  // Get user display name from available fields
+  // Get user display name
   const getUserDisplayName = () => {
     if (!user) return null;
     return (
@@ -90,7 +94,7 @@ const Navbar = () => {
       user.firstName ||
       user.email ||
       "User"
-    ).slice(0, 15); // Limit to 15 characters with fallback
+    ).slice(0, 15);
   };
 
   return (
@@ -128,17 +132,16 @@ const Navbar = () => {
         >
           <input
             type="text"
-            placeholder="Search for products..."
+            placeholder="Search for products or categories..."
             className="px-3 py-2 w-full outline-none text-sm"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange} // Real-time dispatch here
           />
           <button
             type="submit"
             className="bg-primary text-white px-5 py-2 text-sm font-medium hover:bg-primary"
-            disabled={searchLoading}
           >
-            {searchLoading ? "Searching..." : "Search"}
+            Search
           </button>
         </form>
 
@@ -165,7 +168,7 @@ const Navbar = () => {
             </button>
           ) : (
             <Link to="/auth" className="hover:text-primary">
-              <FaRegUser size={20} /> {/* Show login icon */}
+              <FaRegUser size={20} />
             </Link>
           )}
         </div>
@@ -181,14 +184,13 @@ const Navbar = () => {
             placeholder="Search..."
             className="px-3 py-2 w-full outline-none text-sm"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange} // Real-time dispatch here
           />
           <button
             type="submit"
             className="bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary"
-            disabled={searchLoading}
           >
-            {searchLoading ? "Searching..." : "Search"}
+            Search
           </button>
         </form>
       </div>
@@ -235,7 +237,6 @@ const Navbar = () => {
             <Link to="/#" className="hover:text-primary">
               Pages
             </Link>
-
             <Link to="/about" className="hover:text-primary">
               About Us
             </Link>
@@ -285,7 +286,6 @@ const Navbar = () => {
             <Link to="/pages" className="block py-1 hover:text-green-400">
               Pages
             </Link>
-
             <Link to="/about" className="block py-1 hover:text-green-400">
               About Us
             </Link>

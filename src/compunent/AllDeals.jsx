@@ -24,7 +24,7 @@ const AllDeals = () => {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="max-w-7xl mx-auto p-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {Array(8)
           .fill()
           .map((_, index) => (
@@ -53,11 +53,11 @@ const AllDeals = () => {
   return (
     <>
     <Navbar/>
-      <div className="max-w-7xl mx-auto p-6 font-daraz">
+      <div className="max-w-7xl mx-auto p-3 md:p-6 font-daraz">
         <h1 className="text-2xl md:text-3xl font-bold text-dark mb-6">
           All Deals
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
           {deals.map((deal, index) => {
             const discountPercent = getDiscountPercent(
               deal.original_price,

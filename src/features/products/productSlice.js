@@ -1,3 +1,4 @@
+// productSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -127,8 +128,13 @@ const productSlice = createSlice({
     error: null,
     relatedError: null,
     reviewsError: null,
+    searchTerm: "", // Added searchTerm
   },
-  reducers: {},
+  reducers: {
+    setSearchTerm: (state, action) => {
+      state.searchTerm = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProductById.pending, (state) => {
@@ -194,4 +200,5 @@ const productSlice = createSlice({
   },
 });
 
+export const { setSearchTerm } = productSlice.actions;
 export default productSlice.reducer;

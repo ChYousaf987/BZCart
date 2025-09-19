@@ -65,7 +65,7 @@ const ViewAll = () => {
                 {categoryName}
                 <div className="px-2 py-[1px] bg-primary w-24"></div>
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-7">
                 {groupedProducts[categoryName].map((item) => {
                   const discountPercentage = calculateDiscountPercentage(
                     item.product_base_price,
@@ -80,6 +80,7 @@ const ViewAll = () => {
                       {/* Image */}
                       <Link to={`/product/${item._id}`} className="relative">
                         <div
+                          className="md:h-48 flex items-center justify-center"
                           style={{
                             backgroundColor: item.bg_color || "#f3f4f6",
                           }}
@@ -87,7 +88,8 @@ const ViewAll = () => {
                           <img
                             src={item.product_images[0]}
                             alt={item.product_name}
-                            className="h-48 md:h-64 w-full object-contain p-6 transition-transform duration-500 group-hover:scale-105"
+                            className="object-contain max-h-full transition-transform duration-300 group-hover:scale-105"
+                            loading="lazy"
                           />
                         </div>
                         {discountPercentage > 0 && (
@@ -95,51 +97,51 @@ const ViewAll = () => {
                             -{discountPercentage}%
                           </span>
                         )}
-                      </Link>
-
-                      {/* Product Info */}
-                      <div className="flex-1 p-2 md:p-5 flex flex-col justify-between">
-                        <div>
-                          <h6 className="font-semibold text-lg text-dark group-hover:text-primary transition-colors duration-200">
-                            {item.product_name}
-                          </h6>
-                          <p className="text-dark/60 text-sm mt-1 line-clamp-2">
-                            {item.product_description}
-                          </p>
-
-                          {/* Rating */}
-                          <div className="flex items-center gap-1 mt-2">
+                        <div className="px-2 py-2 md:py-4 border-t bg-orange-50">
+                          <h3 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1 hover:text-[#f06621] transition-colors duration-200">
+                            {item.product_name || "Unknown Product"}
+                          </h3>
+                          <div className="flex items-center text-yellow-400 text-sm mb-1">
                             {[...Array(5)].map((_, i) => (
                               <svg
                                 key={i}
                                 className={`w-4 h-4 ${
-                                  i < Math.floor(item.rating || 0)
-                                    ? "text-yellow-400"
-                                    : "text-gray-300"
+                                  i < Math.floor(item.rating || 4)
+                                    ? "fill-current"
+                                    : "fill-none stroke-current"
                                 }`}
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
+                                viewBox="0 0 24 24"
                               >
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.286 3.966c.3.921-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.197-1.539-1.118l1.285-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.951-.69l1.286-3.967z" />
+                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                               </svg>
                             ))}
-                            <span className="text-xs text-dark/50 ml-1">
-                              {item.rating || 0}
+                            <span className="text-gray-600 text-xs ml-2">
+                              ({item.rating || 4})
                             </span>
                           </div>
                         </div>
+                      </Link>
 
-                        {/* Price */}
-                        <div className="mt-2 md:mt-4">
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-400 line-through text-sm">
-                              Rs. {item.product_base_price}
-                            </span>
-                            <span className="text-primary font-semibold md:font-bold md:text-xl">
-                              Rs. {item.product_discounted_price}
-                            </span>
-                          </div>
+                      {/* Price Info */}
+                      <div className="px-2 pb-4 bg-orange-50">
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="line-through text-gray-400">
+                            Rs. {item.product_base_price || "N/A"}
+                          </span>
                         </div>
+                        <span className="font-semibold text-black">
+                          Rs. {item.product_discounted_price || "N/A"}
+                        </span>
+                        {item.product_base_price &&
+                          item.product_discounted_price && (
+                            <p className="text-green-600 text-xs mt-1">
+                              Save - Rs.{" "}
+                              {(
+                                item.product_base_price -
+                                item.product_discounted_price
+                              ).toFixed(2)}
+                            </p>
+                          )}
                       </div>
                     </div>
                   );

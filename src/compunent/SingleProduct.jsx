@@ -60,6 +60,12 @@ const SingleProduct = () => {
       toast.error("Please write a review", { position: "top-right" });
       return;
     }
+    if (reviewText.length < 3 || reviewText.length > 500) {
+      toast.error("Review must be between 3 and 500 characters", {
+        position: "top-right",
+      });
+      return;
+    }
     if (rating < 1 || rating > 5) {
       toast.error("Please select a valid rating (1–5)", {
         position: "top-right",
@@ -143,8 +149,7 @@ const SingleProduct = () => {
       .unwrap()
       .then(() => {
         toast.success("Redirecting to checkout...", { position: "top-right" });
-        // Navigate to cart/checkout page
-        window.location.href = "/paymentMethod"; // or "/checkout" if you make a separate page
+        window.location.href = "/paymentMethod";
       })
       .catch((err) => {
         toast.error(err || "Failed to proceed with Buy Now", {
@@ -281,20 +286,18 @@ const SingleProduct = () => {
               Buy Now
             </button>
 
-            <div className="mb-6">
+            <div className="mb-6 mt-3">
               <h3 className="font-semibold text-lg mb-2">
                 Product Highlights:
               </h3>
               <ul className="list-disc pl-6 space-y-1 text-gray-700">
                 {product.product_description
-                  .split(". ")
+                  ?.split(". ")
                   .map(
                     (highlight, i) => highlight && <li key={i}>{highlight}</li>
                   )}
               </ul>
             </div>
-
-            
           </div>
         </div>
 
@@ -361,7 +364,7 @@ const SingleProduct = () => {
                 <h2 className="text-lg font-semibold mb-2">
                   Product Description
                 </h2>
-                <p>{product.product_description}</p>
+                <p>{product.product_description || "No description available."}</p>
               </div>
             )}
 
@@ -380,7 +383,7 @@ const SingleProduct = () => {
                           <p className="font-semibold">
                             {review.user_id?.username || "Anonymous"}
                           </p>
-                          {renderStars(review.rating)}
+                          {renderStars(review.rating || 0)}
                         </div>
                         <p className="mt-2">{review.comment}</p>
                         <p className="text-sm text-gray-500">
@@ -428,7 +431,11 @@ const SingleProduct = () => {
                         value={reviewText}
                         onChange={(e) => setReviewText(e.target.value)}
                         rows="4"
+                        maxLength={500}
                       />
+                      <p className="text-sm text-gray-500">
+                        {reviewText.length}/500 characters
+                      </p>
                     </div>
                     <button
                       type="submit"
@@ -441,9 +448,9 @@ const SingleProduct = () => {
                 ) : (
                   <p className="mt-4 text-gray-500">
                     Please{" "}
-                    <a href="/login" className="text-red-600 hover:underline">
+                    <Link to="/login" className="text-red-600 hover:underline">
                       log in
-                    </a>{" "}
+                    </Link>{" "}
                     to submit a review.
                   </p>
                 )}
