@@ -5,7 +5,7 @@ import { fetchProducts } from "../features/products/productSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-const Essential = () => {
+const BeatSeller = () => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.products);
 
@@ -15,32 +15,10 @@ const Essential = () => {
       .catch(() => {});
   }, [dispatch]);
 
-  // Find the second category dynamically (name and ID)
-  const secondCategory = useMemo(() => {
-    if (products.length === 0) return { name: "", id: "" };
-    const uniqueCategories = [
-      ...new Set(
-        products
-          .map((item) =>
-            JSON.stringify({
-              name: item.category?.name,
-              id: item.category?._id || item.category,
-            })
-          )
-          .filter(Boolean)
-      ),
-    ].map((str) => JSON.parse(str));
-    return uniqueCategories[1] || { name: "", id: "" };
-  }, [products]);
-
-  // Filter products for the second category
+  // Filter products where isBestSeller is true
   const filteredProducts = useMemo(() => {
-    if (!secondCategory.name) return [];
-    return products.filter((item) => {
-      const categoryName = item.category?.name || "";
-      return categoryName.toLowerCase() === secondCategory.name.toLowerCase();
-    });
-  }, [products, secondCategory]);
+    return products.filter((item) => item.isBestSeller === true);
+  }, [products]);
 
   return (
     <div className="md:w-[95%] mx-auto px-2 md:px-0 pt-6">
@@ -49,20 +27,14 @@ const Essential = () => {
         <h2 className="text-lg md:text-2xl font-bold border-b-2 text-gray-500 border-[#f06621] inline-block pb-1">
           Shop From{" "}
           <span className="text-[#f06621]">
-            {loading ? (
-              <Skeleton width={100} />
-            ) : (
-              secondCategory.name || "Essentials"
-            )}
+            {loading ? <Skeleton width={100} /> : "Best Sellers"}
           </span>
         </h2>
         {loading ? (
           <Skeleton width={70} height={20} />
         ) : (
           <Link
-            to={
-              secondCategory.id ? `/category/${secondCategory.id}` : "/products"
-            }
+            to="/products"
             className="text-[#f06621] text-sm sm:text-base font-semibold hover:underline transition"
           >
             View All →
@@ -86,10 +58,10 @@ const Essential = () => {
               </div>
             ))}
         </div>
+      ) : error ? (
+        <p className="text-center w-full text-red-600">Error: {error}</p>
       ) : filteredProducts.length === 0 ? (
-        <p className="text-center w-full">
-          No products found for {secondCategory.name || "any category"}
-        </p>
+        <p className="text-center w-full">No best seller products found</p>
       ) : (
         <div className="flex overflow-x-auto md:overflow-hidden gap-6 sm:gap-10 snap-x snap-mandatory scrollbar-hide">
           {filteredProducts.map((product, index) => (
@@ -133,4 +105,4 @@ const Essential = () => {
   );
 };
 
-export default Essential;
+export default BeatSeller;

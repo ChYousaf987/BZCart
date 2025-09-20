@@ -7,13 +7,14 @@ import Slider from "./Slider";
 import ProductDeals from "./ProductDeals";
 import TopCategories from "./TopCategories";
 import TopBrands from "./TopBrands";
-import Essential from "./Essential";
 import PromoBanner from "./PromoBanner";
 import Footer from "./Footer";
 import LazyWrapper from "./LazyWrapper";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import axios from "axios";
+import NewArrival from "./NewArrival";
+import BeatSeller from "./BeatSeller";
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false };
@@ -95,7 +96,8 @@ const Home = () => {
         {searchTerm && (
           <div className="md:w-[95%] mx-auto px-2 md:px-0 py-8">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-500 mb-8">
-              Search Results for <span className="text-[#f06621]">"{searchTerm}"</span>
+              Search Results for{" "}
+              <span className="text-[#f06621]">"{searchTerm}"</span>
             </h2>
 
             {/* Categories Section */}
@@ -118,7 +120,9 @@ const Home = () => {
                     ))}
                 </div>
               ) : categoriesError ? (
-                <p className="text-center w-full text-red-500">{categoriesError}</p>
+                <p className="text-center w-full text-red-500">
+                  {categoriesError}
+                </p>
               ) : filteredCategories.length === 0 ? (
                 <p className="text-center w-full text-gray-500">
                   No categories found starting with "{searchTerm}"
@@ -133,7 +137,9 @@ const Home = () => {
                     >
                       <div className="w-32 h-32 mt-5 ml-8 md:ml-2 sm:w-36 sm:h-36 rounded-full border border-[#f06621] bg-[#fbf6f4] p-1 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-105">
                         <img
-                          src={category.image || "https://via.placeholder.com/150"}
+                          src={
+                            category.image || "https://via.placeholder.com/150"
+                          }
                           alt={category.name || "Category"}
                           className="w-full h-full object-cover rounded-full"
                           loading="lazy"
@@ -174,10 +180,7 @@ const Home = () => {
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
                   {filteredProducts.map((product) => (
-                    <div
-                      key={product._id}
-                      className="snap-start flex-shrink-0"
-                    >
+                    <div key={product._id} className="snap-start flex-shrink-0">
                       <div className="group mb-3 bg-white rounded-2xl border shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
                         {/* Discount Badge */}
                         {getDiscountPercent(
@@ -273,7 +276,10 @@ const Home = () => {
           <TopCategories />
         </LazyWrapper>
         <LazyWrapper>
-          <Essential />
+          <NewArrival />
+        </LazyWrapper>
+        <LazyWrapper>
+          <BeatSeller />
         </LazyWrapper>
         <LazyWrapper>
           <ProductDeals />
