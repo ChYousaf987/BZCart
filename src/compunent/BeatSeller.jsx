@@ -34,7 +34,7 @@ const BeatSeller = () => {
           <Skeleton width={70} height={20} />
         ) : (
           <Link
-            to="/products"
+            to="/products?filter=best-sellers"
             className="text-[#f06621] text-sm sm:text-base font-semibold hover:underline transition"
           >
             View All →

@@ -13,6 +13,8 @@ import TrackOrder from "./compunent/TrackOrder";
 import PaymentMethod from "./compunent/PaymentMethod";
 import SingleDeal from "./compunent/SingleDeal";
 import AllDeals from "./compunent/AllDeals";
+import AllProducts from "./compunent/AllProducts";
+import SearchPage from "./compunent/SearchPage";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -43,6 +45,8 @@ const App = () => {
       <Route path="/categories" element={<CategoriesPage />} />
       <Route path="/deals" element={<AllDeals />} /> {/* New route */}
       <Route path="/Contact" element={<ContactPage />} />
+      <Route path="/products" element={<AllProducts />} /> {/* New route */}
+      <Route path="/search" element={<SearchPage />} />
     </Routes>
   );
 };

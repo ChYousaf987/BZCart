@@ -15,6 +15,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import axios from "axios";
 import NewArrival from "./NewArrival";
 import BeatSeller from "./BeatSeller";
+import { FaWhatsapp } from "react-icons/fa";
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false };
@@ -57,7 +58,9 @@ const Home = () => {
         );
         setCategories(response.data);
       } catch (err) {
-        setCategoriesError(err.response?.data?.message || "Failed to fetch categories");
+        setCategoriesError(
+          err.response?.data?.message || "Failed to fetch categories"
+        );
       } finally {
         setCategoriesLoading(false);
       }
@@ -65,19 +68,16 @@ const Home = () => {
     fetchCategories();
   }, []);
 
-  // Filter products and categories starting with searchTerm
+  // Filter products and categories containing searchTerm anywhere (case-insensitive)
   const filteredProducts = searchTerm
     ? products.filter((product) =>
-        product.product_name
-          ?.toLowerCase()
-          .startsWith(searchTerm.toLowerCase())
+        product.product_name?.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
+
   const filteredCategories = searchTerm
     ? categories.filter((category) =>
-        category.name
-          ?.toLowerCase()
-          .startsWith(searchTerm.toLowerCase())
+        category.name?.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
 
@@ -88,9 +88,23 @@ const Home = () => {
 
   return (
     <div className="relative font-daraz bg-white">
+      <div className="fixed bottom-5 right-5 z-50">
+        <a
+          href="https://wa.me/923297609190?text=Hello%20I%20want%20to%20know%20more%20about%20your%20products"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p- rounded-full shadow-lg transition-transform transform hover:scale-110"
+        >
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png"
+            alt="WhatsApp"
+            className="w-16 h-16"
+          />
+        </a>
+      </div>
+
       <ErrorBoundary>
         <Navbar />
-        <Slider />
 
         {/* Search Results Section */}
         {searchTerm && (
@@ -272,6 +286,8 @@ const Home = () => {
         )}
 
         {/* Existing Homepage Components */}
+        <Slider />
+
         <LazyWrapper>
           <TopCategories />
         </LazyWrapper>

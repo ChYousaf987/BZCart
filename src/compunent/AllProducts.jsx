@@ -1,20 +1,20 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { fetchProducts } from "../features/products/productSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
 
-const TopBrands = () => {
+const AllProducts = () => {
   const dispatch = useDispatch();
-  const {
-    products = [],
-    loading,
-    error,
-  } = useSelector((state) => state.products || {});
+  const { products, loading, error } = useSelector((state) => state.products);
+  const location = useLocation();
 
-  const [visibleCount, setVisibleCount] = useState(8);
-  const loadMoreRef = useRef(null);
+  // Extract query parameter to determine filter
+  const query = new URLSearchParams(location.search);
+  const filter = query.get("filter");
 
   useEffect(() => {
     dispatch(fetchProducts())
@@ -22,96 +22,70 @@ const TopBrands = () => {
       .catch(() => {});
   }, [dispatch]);
 
-  useEffect(() => {
-    if (visibleCount >= products.length || loading || error) return;
-    if (!("IntersectionObserver" in window)) {
-      // Fallback for browsers without IntersectionObserver
-      setVisibleCount((prev) => Math.min(prev + 8, products.length));
-      return;
+  // Filter products based on query parameter
+  const filteredProducts = useMemo(() => {
+    if (filter === "new-arrivals") {
+      return products.filter((item) => item.isNewArrival === true);
+    } else if (filter === "best-sellers") {
+      return products.filter((item) => item.isBestSeller === true);
     }
-
-    const el = loadMoreRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisibleCount((prev) => {
-            const newCount = Math.min(prev + 8, products.length);
-            return newCount;
-          });
-        }
-      },
-      { root: null, rootMargin: "100px", threshold: 0.1 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [visibleCount, products.length, loading, error]);
-
-  const getDiscountPercent = (base, discounted) => {
-    if (!base || !discounted || base <= 0) return null;
-    return Math.round(((base - discounted) / base) * 100);
-  };
+    return products; // Show all products if no filter is applied
+  }, [products, filter]);
 
   return (
-    <div className="md:w-[95%] mx-auto px-2 md:px-0 pb-7 mt-10">
-      <div className="flex justify-between items-start md:items-center mb-6">
-        <h2 className="text-lg md:text-2xl font-bold text-gray-500 border-b-2 border-[#f06621] inline-block pb-1">
-          Explore From 
-          <span className="text-[#f06621]"> All Product</span>
+    <>
+      <Navbar />
+      <div className="md:w-[95%] mx-auto px-2 md:px-0 py-8">
+        <h2 className="text-2xl md:text-3xl font-bold mb-8">
+          {filter === "new-arrivals"
+            ? "New Arrivals"
+            : filter === "best-sellers"
+            ? "Best Sellers"
+            : "All Products"}
         </h2>
-        <Link
-          to="/products"
-          className="text-[#f06621] font-medium text-sm hover:underline"
-        >
-          View All →
-        </Link>
-      </div>
 
-      {loading ? (
-        // Skeleton Grid Loader
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
-          {Array(8)
-            .fill(0)
-            .map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl border p-3">
-                <Skeleton height={150} className="rounded-lg mb-3" />
-                <Skeleton width="80%" height={16} className="mb-2" />
-                <Skeleton width="60%" height={14} />
-              </div>
-            ))}
-        </div>
-      ) : error ? (
-        <p className="text-center w-full text-red-500">{error}</p>
-      ) : products.length === 0 ? (
-        <p className="text-center w-full">No products found</p>
-      ) : (
-        <>
-          {/* Products Grid */}
+        {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
-            {products.slice(0, visibleCount).map((product) => (
+            {Array(8)
+              .fill(0)
+              .map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl border p-3">
+                  <Skeleton height={150} className="rounded-lg mb-3" />
+                  <Skeleton width="80%" height={16} className="mb-2" />
+                  <Skeleton width="60%" height={14} />
+                </div>
+              ))}
+          </div>
+        ) : error ? (
+          <p className="text-center w-full text-red-600">Error: {error}</p>
+        ) : filteredProducts.length === 0 ? (
+          <p className="text-center w-full text-gray-500">No products found</p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
+            {filteredProducts.map((product) => (
               <div key={product._id} className="snap-start flex-shrink-0">
                 <div className="group mb-3 bg-white rounded-2xl border shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
                   {/* Discount Badge */}
-                  {getDiscountPercent(
-                    product.product_base_price,
-                    product.product_discounted_price
-                  ) !== null && (
-                    <div className="absolute top-2 right-2 bg-[#f06621] text-white text-xs font-semibold px-2 py-1 rounded-bl-lg z-10">
-                      {getDiscountPercent(
-                        product.product_base_price,
-                        product.product_discounted_price
-                      )}
-                      % OFF
-                    </div>
-                  )}
+                  {product.product_base_price &&
+                    product.product_discounted_price && (
+                      <div className="absolute top-2 right-2 bg-[#f06621] text-white text-xs font-semibold px-2 py-1 rounded-bl-lg z-10">
+                        {Math.round(
+                          ((product.product_base_price -
+                            product.product_discounted_price) /
+                            product.product_base_price) *
+                            100
+                        )}
+                        % OFF
+                      </div>
+                    )}
 
                   {/* Product Image */}
                   <Link to={`/product/${product._id}`}>
                     <div
                       className="md:h-48 flex items-center justify-center"
-                      style={{ backgroundColor: product.bg_color || "#f3f4f6" }}
+                      style={{
+                        backgroundColor: product.bg_color || "#f3f4f6",
+                      }}
                     >
                       <img
                         src={
@@ -175,15 +149,11 @@ const TopBrands = () => {
               </div>
             ))}
           </div>
-
-          {/* Invisible trigger for loading more */}
-          {visibleCount < products.length && (
-            <div ref={loadMoreRef} className="h-10"></div>
-          )}
-        </>
-      )}
-    </div>
+        )}
+      </div>
+      <Footer/>
+    </>
   );
 };
 
-export default TopBrands;
+export default AllProducts;
