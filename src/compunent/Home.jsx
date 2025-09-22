@@ -88,7 +88,7 @@ const Home = () => {
 
   return (
     <div className="relative font-daraz bg-white">
-      <div className="fixed bottom-5 right-5 z-50">
+      <div className="fixed bottom-5 left-5 z-50">
         <a
           href="https://wa.me/923297609190?text=Hello%20I%20want%20to%20know%20more%20about%20your%20products"
           target="_blank"

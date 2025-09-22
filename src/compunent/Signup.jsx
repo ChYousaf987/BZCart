@@ -33,7 +33,6 @@ export default function Signup({ setIsSignIn }) {
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-
   const handleOtpChange = (e) => setOtp(e.target.value);
 
   const handleSubmit = (e) => {
@@ -47,10 +46,7 @@ export default function Signup({ setIsSignIn }) {
 
   useEffect(() => {
     if (userError) {
-      toast.error(userMessage, {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.error(userMessage, { position: "top-right", autoClose: 3000 });
       dispatch(userReset());
     }
     if (userSuccess && tempUser && !showOtpInput) {
@@ -83,60 +79,43 @@ export default function Signup({ setIsSignIn }) {
   ]);
 
   return (
-    <div className="flex flex-col md:flex-row w-full font-cabin">
+    <div className="flex flex-col md:flex-row font-cabin">
       {/* Left Panel */}
       <div
-        className="w-full md:w-1/2 relative text-white flex flex-col justify-center items-center p-8 rounded-t-2xl md:rounded-tl-2xl md:rounded-bl-2xl bg-cover bg-center"
-        style={{
-          backgroundImage: "url('./logo.png')",
-        }}
+        className="w-full md:w-1/2 relative text-white flex flex-col justify-center items-center p-10 rounded-t-3xl md:rounded-tl-3xl md:rounded-bl-3xl bg-cover bg-center shadow-lg"
+        style={{ backgroundImage: "url('./logo.png')" }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/95 to-dark/95 rounded-t-2xl md:rounded-tl-2xl md:rounded-bl-2xl" />
-        <h2 className="text-2xl font-bold mb-3 mt-10 z-10">Welcome Back!</h2>
-        <p className="text-center max-w-xs mb-4 z-10">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-dark/90 rounded-t-3xl md:rounded-tl-3xl md:rounded-bl-3xl" />
+        <h2 className="text-3xl font-bold mb-4 z-10 mt-12">Welcome Back!</h2>
+        <p className="text-center max-w-xs mb-6 z-10">
           Already have an account? Sign in to continue with Referra!
         </p>
         <button
           onClick={() => setIsSignIn(true)}
-          className="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-dark transition z-10"
+          className="z-10 w-40 py-3 border border-white rounded-xl hover:bg-white hover:text-primary font-semibold transition"
         >
-          Sign In
+          Log In
         </button>
       </div>
 
       {/* Right Panel - Form */}
-      <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center p-6 md:p-10">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-primary mb-4 text-center">
+      <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center p-8 md:p-12 shadow-lg">
+        <h2 className="text-3xl sm:text-3xl font-bold text-primary mb-6 text-center">
           {showOtpInput ? "Verify Your Email" : "Create An Account"}
         </h2>
 
         {userSuccess && !showOtpInput && (
-          <p className="text-green-500 text-sm mb-4">OTP sent to your email!</p>
+          <p className="text-green-500 text-sm mb-4 text-center">
+            OTP sent to your email!
+          </p>
         )}
         {userSuccess && showOtpInput && (
-          <p className="text-green-500 text-sm mb-4">
+          <p className="text-green-500 text-sm mb-4 text-center">
             Enter the OTP to complete registration
           </p>
         )}
 
-        <div className="flex space-x-3 md:space-x-4 mb-6">
-          {[FaFacebookF, FaGoogle, FaLinkedinIn].map((Icon, idx) => (
-            <button
-              key={idx}
-              className="border rounded-full p-3 w-12 h-12 flex items-center justify-center hover:bg-light transition"
-            >
-              <Icon className="text-lg text-dark" />
-            </button>
-          ))}
-        </div>
-
-        <p className="mb-4 text-gray-500 text-sm text-center">
-          {showOtpInput
-            ? "Enter the OTP sent to your email"
-            : "Or Signup Through Your Email"}
-        </p>
-
-        <form onSubmit={handleSubmit} className="w-full max-w-[24rem]">
+        <form onSubmit={handleSubmit} className="w-full max-w-sm">
           {!showOtpInput ? (
             <>
               <InputWithIcon
@@ -168,7 +147,7 @@ export default function Signup({ setIsSignIn }) {
               />
               <div className="flex items-center mb-4">
                 <input type="checkbox" id="robot" className="mr-2 w-4 h-4" />
-                <label htmlFor="robot" className="text-sm text-gray-700">
+                <label htmlFor="robot" className="text-sm text-gray-600">
                   I am not a robot
                 </label>
               </div>
@@ -187,8 +166,8 @@ export default function Signup({ setIsSignIn }) {
           <button
             type="submit"
             disabled={userLoading}
-            className={`w-full p-3 bg-primary text-white rounded-full hover:bg-primary/90 transition ${
-              userLoading ? "opacity-50 cursor-not-allowed" : ""
+            className={`w-full py-3 bg-primary text-white font-semibold rounded-xl shadow-lg hover:from-primary/90 hover:to-secondary/90 transition ${
+              userLoading ? "opacity-60 cursor-not-allowed" : ""
             }`}
           >
             {userLoading

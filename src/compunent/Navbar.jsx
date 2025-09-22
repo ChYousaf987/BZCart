@@ -1,4 +1,3 @@
-// Navbar.jsx
 import React, { useState, useEffect } from "react";
 import {
   FaShoppingCart,
@@ -51,31 +50,25 @@ const Navbar = () => {
     }
   }, [user, dispatch]);
 
-  // Handle input change - real-time search
+  // Handle input change
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setLocalSearchTerm(value);
-    dispatch(setSearchTerm(value)); // Dispatch immediately for real-time filtering
+    dispatch(setSearchTerm(value)); // optional real-time filtering
   };
 
-  // Handle form submit - optional navigation and validation
+  // Submit search: navigate to search page
   const handleSearch = (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) {
       toast.error("Please enter a search term");
-      dispatch(setSearchTerm(""));
       return;
     }
-    // If on a different page, navigate to home to show results
-    if (location.pathname !== "/") {
-      navigate("/");
-    }
+    navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
   };
 
-  // Logout
   const handleLogout = () => {
-    const confirmLogout = window.confirm("Are you sure you want to logout?");
-    if (confirmLogout) {
+    if (window.confirm("Are you sure you want to logout?")) {
       dispatch(logoutUser());
       localStorage.removeItem("myUser");
       setIsMenuOpen(false);
@@ -84,7 +77,6 @@ const Navbar = () => {
     }
   };
 
-  // Get user display name
   const getUserDisplayName = () => {
     if (!user) return null;
     return (
@@ -99,6 +91,7 @@ const Navbar = () => {
 
   return (
     <div className="sticky top-0 z-20 font-sans shadow bg-white">
+      {/* Top Info */}
       <div className="bg-gray-100 text-gray-600 text-xs py-2 max-lg:hidden">
         <div className="md:w-[95%] mx-auto px-2 md:px-0 flex justify-between">
           <p>Dinga, Tehsil Kharian District Gujrat, Punjab –Pakistan</p>
@@ -109,6 +102,7 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Main Navbar */}
       <div className="flex justify-between md:w-[95%] mx-auto px-2 md:px-0 items-center py-4 bg-white border-b">
         <div className="flex items-center gap-2">
           <button
@@ -126,6 +120,7 @@ const Navbar = () => {
           </Link>
         </div>
 
+        {/* Desktop Search */}
         <form
           onSubmit={handleSearch}
           className="hidden md:flex items-center border border-gray-300 rounded-md overflow-hidden w-1/2"
@@ -135,7 +130,7 @@ const Navbar = () => {
             placeholder="Search for products or categories..."
             className="px-3 py-2 w-full outline-none text-sm"
             value={searchTerm}
-            onChange={handleSearchChange} // Real-time dispatch here
+            onChange={handleSearchChange}
           />
           <button
             type="submit"
@@ -145,6 +140,7 @@ const Navbar = () => {
           </button>
         </form>
 
+        {/* Right Section */}
         <div className="flex items-center gap-4 md:gap-6 text-gray-600">
           <div className="text-right hidden md:block">
             <p className="text-xs text-gray-500">Customer Services</p>
@@ -159,6 +155,7 @@ const Navbar = () => {
               {cartItems.length}
             </span>
           </div>
+
           {user ? (
             <button
               onClick={handleLogout}
@@ -174,6 +171,7 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Mobile Search */}
       <div className="md:hidden px-4 mt-2 pb-3">
         <form
           onSubmit={handleSearch}
@@ -184,7 +182,7 @@ const Navbar = () => {
             placeholder="Search..."
             className="px-3 py-2 w-full outline-none text-sm"
             value={searchTerm}
-            onChange={handleSearchChange} // Real-time dispatch here
+            onChange={handleSearchChange}
           />
           <button
             type="submit"
@@ -195,6 +193,7 @@ const Navbar = () => {
         </form>
       </div>
 
+      {/* Categories Menu */}
       <div className="bg-black">
         <div className="py-2 hidden md:flex md:w-[95%] mx-auto px-2 md:px-0 text-white items-center gap-9">
           <div className="relative group">
@@ -227,6 +226,7 @@ const Navbar = () => {
               ))}
             </div>
           </div>
+
           <div className="flex gap-6 text-sm font-medium ml-6">
             <Link to="/" className="hover:text-primary">
               Home
@@ -234,7 +234,7 @@ const Navbar = () => {
             <Link to="/cart" className="hover:text-primary">
               Shop
             </Link>
-            <Link to="/#" className="hover:text-primary">
+            <Link to="/pages" className="hover:text-primary">
               Pages
             </Link>
             <Link to="/about" className="hover:text-primary">
@@ -247,6 +247,7 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-black text-white px-6 py-4 space-y-4">
           <div>

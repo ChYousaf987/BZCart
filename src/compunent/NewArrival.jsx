@@ -71,7 +71,7 @@ const NewArrival = () => {
               className="flex flex-col items-center text-center bg-transparent"
             >
               <div
-                className="w-36 h-36 lg:w-40 lg:h-40 rounded-3xl border border-[#f06621] mt-2 p-1 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-105"
+                className="w-36 h-36 lg:w-40 lg:h-40 rounded-3xl border border-[#f06621] mt-2 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-105"
                 style={{ backgroundColor: product.bg_color || "#fbf6f4" }}
               >
                 <img
@@ -80,7 +80,7 @@ const NewArrival = () => {
                     "https://via.placeholder.com/150"
                   }
                   alt={product.product_name || "Product"}
-                  className="w-full h-full object-cover rounded-full"
+                  className="w-full h-full object-cover rounded-3xl"
                   loading="lazy"
                 />
               </div>
