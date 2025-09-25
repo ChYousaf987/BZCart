@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { createOrder } from "../features/cart/cartSlice";
 import axios from "axios";
-import Footer from "./Footer";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
+import { Mail, Phone, MapPin, User, Tag } from "lucide-react"; // icons
 
-const PaymentMethod = () => {
+const Cashout = () => {
   const dispatch = useDispatch();
   const { items: cart } = useSelector((state) => state.cart);
-  const { user: authUser } = useSelector((state) => state.auth); // Get logged-in user
+  const { user: authUser } = useSelector((state) => state.auth);
 
   // Prefill form data for logged-in users
   const [fullName, setFullName] = useState(authUser?.username || "");
@@ -19,8 +21,8 @@ const PaymentMethod = () => {
   const [discountCode, setDiscountCode] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isValidDiscount, setIsValidDiscount] = useState(false); // Track discount code validity
-  const [discountMessage, setDiscountMessage] = useState(""); // Store validation message
+  const [isValidDiscount, setIsValidDiscount] = useState(false);
+  const [discountMessage, setDiscountMessage] = useState("");
 
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
@@ -30,7 +32,6 @@ const PaymentMethod = () => {
   const guestId = localStorage.getItem("guestId") || `guest_${Date.now()}`;
 
   useEffect(() => {
-    // Set guestId in localStorage if not exists
     if (!localStorage.getItem("guestId")) {
       localStorage.setItem("guestId", guestId);
     }
@@ -44,16 +45,19 @@ const PaymentMethod = () => {
     }
   };
 
+  const location = useLocation();
+  const buyNowProduct = location.state?.buyNowProduct;
+  const guestIdFromState = location.state?.guestId;
+
+  // Use this cart for calculation (Buy Now or full cart)
+  const displayCart = buyNowProduct ? [buyNowProduct] : cart;
+
   const calculateTotal = () => {
-    return Array.isArray(cart)
-      ? cart.reduce(
-          (total, item) =>
-            total +
-            (item.product_id?.product_discounted_price || 0) *
-              (item.quantity || 1),
-          0
-        )
-      : 0;
+    return displayCart.reduce(
+      (total, item) =>
+        total + (item.product_discounted_price || 0) * (item.quantity || 1),
+      0
+    );
   };
 
   const handleDiscountCodeChange = async (e) => {
@@ -61,7 +65,6 @@ const PaymentMethod = () => {
     setDiscountCode(code);
 
     if (code) {
-      // Check if email is available before making the API call
       if (!email && !authUser?.email) {
         setIsValidDiscount(false);
         setDiscountMessage(
@@ -95,7 +98,6 @@ const PaymentMethod = () => {
   };
 
   const calculateDiscountedTotal = () => {
-    // Apply 10% discount only if the code is valid
     return isValidDiscount
       ? Math.round(calculateTotal() * 0.9 * 100) / 100
       : calculateTotal();
@@ -111,19 +113,20 @@ const PaymentMethod = () => {
 
     setIsSubmitting(true);
 
+    // Prepare order data from displayCart instead of full cart
     const orderData = {
-      products: cart.map((item) => ({
-        product_id: item.product_id?._id || item.product_id,
+      products: displayCart.map((item) => ({
+        product_id: item.product_id?._id || item._id,
         quantity: item.quantity,
         selected_image: item.selected_image,
       })),
-      total_amount: calculateTotal(), // Send original total to backend
-      shipping_address: shippingAddress, // Fixed: Use snake_case to match backend
+      total_amount: calculateDiscountedTotal(),
+      shipping_address: shippingAddress,
       order_email: email,
       phone_number: phoneNumber,
       full_name: fullName,
-      guestId,
-      discount_code: isValidDiscount ? discountCode : undefined, // Send discount code only if valid
+      guestId: guestIdFromState || guestId,
+      discount_code: isValidDiscount ? discountCode : undefined,
     };
 
     try {
@@ -137,7 +140,7 @@ const PaymentMethod = () => {
       setOrderPlaced(true);
       setOrderDetails(result);
 
-      // Clear cart and guestId after successful order
+      // Clear guestId after successful order
       localStorage.removeItem("guestId");
 
       // Reset form
@@ -160,91 +163,164 @@ const PaymentMethod = () => {
 
   return (
     <>
-    <Navbar/>
-      <div className="md:w-[35%] bg-white p-4 rounded-xl shadow">
+      <Navbar />
+
+      <div className="md:w-[35%] bg-white p-4 rounded-xl shadow mx-auto my-8">
         <h3 className="text-lg font-bold mb-4 text-dark">Order Summary</h3>
-
         {/* Full Name */}
-        <div className="mb-4">
-          <label className="block text-dark mb-2 font-medium">Full Name</label>
-          <input
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="w-full border border-dark/20 rounded-lg p-2 focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-            placeholder="Enter full name"
-            disabled={authUser?.username}
-          />
+        <div className="mb-6">
+          <label
+            htmlFor="fullName"
+            className="block text-dark mb-2 font-bold text-lg tracking-wide"
+          >
+            Full Name
+          </label>
+          <div className="relative group">
+            <User
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
+              size={22}
+            />
+            <input
+              type="text"
+              id="fullName"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Enter your full name..."
+              disabled={!!authUser?.username}
+              className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 
+                         bg-white/80  shadow
+                         placeholder-gray-400
+                         focus:border-transparent focus:ring-2 focus:ring-primary/70 
+                         focus:shadow-lg focus:shadow-primary/20
+                         hover:shadow-md hover:border-gray-300
+                         outline-none transition-all duration-300
+                         disabled:bg-gray-100 disabled:cursor-not-allowed 
+                         text-dark font-medium"
+            />
+          </div>
         </div>
-
         {/* Email */}
-        <div className="mb-4">
-          <label className="block text-dark mb-2 font-medium">
+        <div className="mb-6">
+          <label className="block text-dark mb-2 font-bold text-lg tracking-wide">
             Email Address
           </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-dark/20 rounded-lg p-2 focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-            placeholder="Enter email address"
-            disabled={authUser?.email}
-          />
+          <div className="relative group">
+            <Mail
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
+              size={20}
+            />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter email address"
+              disabled={authUser?.email}
+              className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 
+                         bg-white/80 shadow
+                         placeholder-gray-400
+                         focus:border-transparent focus:ring-2 focus:ring-primary/70 
+                         focus:shadow-lg focus:shadow-primary/20
+                         hover:shadow-md hover:border-gray-300
+                         outline-none transition-all duration-300
+                         disabled:bg-gray-100 disabled:cursor-not-allowed 
+                         text-dark font-medium"
+            />
+          </div>
         </div>
-
         {/* Phone */}
-        <div className="mb-4">
-          <label className="block text-dark mb-2 font-medium">
+        <div className="mb-6">
+          <label className="block text-dark mb-2 font-bold text-lg tracking-wide">
             Phone Number
           </label>
-          <input
-            type="tel"
-            value={phoneNumber}
-            onChange={(e) => {
-              setPhoneNumber(e.target.value);
-              validatePhone(e.target.value);
-            }}
-            className={`w-full border rounded-lg p-2 focus:ring-2 focus:ring-primary focus:border-transparent ${
-              phoneError ? "border-red-500" : "border-dark/20"
-            }`}
-            placeholder="Enter phone number (10-15 digits)"
-          />
+          <div className="relative group">
+            <Phone
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
+              size={20}
+            />
+            <input
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => {
+                setPhoneNumber(e.target.value);
+                validatePhone(e.target.value);
+              }}
+              placeholder="Enter phone number (10-15 digits)"
+              className={`w-full pl-12 pr-4 py-3 rounded-xl border 
+                          bg-white/80 shadow
+                          placeholder-gray-400
+                          focus:border-transparent focus:ring-2 focus:ring-primary/70 
+                          focus:shadow-lg focus:shadow-primary/20
+                          hover:shadow-md hover:border-gray-300
+                          outline-none transition-all duration-300
+                          text-dark font-medium
+                          ${
+                            phoneError
+                              ? "border-red-500 focus:ring-red-500 focus:shadow-red-200"
+                              : "border-gray-200"
+                          }`}
+            />
+          </div>
           {phoneError && (
             <p className="text-red-500 text-sm mt-1">{phoneError}</p>
           )}
         </div>
-
         {/* Address */}
-        <div className="mb-4">
-          <label className="block text-dark mb-2 font-medium">
+        <div className="mb-6">
+          <label className="block text-dark mb-2 font-bold text-lg tracking-wide">
             Shipping Address
           </label>
-          <input
-            type="text"
-            value={shippingAddress}
-            onChange={(e) => setShippingAddress(e.target.value)}
-            className="w-full border border-dark/20 rounded-lg p-2 focus:ring-2 focus:ring-primary focus:border-transparent"
-            placeholder="Enter shipping address"
-          />
-        </div>
-
-        {/* Discount Code */}
-        {authUser && (
-          <div className="mb-4">
-            <label className="block text-dark mb-2 font-medium">
-              Discount Code
-            </label>
+          <div className="relative group">
+            <MapPin
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
+              size={20}
+            />
             <input
               type="text"
-              value={discountCode}
-              onChange={handleDiscountCodeChange}
-              className="w-full border border-dark/20 rounded-lg p-2 focus:ring-2 focus:ring-primary focus:border-transparent"
-              placeholder="Enter your 10% discount code"
-              maxLength={8}
+              value={shippingAddress}
+              onChange={(e) => setShippingAddress(e.target.value)}
+              placeholder="Enter shipping address"
+              className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 
+                         bg-white/80 shadow
+                         placeholder-gray-400
+                         focus:border-transparent focus:ring-2 focus:ring-primary/70 
+                         focus:shadow-lg focus:shadow-primary/20
+                         hover:shadow-md hover:border-gray-300
+                         outline-none transition-all duration-300
+                         text-dark font-medium"
             />
+          </div>
+        </div>
+        {/* Discount Code */}
+        {authUser && (
+          <div className="mb-6">
+            <label className="block text-dark mb-2 font-bold text-lg tracking-wide">
+              Discount Code
+            </label>
+            <div className="relative group">
+              <Tag
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
+                size={20}
+              />
+              <input
+                type="text"
+                value={discountCode}
+                onChange={handleDiscountCodeChange}
+                placeholder="Enter your 10% discount code"
+                maxLength={8}
+                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 
+                           bg-white/80 shadow
+                           placeholder-gray-400 tracking-widest uppercase
+                           focus:border-transparent focus:ring-2 focus:ring-primary/70 
+                           focus:shadow-lg focus:shadow-primary/20
+                           hover:shadow-md hover:border-gray-300
+                           outline-none transition-all duration-300
+                           text-dark font-semibold"
+              />
+            </div>
+
             {discountCode && (
               <p
-                className={`text-sm mt-1 ${
+                className={`text-sm mt-2 font-medium transition ${
                   isValidDiscount ? "text-green-600" : "text-red-500"
                 }`}
               >
@@ -253,29 +329,30 @@ const PaymentMethod = () => {
             )}
           </div>
         )}
-
-        {/* Cart Summary */}
+        {/* Order Items */}
         <div className="mb-4 p-3 bg-gray-50 rounded-lg">
           <h4 className="font-semibold text-dark mb-2">Order Items:</h4>
-          {cart.map((item) => (
+          {displayCart.map((item) => (
             <div
               key={`${item.product_id?._id || item._id}-${item.selected_image}`}
               className="flex justify-between text-sm text-dark py-1 border-b border-gray-200 last:border-b-0"
             >
               <span className="truncate">
-                {item.quantity}x {item.product_id?.product_name || "Product"}
+                {item.quantity}x{" "}
+                {item.product_id?.product_name ||
+                  item.product_name ||
+                  "Product"}
               </span>
               <span className="font-medium">
                 Rs.{" "}
-                {(item.product_id?.product_discounted_price || 0) *
-                  item.quantity}
+                {(item.product_id?.product_discounted_price ||
+                  item.product_discounted_price ||
+                  0) * item.quantity}
               </span>
             </div>
           ))}
         </div>
-
         <hr className="my-4" />
-
         {/* Total Display */}
         <div className="space-y-2 mb-4">
           <div className="flex justify-between text-sm text-gray-600">
@@ -308,7 +385,6 @@ const PaymentMethod = () => {
             </span>
           </div>
         </div>
-
         {/* Order Button */}
         {!orderPlaced ? (
           <button
@@ -384,6 +460,17 @@ const PaymentMethod = () => {
                     Rs. {orderDetails.total_amount}
                   </span>
                 </div>
+                <div className="">
+                  If you have any question please contect on whatsapp number{" "}
+                  <a
+                    href="https://wa.me/923297609190?text=Hello%20I%20want%20to%20know%20more%20about%20your%20products"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary font-semibold underline"
+                  >
+                    03297609190
+                  </a>
+                </div>
                 <div className="mt-3 pt-2 border-t text-center text-sm text-gray-600">
                   <p>Order Status: {orderDetails.status}</p>
                   <p className="text-xs mt-1">
@@ -394,7 +481,6 @@ const PaymentMethod = () => {
             )}
           </>
         )}
-
         {/* Payment Info */}
         {!orderPlaced && (
           <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
@@ -405,9 +491,9 @@ const PaymentMethod = () => {
           </div>
         )}
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };
 
-export default PaymentMethod;
+export default Cashout;

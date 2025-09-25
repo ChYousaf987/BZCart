@@ -34,7 +34,7 @@ export default function Login({ setIsSignIn }) {
   }, [userSuccess, user, navigate, dispatch]);
 
   return (
-    <div className="flex flex-col md:flex-row  font-cabin">
+    <div className="flex flex-col-reverse md:flex-row  font-cabin">
       {/* Left Panel - Form */}
       <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center p-8 md:p-12 shadow-lg">
         <h2 className="text-3xl sm:text-4xl font-extrabold mb-8 text-center text-gray-800">
@@ -106,7 +106,7 @@ export default function Login({ setIsSignIn }) {
         <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-dark/90  md:rounded-tr-none md:rounded-br-3xl" />
 
         {/* Center Text */}
-        <div className="z-10 flex-1 flex flex-col justify-center items-center text-center my-12 md:my-0">
+        <div className="z-10 flex-1 flex flex-col justify-center items-center text-center my-3 md:my-0">
           <h2 className="text-3xl font-bold mb-4">Welcome Back!</h2>
           <p className="max-w-xs">
             Enter your credentials to access your account and enjoy shopping

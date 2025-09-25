@@ -201,7 +201,7 @@ const CartItems = () => {
           Total: <span className="text-primary">Rs. {totalPrice()}</span>
         </h3>
         <button
-          onClick={() => navigate("/paymentMethod")}
+          onClick={() => navigate("/paymentMethods")}
           className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition"
         >
           Proceed to Payment <FaArrowRight />

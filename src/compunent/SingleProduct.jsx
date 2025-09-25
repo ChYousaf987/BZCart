@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Navbar from "./Navbar";
@@ -21,6 +22,7 @@ import { v4 as uuidv4 } from "uuid";
 import Loader from "./Loader";
 
 const SingleProduct = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useDispatch();
   const { product, loading, error, reviews, reviewsLoading, reviewsError } =
@@ -30,6 +32,7 @@ const SingleProduct = () => {
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
   const [selectedImage, setSelectedImage] = useState("");
+  const WHATSAPP_NUMBER = "923165275052"; // Pakistan example
   const [guestId] = useState(
     localStorage.getItem("guestId") || `guest_${uuidv4()}`
   );
@@ -95,16 +98,27 @@ const SingleProduct = () => {
   };
 
   const handleAddToCart = () => {
+    if (!product?._id) {
+      toast.error("Product ID is missing", { position: "top-right" });
+      return;
+    }
+    if (!selectedImage) {
+      toast.error("Please select an image", { position: "top-right" });
+      return;
+    }
+
     dispatch(
       addToCart({
-        prod_id: id,
-        selected_image: selectedImage || product.product_images[0],
+        product_id: product._id,
+        selected_image: selectedImage,
         guestId: user ? undefined : guestId,
       })
     )
       .unwrap()
       .then(() => {
-        toast.success("Added to cart!", { position: "top-right" });
+        
+        // Fetch the updated cart to ensure consistency
+        dispatch(fetchCart({ guestId: user ? undefined : guestId }));
       })
       .catch((err) => {
         toast.error(err || "Failed to add to cart", { position: "top-right" });
@@ -139,23 +153,34 @@ const SingleProduct = () => {
   }
 
   const handleBuyNow = () => {
-    dispatch(
-      addToCart({
-        prod_id: id,
-        selected_image: selectedImage || product.product_images[0],
+    const buyNowProduct = {
+      _id: product._id,
+      product_name: product.product_name,
+      product_discounted_price: product.product_discounted_price,
+      quantity: 1,
+      selected_image: selectedImage || product.product_images[0],
+    };
+
+    navigate("/paymentMethod", {
+      state: {
+        buyNowProduct,
         guestId: user ? undefined : guestId,
-      })
-    )
-      .unwrap()
-      .then(() => {
-        toast.success("Redirecting to checkout...", { position: "top-right" });
-        window.location.href = "/paymentMethod";
-      })
-      .catch((err) => {
-        toast.error(err || "Failed to proceed with Buy Now", {
-          position: "top-right",
-        });
-      });
+      },
+    });
+  };
+
+  const handleOrderOnWhatsapp = () => {
+    const productUrl = `${window.location.origin}/product/${id}`;
+    const message =
+      `Hello! I want to order this product.\n\n` +
+      `🛒 Product: ${product.product_name}\n` +
+      `💰 Price: Rs. ${product.product_discounted_price}\n` +
+      `🔗 Product Link: ${productUrl}`;
+
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(whatsappUrl, "_blank");
   };
 
   return (
@@ -173,7 +198,7 @@ const SingleProduct = () => {
                 "https://via.placeholder.com/500"
               }
               alt={product.product_name}
-              className="w-full h-[320px] object-contain rounded-md border bg-gray-50"
+              className="max-h-[450px] object-contain rounded-md border bg-gray-50"
             />
             <div className="flex gap-2 mt-3 overflow-x-auto">
               {product.product_images?.map((img, i) => (
@@ -285,6 +310,13 @@ const SingleProduct = () => {
             >
               Buy Now
             </button>
+            <button
+              onClick={handleOrderOnWhatsapp}
+              className="mt-4 w-full bg-primary hover:bg-[#bd470c] text-white py-3 rounded-lg font-medium disabled:bg-gray-400"
+              disabled={product.product_stock <= 0}
+            >
+              Order On Whatsapp
+            </button>
 
             <div className="mb-6 mt-3">
               <h3 className="font-semibold text-lg mb-2">
@@ -364,7 +396,9 @@ const SingleProduct = () => {
                 <h2 className="text-lg font-semibold mb-2">
                   Product Description
                 </h2>
-                <p>{product.product_description || "No description available."}</p>
+                <p>
+                  {product.product_description || "No description available."}
+                </p>
               </div>
             )}
 

@@ -25,6 +25,12 @@ const Navbar = () => {
   const [categories, setCategories] = useState([]);
   const [searchTerm, setLocalSearchTerm] = useState("");
 
+  // Calculate total cart items
+  const totalCartItems = cartItems.reduce(
+    (total, item) => total + (item.quantity || 0),
+    0
+  );
+
   // Fetch categories
   useEffect(() => {
     axios
@@ -152,7 +158,7 @@ const Navbar = () => {
               <SlHandbag size={22} />
             </Link>
             <span className="absolute -top-2 -right-2 bg-primary text-xs text-white rounded-full w-4 h-4 flex items-center justify-center">
-              {cartItems.length}
+              {totalCartItems}
             </span>
           </div>
 

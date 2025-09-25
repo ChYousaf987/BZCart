@@ -40,7 +40,7 @@ const HeroSection = () => {
     .filter((slide) => slide.size === "small")
     .slice(0, 2);
 
-// Debug: Log small slides
+  // Debug: Log small slides
 
   return (
     <div className="font-sans bg-white">
@@ -48,7 +48,8 @@ const HeroSection = () => {
       <div className="grid grid-cols-1 w-[95%] mx-auto md:grid-cols-3 gap-6 px-2 md:px-0 pb-10 mt-3">
         {/* Left: Main Hero (Large Banner) */}
         {largeSlide && (
-          <div
+          <a
+            href={largeSlide.link}
             className="md:col-span-2 bg-primary rounded-2xl flex items-center p-8 text-white bg-cover bg-center min-h-[400px] md:min-h-[500px]"
             style={{
               backgroundImage: largeSlide.image
@@ -95,16 +96,17 @@ const HeroSection = () => {
                 </a>
               )}
             </div>
-          </div>
+          </a>
         )}
 
         {/* Right: Promo Boxes (Medium and Small Banners) */}
         <div className="space-y-6 flex flex-col">
           {mediumSlides.concat(smallSlides).map((slide, index) => (
-            <div
+            <a
+              href={slide.link}
               key={index}
               className={`rounded-2xl p-6 relative flex-1 flex flex-col justify-center ${
-                slide.size === "small" ? "min-h-[150px]" : "min-h-[200px]"
+                slide.size === "small" ? "min-h-[200px]" : "min-h-[200px]"
               } md:min-h-[240px] bg-cover bg-right ${
                 index === 1 ? "bg-primary text-white" : "bg-gray-100"
               }`}
@@ -152,18 +154,25 @@ const HeroSection = () => {
                         75% OFF
                       </p>
                     )}
-                    {slide.buttonText && (
-                      <a
-                        href={slide.link || "/products"}
-                        className="mt-3 block text-sm font-semibold hover:underline"
-                        style={{
-                          backgroundColor: slide.buttonBgColor || "transparent",
-                          color: slide.buttonTextColor || "#28a745",
-                        }}
-                      >
-                        {slide.buttonText} →
-                      </a>
-                    )}
+                    {/* Spacer pushes button to bottom */}
+                    <div className="flex-1" />
+
+                    {/* Button */}
+                    <div className="mt-32 text-center">
+                      {slide.buttonText && (
+                        <a
+                          href={slide.link || "/products"}
+                          className="px-4 py-1  rounded-full font-semibold text-sm hover:bg-gray-100 "
+                          style={{
+                            backgroundColor:
+                              slide.buttonBgColor || "transparent",
+                            color: slide.buttonTextColor || "#28a745",
+                          }}
+                        >
+                          {slide.buttonText} →
+                        </a>
+                      )}
+                    </div>
                   </>
                 ) : (
                   <>
@@ -198,7 +207,7 @@ const HeroSection = () => {
                   </>
                 )}
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

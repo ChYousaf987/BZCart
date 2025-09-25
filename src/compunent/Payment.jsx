@@ -5,20 +5,6 @@ import PaymentMethods from "./PaymentMethods";
 import { useSelector } from "react-redux";
 
 const Payment = () => {
-  const { items: cart } = useSelector((state) => state.cart);
-
-  // ✅ calculateTotal defined here
-  const calculateTotal = () => {
-    return Array.isArray(cart)
-      ? cart.reduce(
-          (total, item) =>
-            total +
-            (item.product_id?.product_discounted_price || 0) *
-              (item.quantity || 1),
-          0
-        )
-      : 0;
-  };
 
   return (
     <>
@@ -26,7 +12,7 @@ const Payment = () => {
       <div className="md:w-[98%] hidden mx-auto pt-8 md:flex flex-col lg:flex-row justify-between gap-6 p-4 min-h-screen bg-light font-montserrat">
         <CartItems />
         {/* ✅ pass calculateTotal */}
-        <PaymentMethods calculateTotal={calculateTotal} />
+        <PaymentMethods />
       </div>
       <div className="flex md:hidden md:w-[98%]  mx-auto pt-8 p-4 min-h-screen bg-light font-montserrat">
         <CartItems />
