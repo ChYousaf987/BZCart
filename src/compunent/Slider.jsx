@@ -35,27 +35,37 @@ const HeroSection = () => {
   const largeSlide = sortedSlides.find((slide) => slide.size === "large");
   const mediumSlides = sortedSlides
     .filter((slide) => slide.size === "medium")
-    .slice(0, 2);
+    .slice(0, 2); // Up to 2 medium slides
   const smallSlides = sortedSlides
     .filter((slide) => slide.size === "small")
-    .slice(0, 2);
+    .slice(0, 2); // Up to 2 small slides
 
-  // Debug: Log small slides
+  // Combine medium and small slides, limiting to exactly 3 banners
+  const sideBanners = [...mediumSlides, ...smallSlides].slice(0, 3);
+
+  // Debug: Log slides to verify inclusion
+  console.log("Large slide:", largeSlide);
+  console.log("Medium slides:", mediumSlides);
+  console.log("Small slides:", smallSlides);
+  console.log("Side banners:", sideBanners);
 
   return (
     <div className="font-sans bg-white">
       {/* 🔹 Hero & Promo Banners */}
-      <div className="grid grid-cols-1 w-[95%] mx-auto md:grid-cols-3 gap-6 px-2 md:px-0 pb-10 mt-3">
+      <div className="grid grid-cols-1 w-[95%] mx-auto md:grid-cols-[2fr_1fr] gap-6 px-2 md:px-0 pb-10 mt-3">
         {/* Left: Main Hero (Large Banner) */}
         {largeSlide && (
           <a
             href={largeSlide.link}
-            className="md:col-span-2 bg-primary rounded-2xl flex items-center p-8 text-white bg-cover bg-center min-h-[400px] md:min-h-[500px]"
+            className="bg-primary rounded-2xl flex items-center p-8 text-white bg-cover bg-center w-[800px] h-[560px]"
             style={{
               backgroundImage: largeSlide.image
                 ? `url(${largeSlide.image})`
                 : "url('/image.jpg')", // Fallback to default image
               backgroundColor: largeSlide.bgColor || "#28a745", // Fallback color
+              backgroundRepeat: "no-repeat", // Prevent image repeating
+              backgroundSize: "cover", // Ensure image covers container
+              backgroundPosition: "center", // Center the image
             }}
           >
             <div className="max-w-md space-y-4">
@@ -101,114 +111,71 @@ const HeroSection = () => {
 
         {/* Right: Promo Boxes (Medium and Small Banners) */}
         <div className="space-y-6 flex flex-col">
-          {mediumSlides.concat(smallSlides).map((slide, index) => (
-            <a
-              href={slide.link}
-              key={index}
-              className={`rounded-2xl p-6 relative flex-1 flex flex-col justify-center ${
-                slide.size === "small" ? "min-h-[200px]" : "min-h-[200px]"
-              } md:min-h-[240px] bg-cover bg-right ${
-                index === 1 ? "bg-primary text-white" : "bg-gray-100"
-              }`}
-              style={{
-                backgroundImage: slide.image
-                  ? `url(${slide.image})`
-                  : index === 0
-                  ? "url('/image-2.jpg')"
-                  : "url('/image-1.jpg')", // Fallback to default images
-                backgroundColor:
-                  slide.bgColor || (index === 0 ? "#f4f4f4" : "#28a745"), // Fallback colors
-              }}
-            >
-              {index === 1 && (
-                <div className="absolute inset-0 bg-black/50 rounded-2xl"></div>
-              )}
-              <div
-                className={`relative z-10 ${
-                  index === 1 ? "text-center" : "text-start"
-                }`}
+          {sideBanners.length > 0 ? (
+            sideBanners.map((slide, index) => (
+              <a
+                href={slide.link}
+                key={index}
+                className="rounded-lg p-6 relative flex flex-col justify-center bg-contain bg-center w-full max-w-[407px] h-[170px] bg-gray-100"
+                style={{
+                  backgroundImage: slide.image
+                    ? `url(${slide.image})`
+                    : index === 0
+                    ? "url('/image-2.jpg')"
+                    : index === 1
+                    ? "url('/image-1.jpg')"
+                    : "url('/image-3.jpg')", // Fallback to default images
+                  backgroundColor: slide.bgColor || "#f4f4f4", // Consistent fallback color
+                  backgroundRepeat: "no-repeat", // Prevent image repeating
+                  aspectRatio: "480/280", // Maintain proportions
+                }}
               >
-                {slide.title && (
-                  <h3
-                    className="text-sm uppercase"
-                    style={{ color: slide.titleColor || "#000000" }}
-                  >
-                    {slide.title}
-                  </h3>
-                )}
-                {index === 0 ? (
-                  <>
-                    {slide.subtitle && (
-                      <p
-                        className="text-3xl font-bold text-primary"
-                        style={{ color: slide.subtitleColor || "#28a745" }}
-                      >
-                        {slide.subtitle}
-                      </p>
-                    )}
-                    {!slide.subtitle && (
-                      <p
-                        className="text-3xl font-bold text-primary hidden"
-                        style={{ color: slide.subtitleColor || "#28a745" }}
-                      >
-                        75% OFF
-                      </p>
-                    )}
-                    {/* Spacer pushes button to bottom */}
-                    <div className="flex-1" />
-
-                    {/* Button */}
-                    <div className="mt-32 text-center">
-                      {slide.buttonText && (
-                        <a
-                          href={slide.link || "/products"}
-                          className="px-4 py-1  rounded-full font-semibold text-sm hover:bg-gray-100 "
-                          style={{
-                            backgroundColor:
-                              slide.buttonBgColor || "transparent",
-                            color: slide.buttonTextColor || "#28a745",
-                          }}
-                        >
-                          {slide.buttonText} →
-                        </a>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {slide.subtitle && (
-                      <p
-                        className="text-xl font-bold"
-                        style={{ color: slide.subtitleColor || "#ffffff" }}
-                      >
-                        {slide.subtitle}
-                      </p>
-                    )}
-                    {!slide.subtitle && (
-                      <p
-                        className="text-xl font-bold hidden"
-                        style={{ color: slide.subtitleColor || "#ffffff" }}
-                      >
-                        Special Products
-                      </p>
-                    )}
-                    {slide.buttonText && (
-                      <a
-                        href={slide.link || "/products"}
-                        className="mt-3 px-4 py-1 rounded-full font-semibold text-sm hover:bg-gray-100"
-                        style={{
-                          backgroundColor: slide.buttonBgColor || "#ffffff",
-                          color: slide.buttonTextColor || "#28a745",
-                        }}
-                      >
-                        {slide.buttonText} →
-                      </a>
-                    )}
-                  </>
-                )}
-              </div>
-            </a>
-          ))}
+                <div className="relative z-10 text-start">
+                  {slide.title && (
+                    <h3
+                      className="text-sm uppercase"
+                      style={{ color: slide.titleColor || "#000000" }}
+                    >
+                      {slide.title}
+                    </h3>
+                  )}
+                  {slide.subtitle && (
+                    <p
+                      className="text-xl font-bold"
+                      style={{ color: slide.subtitleColor || "#000000" }}
+                    >
+                      {slide.subtitle}
+                    </p>
+                  )}
+                  {!slide.subtitle && (
+                    <p
+                      className="text-xl font-bold hidden"
+                      style={{ color: slide.subtitleColor || "#000000" }}
+                    >
+                      Special Offer
+                    </p>
+                  )}
+                  <div className="flex-1" />
+                  {slide.buttonText && (
+                    <a
+                      href={slide.link || "/products"}
+                      className="mt-3 px-4 py-1 rounded-full font-semibold text-sm hover:bg-gray-100"
+                      style={{
+                        backgroundColor: slide.buttonBgColor || "transparent",
+                        color: slide.buttonTextColor || "#28a745",
+                      }}
+                    >
+                      {slide.buttonText} →
+                    </a>
+                  )}
+                </div>
+              </a>
+            ))
+          ) : (
+            <div className="text-center text-gray-500 w-full max-w-[480px] h-[840px] flex items-center justify-center">
+              No side banners available
+            </div>
+          )}
         </div>
       </div>
 
