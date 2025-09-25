@@ -249,6 +249,16 @@ const Navbar = () => {
             <Link to="/contact" className="hover:text-primary">
               Contact Us
             </Link>
+            <Link to="/privacypolicy" className="hover:text-primary">
+              Privacy Policy
+            </Link>
+            <Link to="/returnandrefund" className="hover:text-primary">
+              Return & Refund Policy
+            </Link>
+            <Link to="/termsandconditions" className="hover:text-primary">
+              Terms & Conditions
+
+            </Link>
           </div>
         </div>
       </div>

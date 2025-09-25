@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const [open, setOpen] = useState(null);
@@ -128,10 +129,18 @@ const Footer = () => {
               open === "info" ? "block" : "hidden"
             }`}
           >
-            <li>About Us</li>
-            <li>Return & Refund</li>
-            <li>Privacy Policy</li>
-            <li>Terms & Conditions</li>
+             <li>
+            <Link to="/about" className="hover:text-primary">About Us</Link>
+          </li>
+          <li>
+            <Link to="/returnandrefund" className="hover:text-primary">Return & Refund</Link>
+          </li>
+          <li>
+            <Link to="/privacypolicy" className="hover:text-primary">Privacy Policy</Link>
+          </li>
+          <li>
+            <Link to="/termsandconditions" className="hover:text-primary">Terms & Conditions</Link>
+          </li>
           </ul>
         </div>
 
