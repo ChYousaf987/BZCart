@@ -57,7 +57,7 @@ const HeroSection = () => {
         {largeSlide && (
           <a
             href={largeSlide.link}
-            className="bg-primary rounded-2xl flex items-center p-8 text-white bg-cover bg-center w-[800px] h-[560px]"
+            className="bg-primary rounded-2xl flex items-center p-8 text-white bg-cover bg-center h-[500px]  md:h-[650px]"
             style={{
               backgroundImage: largeSlide.image
                 ? `url(${largeSlide.image})`
@@ -116,7 +116,7 @@ const HeroSection = () => {
               <a
                 href={slide.link}
                 key={index}
-                className="rounded-lg p-6 relative flex flex-col justify-center bg-contain bg-center w-full max-w-[407px] h-[170px] bg-gray-100"
+                className="rounded-2xl  p-6 relative flex flex-col justify-center bg-contain bg-center w-full h-[165px]  md:w-[480px] md:h-[200px] bg-gray-100"
                 style={{
                   backgroundImage: slide.image
                     ? `url(${slide.image})`
