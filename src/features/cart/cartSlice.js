@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://localhost:3003/api";
+const API_URL = "https://bzbackend.online/api";
 
 export const addToCart = createAsyncThunk(
   "cart/addToCart",

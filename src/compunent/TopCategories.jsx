@@ -7,20 +7,27 @@ import "react-loading-skeleton/dist/skeleton.css";
 const TopCategories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
+      setError(null);
       try {
         const response = await axios.get(
           "https://bzbackend.online/api/categories/categories"
         );
-        setCategories(response.data);
+        // Filter top-level categories where parent_category is null
+        const topLevelCategories = response.data.filter(
+          (category) => category.parent_category === null
+        );
+        setCategories(topLevelCategories);
       } catch (err) {
         console.error(
           "Fetch categories error:",
           err.response?.data || err.message
         );
+        setError("Failed to load categories. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -29,7 +36,7 @@ const TopCategories = () => {
   }, []);
 
   return (
-    <div className="md:w-[95%] mx-auto px-2 md:px-0 ">
+    <div className="md:w-[95%] mx-auto px-2 md:px-0">
       {/* Header */}
       <div className="flex justify-between items-start md:items-center mb-8">
         <h2 className="text-lg md:text-2xl font-bold border-b-2 text-gray-500 border-[#f06621] inline-block pb-1">
@@ -46,7 +53,7 @@ const TopCategories = () => {
       {/* Scrollable Categories */}
       {loading ? (
         <div className="flex overflow-x-auto gap-6 sm:gap-10 snap-x snap-mandatory">
-          {Array(6)
+          {Array(4)
             .fill()
             .map((_, index) => (
               <div
@@ -58,10 +65,12 @@ const TopCategories = () => {
               </div>
             ))}
         </div>
+      ) : error ? (
+        <p className="text-center w-full text-red-500">{error}</p>
       ) : categories.length === 0 ? (
         <p className="text-center w-full">No categories found</p>
       ) : (
-        <div className="flex overflow-x-auto md:overflow-hidden gap-6 sm:gap-10 snap-x snap-mandatory scrollbar-hide">
+        <div className="flex overflow-x-auto gap-6 sm:gap-10 snap-x snap-mandatory scrollbar-hide">
           {categories.map((category, index) => (
             <Link
               key={`${category._id}-${index}`}
@@ -70,10 +79,13 @@ const TopCategories = () => {
             >
               <div className="w-32 h-32 mt-5 ml-8 md:ml-2 sm:w-36 sm:h-36 rounded-full border border-[#f06621] bg-[#fbf6f4] p-1 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-105">
                 <img
-                  src={category.image || "https://via.placeholder.com/150"}
+                  src={category.image || "https://placehold.co/150x150"}
                   alt={category.name || "Category"}
                   className="w-full h-full object-cover rounded-full"
                   loading="lazy"
+                  onError={(e) =>
+                    (e.target.src = "https://placehold.co/150x150")
+                  }
                 />
               </div>
               <p className="mt-3 text-sm ml-8 md:ml-2 sm:text-base font-medium hover:text-[#f06621] transition">

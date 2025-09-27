@@ -20,6 +20,8 @@ import {
 import { addToCart } from "../features/cart/cartSlice";
 import { v4 as uuidv4 } from "uuid";
 import Loader from "./Loader";
+import Slider from "react-slick";
+
 
 const SingleProduct = () => {
   const navigate = useNavigate();
@@ -182,6 +184,46 @@ const SingleProduct = () => {
     )}`;
     window.open(whatsappUrl, "_blank");
   };
+  const NextArrow = ({ onClick }) => (
+    <div
+      className="absolute top-1/2 right-2 transform -translate-y-1/2 z-10 cursor-pointer text-white bg-black/50 p-2 rounded-full"
+      onClick={onClick}
+    >
+      ❯
+    </div>
+  );
+
+  const PrevArrow = ({ onClick }) => (
+    <div
+      className="absolute top-1/2 left-2 transform -translate-y-1/2 z-10 cursor-pointer text-white bg-black/50 p-2 rounded-full"
+      onClick={onClick}
+    >
+      ❮
+    </div>
+  );
+
+  <Slider
+    dots={true}
+    infinite={true}
+    speed={500}
+    slidesToShow={1}
+    slidesToScroll={1}
+    arrows={true} // enable arrows
+    nextArrow={<NextArrow />}
+    prevArrow={<PrevArrow />}
+  >
+    {product.product_images?.map((img, i) => (
+      <div key={i}>
+        <img
+          src={img}
+          alt={`${product.product_name} image ${i}`}
+          className="max-h-[450px] object-contain rounded-md border bg-gray-50 w-full"
+        />
+      </div>
+    ))}
+  </Slider>;
+  
+
 
   return (
     <>
@@ -190,29 +232,29 @@ const SingleProduct = () => {
         {/* ---------------- IMAGES + INFO ---------------- */}
         <div className="md:grid md:grid-cols-2 md:gap-8">
           {/* Mobile: Big image with thumbnails below */}
-          <div className="md:hidden">
-            <img
-              src={
-                selectedImage ||
-                product.product_images?.[0] ||
-                "https://via.placeholder.com/500"
-              }
-              alt={product.product_name}
-              className="max-h-[450px] object-contain rounded-md border bg-gray-50"
-            />
-            <div className="flex gap-2 mt-3 overflow-x-auto">
+
+          {/* Mobile: Slider for product images */}
+          <div className="md:hidden relative">
+            <Slider
+              dots={true}
+              infinite={true}
+              speed={500}
+              slidesToShow={1}
+              slidesToScroll={1}
+              arrows={true} // enable arrows
+              nextArrow={<NextArrow />}
+              prevArrow={<PrevArrow />}
+            >
               {product.product_images?.map((img, i) => (
-                <img
-                  key={i}
-                  src={img}
-                  alt={`thumb-${i}`}
-                  className={`w-16 h-16 border rounded-md cursor-pointer ${
-                    selectedImage === img ? "border-primary" : "border-gray-300"
-                  }`}
-                  onClick={() => setSelectedImage(img)}
-                />
+                <div key={i}>
+                  <img
+                    src={img}
+                    alt={`${product.product_name} image ${i}`}
+                    className="max-h-[450px] object-contain rounded-md border bg-gray-50 w-full"
+                  />
+                </div>
               ))}
-            </div>
+            </Slider>
           </div>
 
           {/* Desktop: thumbnails left, big image right */}

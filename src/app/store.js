@@ -4,7 +4,6 @@ import userReducer from "../features/users/userSlice";
 import productReducer from "../features/products/productSlice"; // Adjust the path as needed
 import cartReducer from "../features/cart/cartSlice"; // Import cart reducer
 import slideReducer from "../features/slides/slideSlice";
-import brandReducer from "../features/brands/brandSlice";
 import dealReducer from "../features/deals/dealSlice";
 
 export const store = configureStore({
@@ -13,7 +12,6 @@ export const store = configureStore({
     products: productReducer,
     cart: cartReducer,
     slides: slideReducer,
-    brands: brandReducer,
     deals: dealReducer,
   },
 });

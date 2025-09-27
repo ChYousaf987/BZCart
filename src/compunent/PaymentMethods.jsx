@@ -158,13 +158,15 @@ const PaymentMethods = () => {
   };
 
   return (
-    <div className="md:w-[35%] bg-white p-4 rounded-xl shadow">
-      <h3 className="text-lg font-bold mb-4 text-dark">Order Summary</h3>
+    <div className="md:w-[35%] font-daraz bg-white p-4 rounded-xl shadow">
+      <h3 className="text-2xl font-bold mb-5 text-center text-dark">
+        Shipping Details
+      </h3>
       {/* Full Name */}
       <div className="mb-6">
         <label
           htmlFor="fullName"
-          className="block text-dark mb-2 font-bold text-lg tracking-wide"
+          className="block text-gray-600 mb-2 font-semibold tracking-wide"
         >
           Full Name
         </label>
@@ -194,7 +196,7 @@ const PaymentMethods = () => {
       </div>
       {/* Email */}
       <div className="mb-6">
-        <label className="block text-dark mb-2 font-bold text-lg tracking-wide">
+        <label className="block text-gray-600 mb-2 font-semibold tracking-wide">
           Email Address
         </label>
         <div className="relative group">
@@ -222,7 +224,7 @@ const PaymentMethods = () => {
       </div>
       {/* Phone */}
       <div className="mb-6">
-        <label className="block text-dark mb-2 font-bold text-lg tracking-wide">
+        <label className="block text-gray-600 mb-2 font-semibold tracking-wide">
           Phone Number
         </label>
         <div className="relative group">
@@ -259,7 +261,7 @@ const PaymentMethods = () => {
       </div>
       {/* Address */}
       <div className="mb-6">
-        <label className="block text-dark mb-2 font-bold text-lg tracking-wide">
+        <label className="block text-gray-600 mb-2 font-semibold tracking-wide">
           Shipping Address
         </label>
         <div className="relative group">
@@ -286,7 +288,7 @@ const PaymentMethods = () => {
       {/* Discount Code */}
       {authUser && (
         <div className="mb-6">
-          <label className="block text-dark mb-2 font-bold text-lg tracking-wide">
+          <label className="block text-gray-600 mb-2 font-semibold tracking-wide">
             Discount Code
           </label>
           <div className="relative group">

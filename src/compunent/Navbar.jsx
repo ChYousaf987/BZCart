@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   FaShoppingCart,
   FaRegUser,
@@ -24,7 +24,19 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [searchTerm, setLocalSearchTerm] = useState("");
+  const [isCatOpen, setIsCatOpen] = useState(false);
+  const menuRef = useRef(null);
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setIsCatOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   // Calculate total cart items
   const totalCartItems = cartItems.reduce(
     (total, item) => total + (item.quantity || 0),
@@ -202,35 +214,54 @@ const Navbar = () => {
       {/* Categories Menu */}
       <div className="bg-black">
         <div className="py-2 hidden md:flex md:w-[95%] mx-auto px-2 md:px-0 text-white items-center gap-9">
-          <div className="relative group">
-            <button className="flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm font-medium">
+          <div className="relative" ref={menuRef}>
+            {/* Main Button */}
+            <button
+              onClick={() => setIsCatOpen(!isCatOpen)}
+              className="flex items-center gap-2 rounded-md bg-primary px-5 py-2 text-sm font-semibold text-white shadow-md hover:bg-primary/90 transition"
+            >
               <FaBars /> All Categories <FaChevronDown size={12} />
             </button>
-            <div className="absolute left-0 top-full bg-white text-black shadow-lg hidden group-hover:block min-w-[220px] z-50">
-              {categories.map((cat) => (
-                <div key={cat._id} className="relative group/item">
-                  <Link
-                    to={`/category/${cat._id}`}
-                    className="block px-4 py-2 hover:bg-gray-100"
+
+            {/* Dropdown */}
+            {isCatOpen && (
+              <div className="absolute left-0 top-full bg-white text-gray-800 shadow-2xl rounded-md mt-2 min-w-[250px] z-50 animate-fadeIn">
+                {categories.map((cat) => (
+                  <div
+                    key={cat._id}
+                    className="relative group/item border-b last:border-none"
                   >
-                    {cat.name}
-                  </Link>
-                  {cat.sub.length > 0 && (
-                    <div className="absolute left-full top-0 bg-white shadow-lg hidden group-hover/item:block min-w-[180px]">
-                      {cat.sub.map((sub) => (
-                        <Link
-                          key={sub._id}
-                          to={`/category/${sub._id}`}
-                          className="block px-4 py-2 hover:bg-gray-100"
-                        >
-                          {sub.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+                    <Link
+                      to={`/category/${cat._id}`}
+                      className="flex justify-between items-center px-4 py-3 hover:bg-gray-100 transition text-sm font-medium"
+                    >
+                      {cat.name}
+                      {cat.sub.length > 0 && (
+                        <FaChevronDown
+                          size={10}
+                          className="transform rotate-[-90deg] text-gray-500"
+                        />
+                      )}
+                    </Link>
+
+                    {/* Subcategories */}
+                    {cat.sub.length > 0 && (
+                      <div className="absolute left-full top-0 bg-white shadow-xl rounded-md hidden group-hover/item:block min-w-[220px] transition-all">
+                        {cat.sub.map((sub) => (
+                          <Link
+                            key={sub._id}
+                            to={`/category/${sub._id}`}
+                            className="block px-4 py-2 text-sm hover:bg-gray-100 transition"
+                          >
+                            {sub.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex gap-6 text-sm font-medium ml-6">
@@ -239,9 +270,6 @@ const Navbar = () => {
             </Link>
             <Link to="/cart" className="hover:text-primary">
               Shop
-            </Link>
-            <Link to="/pages" className="hover:text-primary">
-              Pages
             </Link>
             <Link to="/about" className="hover:text-primary">
               About Us
@@ -257,7 +285,6 @@ const Navbar = () => {
             </Link>
             <Link to="/termsandconditions" className="hover:text-primary">
               Terms & Conditions
-
             </Link>
           </div>
         </div>
@@ -292,22 +319,27 @@ const Navbar = () => {
               </div>
             ))}
           </div>
-          <div>
-            <p className="font-semibold mb-2">Menu</p>
-            <Link to="/" className="block py-1 hover:text-green-400">
+          <div className="flex gap-6 text-sm font-medium ml-6">
+            <Link to="/" className="hover:text-primary">
               Home
             </Link>
-            <Link to="/cart" className="block py-1 hover:text-green-400">
+            <Link to="/cart" className="hover:text-primary">
               Shop
             </Link>
-            <Link to="/pages" className="block py-1 hover:text-green-400">
-              Pages
-            </Link>
-            <Link to="/about" className="block py-1 hover:text-green-400">
+            <Link to="/about" className="hover:text-primary">
               About Us
             </Link>
-            <Link to="/contact" className="block py-1 hover:text-green-400">
+            <Link to="/contact" className="hover:text-primary">
               Contact Us
+            </Link>
+            <Link to="/privacypolicy" className="hover:text-primary">
+              Privacy Policy
+            </Link>
+            <Link to="/returnandrefund" className="hover:text-primary">
+              Return & Refund Policy
+            </Link>
+            <Link to="/termsandconditions" className="hover:text-primary">
+              Terms & Conditions
             </Link>
           </div>
         </div>

@@ -10,7 +10,6 @@ const HeroSection = () => {
 
   useEffect(() => {
     dispatch(fetchSlides()).then(() => {
-      console.log("Fetched slides:", slides); // Debug: Log slides after fetch
     });
   }, [dispatch]);
 
@@ -43,16 +42,12 @@ const HeroSection = () => {
   // Combine medium and small slides, limiting to exactly 3 banners
   const sideBanners = [...mediumSlides, ...smallSlides].slice(0, 3);
 
-  // Debug: Log slides to verify inclusion
-  console.log("Large slide:", largeSlide);
-  console.log("Medium slides:", mediumSlides);
-  console.log("Small slides:", smallSlides);
-  console.log("Side banners:", sideBanners);
+ 
 
   return (
     <div className="font-sans bg-white">
       {/* 🔹 Hero & Promo Banners */}
-      <div className="grid grid-cols-1 w-[95%] mx-auto md:grid-cols-[2fr_1fr] gap-6 px-2 md:px-0 pb-10 mt-3">
+      <div className="grid grid-cols-1 w-[95%] mx-auto md:grid-cols-[2fr_1fr] gap-3 md:gap-6 px- md:px-0 pb-10 mt-3">
         {/* Left: Main Hero (Large Banner) */}
         {largeSlide && (
           <a
@@ -110,13 +105,13 @@ const HeroSection = () => {
         )}
 
         {/* Right: Promo Boxes (Medium and Small Banners) */}
-        <div className="space-y-6 flex flex-col">
+        <div className="space-y-2 md:space-y-6 flex flex-col">
           {sideBanners.length > 0 ? (
             sideBanners.map((slide, index) => (
               <a
                 href={slide.link}
                 key={index}
-                className="rounded-2xl  p-6 relative flex flex-col justify-center bg-contain bg-center w-full h-[165px]  md:w-[480px] md:h-[200px] bg-gray-100"
+                className="rounded-2xl relative flex flex-col justify-center bg-contain bg-center w-full h-[165px] md:h-[200px] bg-gray-100"
                 style={{
                   backgroundImage: slide.image
                     ? `url(${slide.image})`
