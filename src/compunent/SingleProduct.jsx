@@ -34,7 +34,7 @@ const SingleProduct = () => {
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
   const [selectedImage, setSelectedImage] = useState("");
-  const WHATSAPP_NUMBER = "923165275052"; // Pakistan example
+  const WHATSAPP_NUMBER = "923297609190"; // Pakistan example
   const [guestId] = useState(
     localStorage.getItem("guestId") || `guest_${uuidv4()}`
   );
@@ -338,39 +338,47 @@ const SingleProduct = () => {
               <span className="font-semibold">2 Years Brand Warranty</span>
             </p>
 
-            <button
-              onClick={handleAddToCart}
-              className="mt-4 w-full bg-primary hover:bg-[#bd470c] text-white py-3 rounded-lg font-medium disabled:bg-gray-400"
-              disabled={product.product_stock <= 0}
-            >
-              {product.product_stock > 0 ? "Add to Cart" : "Out of Stock"}
-            </button>
-            <button
-              onClick={handleBuyNow}
-              className="mt-4 w-full bg-primary hover:bg-[#bd470c] text-white py-3 rounded-lg font-medium disabled:bg-gray-400"
-              disabled={product.product_stock <= 0}
-            >
-              Buy Now
-            </button>
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={handleAddToCart}
+                className="w-1/2 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 disabled:bg-gray-400"
+                disabled={product.product_stock <= 0}
+              >
+                {product.product_stock > 0 ? "Add to Cart" : "Out of Stock"}
+              </button>
+
+              <button
+                onClick={handleBuyNow}
+                className="w-1/2 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 disabled:bg-gray-400"
+                disabled={product.product_stock <= 0}
+              >
+                Buy Now
+              </button>
+            </div>
+
             <button
               onClick={handleOrderOnWhatsapp}
-              className="mt-4 w-full bg-primary hover:bg-[#bd470c] text-white py-3 rounded-lg font-medium disabled:bg-gray-400"
+              className="mt-3 w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20b954] text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 disabled:bg-gray-400"
               disabled={product.product_stock <= 0}
             >
-              Order On Whatsapp
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12.04 2c-5.52 0-10 4.47-10 9.99 0 1.76.46 3.46 1.34 4.97L2 22l5.19-1.36c1.45.79 3.08 1.2 4.85 1.2 5.53 0 10-4.48 10-10s-4.47-9.84-10-9.84zm.04 18.03c-1.54 0-3.02-.41-4.3-1.2l-.31-.19-3.07.8.82-3.02-.2-.31c-.84-1.33-1.28-2.86-1.28-4.41 0-4.53 3.7-8.23 8.23-8.23 2.19 0 4.25.85 5.79 2.39 1.55 1.55 2.4 3.61 2.4 5.79-.01 4.53-3.7 8.38-8.28 8.38zm4.67-6.23c-.26-.13-1.54-.76-1.78-.84-.24-.09-.41-.13-.58.13-.17.26-.67.84-.82 1.01-.15.17-.3.2-.56.07-.26-.13-1.1-.4-2.1-1.27-.77-.68-1.28-1.52-1.43-1.78-.15-.26-.02-.41.11-.54.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.07-.13-.58-1.39-.8-1.9-.21-.51-.42-.44-.58-.45-.15-.01-.32-.01-.49-.01-.17 0-.45.07-.69.32-.24.26-.9.88-.9 2.15s.92 2.49 1.05 2.66c.13.17 1.8 2.75 4.35 3.86.61.27 1.09.43 1.46.55.61.19 1.17.16 1.61.1.49-.07 1.54-.63 1.76-1.23.22-.61.22-1.13.15-1.23-.06-.1-.24-.16-.5-.29z" />
+              </svg>
+              Order on WhatsApp
             </button>
 
             <div className="mb-6 mt-3">
               <h3 className="font-semibold text-lg mb-2">
                 Product Highlights:
               </h3>
-              <ul className="list-disc pl-6 space-y-1 text-gray-700">
-                {product.product_description
-                  ?.split(". ")
-                  .map(
-                    (highlight, i) => highlight && <li key={i}>{highlight}</li>
-                  )}
-              </ul>
+              <p className="whitespace-pre-line text-gray-700">
+                {product.product_description}
+              </p>
             </div>
           </div>
         </div>
@@ -438,8 +446,8 @@ const SingleProduct = () => {
                 <h2 className="text-lg font-semibold mb-2">
                   Product Description
                 </h2>
-                <p>
-                  {product.product_description || "No description available."}
+                <p className="whitespace-pre-line text-gray-700">
+                  {product.product_description}
                 </p>
               </div>
             )}
