@@ -36,22 +36,68 @@ const CartItems = () => {
     dispatch(fetchCart({ guestId }));
   }, [dispatch, guestId]);
 
+  // Log cart for debugging
+  useEffect(() => {
+    console.log("CartItems - Cart items:", cart);
+  }, [cart]);
+
+  // Check stock for a specific size or product_stock
+  const getStock = (item) => {
+    if (!item.product_id) {
+      console.warn("CartItems - Missing product_id for item:", item);
+      return 0;
+    }
+    if (item.product_id.sizes?.length > 0) {
+      if (!item.selected_size) {
+        console.warn(
+          `CartItems - Missing selected_size for size-based product: ${item.product_id.product_name}`
+        );
+        return 0;
+      }
+      const size = item.product_id.sizes.find(
+        (s) => s.size === item.selected_size
+      );
+      if (!size) {
+        console.warn(
+          `CartItems - Size ${item.selected_size} not found for product ${item.product_id.product_name}`
+        );
+        return 0;
+      }
+      return size.stock || 0;
+    }
+    return item.product_id.product_stock || 0;
+  };
+
   const handleAddItem = (item) => {
     if (!item.product_id) {
       toast.error("Invalid product data", { position: "top-right" });
+      return;
+    }
+    if (item.product_id.sizes?.length > 0 && !item.selected_size) {
+      toast.error("Please select a size for this product", {
+        position: "top-right",
+      });
+      return;
+    }
+    const stock = getStock(item);
+    if (stock <= item.quantity) {
+      toast.error(`Cannot add more: ${item.selected_size || "Item"} out of stock`, {
+        position: "top-right",
+      });
       return;
     }
     dispatch(
       addToCart({
         prod_id: item.product_id._id,
         selected_image: item.selected_image,
+        selected_size: item.selected_size,
         guestId,
       })
     )
       .unwrap()
       .then(() => toast.success("Quantity updated!", { position: "top-right" }))
       .catch((err) =>
-        toast.error(err || "Failed to update quantity", {
+        toast.error(err?.message || err || "Failed to update quantity", {
           position: "top-right",
         })
       );
@@ -66,13 +112,16 @@ const CartItems = () => {
       removeFromCart({
         prod_id: item.product_id._id,
         selected_image: item.selected_image,
+        selected_size: item.selected_size,
         guestId,
       })
     )
       .unwrap()
       .then(() => toast.success("Item removed!", { position: "top-right" }))
       .catch((err) =>
-        toast.error(err || "Failed to remove item", { position: "top-right" })
+        toast.error(err?.message || err || "Failed to remove item", {
+          position: "top-right",
+        })
       );
   };
 
@@ -132,7 +181,7 @@ const CartItems = () => {
   }
 
   return (
-    <div className="md:w-[70%] mx-auto md:p-4 bg-light ">
+    <div className="md:w-[70%] mx-auto md:p-4 bg-light">
       <h2 className="text-3xl font-bold mb-6 text-dark">
         🛒 Your Cart{" "}
         <span className="text-xl font-medium text-primary">
@@ -147,10 +196,12 @@ const CartItems = () => {
             item.product_id?.category?.name?.includes("Devices");
           const colorIndex =
             item.product_id?.product_images?.indexOf(item.selected_image) || -1;
-
+          const stock = getStock(item);
+          const isSizeMissing =
+            item.product_id?.sizes?.length > 0 && !item.selected_size;
           return (
             <div
-              key={`${item.product_id?._id || index}-${item.selected_image}`}
+              key={`${item.product_id?._id || index}-${item.selected_image}-${item.selected_size}`}
               className="flex items-center justify-between border-b last:border-0 pb-4 mb-4"
             >
               <div className="flex items-center gap-4">
@@ -168,9 +219,27 @@ const CartItems = () => {
                         ({colorNames[colorIndex] || "Selected Color"})
                       </span>
                     )}
+                    {item.selected_size && (
+                      <span className="text-sm text-dark/60 ml-2">
+                        (Size: {item.selected_size})
+                      </span>
+                    )}
                   </h4>
                   <p className="text-primary font-bold mt-1">
                     Rs. {item.product_id?.product_discounted_price || 0}
+                  </p>
+                  <p
+                    className={`text-sm mt-1 ${
+                      stock <= 5 || isSizeMissing
+                        ? "text-red-500"
+                        : "text-dark/70"
+                    }`}
+                  >
+                    {isSizeMissing
+                      ? "Please select a size"
+                      : `Stock: ${stock} ${
+                          item.selected_size ? "in size" : "units"
+                        }`}
                   </p>
                 </div>
               </div>
@@ -179,6 +248,7 @@ const CartItems = () => {
                 <button
                   onClick={() => handleRemoveItem(item)}
                   className="bg-red-100 text-red-600 rounded-full p-2 hover:bg-red-200 transition"
+                  disabled={item.quantity <= 0}
                 >
                   <FaTrash size={12} />
                 </button>
@@ -186,6 +256,7 @@ const CartItems = () => {
                 <button
                   onClick={() => handleAddItem(item)}
                   className="bg-green-100 text-green-600 rounded-full p-2 hover:bg-green-200 transition"
+                  disabled={stock <= item.quantity || isSizeMissing}
                 >
                   <FaPlus size={12} />
                 </button>
@@ -195,8 +266,7 @@ const CartItems = () => {
         })}
       </div>
 
-      {/* Cart Summary */}
-      <div className="mt-6 p-5  bg-white rounded-xl shadow flex flex-col md:hidden justify-between items-center gap-4">
+      <div className="mt-6 p-5 bg-white rounded-xl shadow flex flex-col md:hidden justify-between items-center gap-4">
         <h3 className="text-lg font-bold text-dark">
           Total: <span className="text-primary">Rs. {totalPrice()}</span>
         </h3>

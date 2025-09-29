@@ -31,7 +31,7 @@ const Cartss = () => {
   const [shippingAddress, setShippingAddress] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [phoneError, setPhoneError] = useState(""); // local phone validation state
+  const [phoneError, setPhoneError] = useState("");
 
   const [guestId] = useState(
     localStorage.getItem("guestId") || `guest_${uuidv4()}`
@@ -42,14 +42,46 @@ const Cartss = () => {
     dispatch(fetchCart({ guestId }));
   }, [dispatch, guestId]);
 
-  // Validate phone number
+  // Log cart for debugging
+  useEffect(() => {
+    console.log("Cartss - Cart items:", cart);
+  }, [cart]);
+
+  // Validate phone number (aligned with backend)
   const validatePhone = (value) => {
-    const phoneRegex = /^[0-9]{9,12}$/; // 10–15 digits only
+    const phoneRegex = /^\+?\d{10,15}$/;
     if (!phoneRegex.test(value)) {
-      setPhoneError("Invalid phone number");
+      setPhoneError("Phone number must be 10-15 digits, optional + prefix");
     } else {
       setPhoneError("");
     }
+  };
+
+  // Check stock for a specific size or product_stock
+  const getStock = (item) => {
+    if (!item.product_id) {
+      console.warn("Cartss - Missing product_id for item:", item);
+      return 0;
+    }
+    if (item.product_id.sizes?.length > 0) {
+      if (!item.selected_size) {
+        console.warn(
+          `Cartss - Missing selected_size for size-based product: ${item.product_id.product_name}`
+        );
+        return 0;
+      }
+      const size = item.product_id.sizes.find(
+        (s) => s.size === item.selected_size
+      );
+      if (!size) {
+        console.warn(
+          `Cartss - Size ${item.selected_size} not found for product ${item.product_id.product_name}`
+        );
+        return 0;
+      }
+      return size.stock || 0;
+    }
+    return item.product_id.product_stock || 0;
   };
 
   // Increase quantity
@@ -58,17 +90,31 @@ const Cartss = () => {
       toast.error("Invalid product data", { position: "top-right" });
       return;
     }
+    if (item.product_id.sizes?.length > 0 && !item.selected_size) {
+      toast.error("Please select a size for this product", {
+        position: "top-right",
+      });
+      return;
+    }
+    const stock = getStock(item);
+    if (stock <= item.quantity) {
+      toast.error(`Cannot add more: ${item.selected_size || "Item"} out of stock`, {
+        position: "top-right",
+      });
+      return;
+    }
     dispatch(
       addToCart({
         prod_id: item.product_id._id,
         selected_image: item.selected_image,
+        selected_size: item.selected_size,
         guestId,
       })
     )
       .unwrap()
       .then(() => toast.success("Quantity updated!", { position: "top-right" }))
       .catch((err) =>
-        toast.error(err || "Failed to update quantity", {
+        toast.error(err?.message || err || "Failed to update quantity", {
           position: "top-right",
         })
       );
@@ -84,13 +130,16 @@ const Cartss = () => {
       removeFromCart({
         prod_id: item.product_id._id,
         selected_image: item.selected_image,
+        selected_size: item.selected_size,
         guestId,
       })
     )
       .unwrap()
       .then(() => toast.success("Item removed!", { position: "top-right" }))
       .catch((err) =>
-        toast.error(err || "Failed to remove item", { position: "top-right" })
+        toast.error(err?.message || err || "Failed to remove item", {
+          position: "top-right",
+        })
       );
   };
 
@@ -102,12 +151,29 @@ const Cartss = () => {
       });
       return;
     }
+    if (
+      cart.some(
+        (item) => item.product_id.sizes?.length > 0 && !item.selected_size
+      )
+    ) {
+      toast.error("Please select a size for all size-based products", {
+        position: "top-right",
+      });
+      return;
+    }
+    if (cart.some((item) => getStock(item) < item.quantity)) {
+      toast.error("One or more items are out of stock", {
+        position: "top-right",
+      });
+      return;
+    }
 
     const orderData = {
       products: cart.map((item) => ({
         product_id: item.product_id._id,
         quantity: item.quantity,
         selected_image: item.selected_image,
+        selected_size: item.selected_size,
       })),
       total_amount: calculateTotal(),
       shipping_address: shippingAddress,
@@ -125,7 +191,9 @@ const Cartss = () => {
         navigate("/");
       })
       .catch((err) =>
-        toast.error(err || "Failed to place order", { position: "top-right" })
+        toast.error(err?.message || err || "Failed to place order", {
+          position: "top-right",
+        })
       );
   };
 
@@ -148,7 +216,6 @@ const Cartss = () => {
 
   if (loading) return <Loader />;
 
-  // Only show real cart errors (not phone validation)
   if (error && !error.includes("phone")) {
     return (
       <div className="text-center p-4 bg-light min-h-screen">
@@ -188,11 +255,12 @@ const Cartss = () => {
               const colorIndex =
                 item.product_id?.product_images?.indexOf(item.selected_image) ||
                 -1;
+              const stock = getStock(item);
+              const isSizeMissing =
+                item.product_id?.sizes?.length > 0 && !item.selected_size;
               return (
                 <div
-                  key={`${item.product_id?._id || index}-${
-                    item.selected_image
-                  }`}
+                  key={`${item.product_id?._id || index}-${item.selected_image}-${item.selected_size}`}
                   className="flex items-center justify-between bg-light p-4 rounded-xl"
                 >
                   <div className="flex items-center gap-4">
@@ -212,9 +280,27 @@ const Cartss = () => {
                             ({colorNames[colorIndex] || "Selected Color"})
                           </span>
                         )}
+                        {item.selected_size && (
+                          <span className="text-sm text-dark/60 ml-2">
+                            (Size: {item.selected_size})
+                          </span>
+                        )}
                       </h4>
                       <p className="text-primary font-bold mt-1">
                         Rs. {item.product_id?.product_discounted_price || 0}
+                      </p>
+                      <p
+                        className={`text-sm mt-1 ${
+                          stock <= 5 || isSizeMissing
+                            ? "text-red-500"
+                            : "text-dark/70"
+                        }`}
+                      >
+                        {isSizeMissing
+                          ? "Please select a size"
+                          : `Stock: ${stock} ${
+                              item.selected_size ? "in size" : "units"
+                            }`}
                       </p>
                     </div>
                   </div>
@@ -222,6 +308,7 @@ const Cartss = () => {
                     <button
                       onClick={() => handleRemoveItem(item)}
                       className="bg-primary/10 text-primary rounded-full p-2"
+                      disabled={item.quantity <= 0}
                     >
                       <FaTrash size={12} />
                     </button>
@@ -231,6 +318,7 @@ const Cartss = () => {
                     <button
                       onClick={() => handleAddItem(item)}
                       className="bg-primary/10 text-primary rounded-full p-2"
+                      disabled={stock <= item.quantity || isSizeMissing}
                     >
                       <FaPlus size={12} />
                     </button>
@@ -278,7 +366,7 @@ const Cartss = () => {
                 className={`w-full border rounded-lg p-2 ${
                   phoneError ? "border-red-500" : "border-dark/20"
                 }`}
-                placeholder="Enter phone number"
+                placeholder="Enter phone number (e.g., +923001234567)"
               />
               {phoneError && (
                 <p className="text-red-500 text-sm mt-1">{phoneError}</p>
@@ -301,14 +389,13 @@ const Cartss = () => {
 
             {cart.map((item) => (
               <div
-                key={`${item.product_id?._id || item._id}-${
-                  item.selected_image
-                }`}
+                key={`${item.product_id?._id || item._id}-${item.selected_image}-${item.selected_size}`}
                 className="flex justify-between text-sm text-dark"
               >
                 <span>
                   {item.quantity} x{" "}
                   {item.product_id?.product_name || "Unknown Product"}
+                  {item.selected_size && ` (Size: ${item.selected_size})`}
                 </span>
                 <span>
                   Rs.{" "}
@@ -331,7 +418,12 @@ const Cartss = () => {
                 !shippingAddress ||
                 !email ||
                 !phoneNumber ||
-                phoneError
+                phoneError ||
+                cart.some((item) => getStock(item) < item.quantity) ||
+                cart.some(
+                  (item) =>
+                    item.product_id.sizes?.length > 0 && !item.selected_size
+                )
               }
               className="w-full mt-4 bg-primary hover:bg-primary/90 text-white py-2 rounded-lg font-semibold disabled:bg-gray-400"
             >

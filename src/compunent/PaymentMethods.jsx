@@ -3,15 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { createOrder } from "../features/cart/cartSlice";
 import axios from "axios";
-import { Mail, Phone, MapPin, User, Tag } from "lucide-react"; // icons
-import { FaUser, FaUserAstronaut } from "react-icons/fa";
+import { Mail, Phone, MapPin, User, Tag } from "lucide-react";
 
 const PaymentMethods = () => {
   const dispatch = useDispatch();
   const { items: cart } = useSelector((state) => state.cart);
-  const { user: authUser } = useSelector((state) => state.auth); // Get logged-in user
+  const { user: authUser } = useSelector((state) => state.auth);
 
-  // Prefill form data for logged-in users
   const [fullName, setFullName] = useState(authUser?.username || "");
   const [email, setEmail] = useState(authUser?.email || "");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -19,30 +17,61 @@ const PaymentMethods = () => {
   const [discountCode, setDiscountCode] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isValidDiscount, setIsValidDiscount] = useState(false); // Track discount code validity
-  const [discountMessage, setDiscountMessage] = useState(""); // Store validation message
-
+  const [isValidDiscount, setIsValidDiscount] = useState(false);
+  const [discountMessage, setDiscountMessage] = useState("");
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  // Get guestId from localStorage or generate one
   const guestId = localStorage.getItem("guestId") || `guest_${Date.now()}`;
 
   useEffect(() => {
-    // Set guestId in localStorage if not exists
     if (!localStorage.getItem("guestId")) {
       localStorage.setItem("guestId", guestId);
     }
   }, [guestId]);
 
+  // Log cart for debugging
+  useEffect(() => {
+    console.log("PaymentMethods - Cart items:", cart);
+  }, [cart]);
+
+  // Check stock for a specific size or product_stock
+  const getStock = (item) => {
+    if (!item.product_id) {
+      console.warn("PaymentMethods - Missing product_id for item:", item);
+      return 0;
+    }
+    if (item.product_id.sizes?.length > 0) {
+      if (!item.selected_size) {
+        console.warn(
+          `PaymentMethods - Missing selected_size for size-based product: ${item.product_id.product_name}`
+        );
+        return 0;
+      }
+      const size = item.product_id.sizes.find(
+        (s) => s.size === item.selected_size
+      );
+      if (!size) {
+        console.warn(
+          `PaymentMethods - Size ${item.selected_size} not found for product ${item.product_id.product_name}`
+        );
+        return 0;
+      }
+      return size.stock || 0;
+    }
+    return item.product_id.product_stock || 0;
+  };
+
   const validatePhone = (value) => {
-    if (!/^\+?\d{10,15}$/.test(value)) {
-      setPhoneError("Phone number must be valid (10-15 digits)");
+    const phoneRegex = /^\+?\d{10,15}$/;
+    if (!phoneRegex.test(value)) {
+      setPhoneError("Phone number must be 10-15 digits, optional + prefix");
     } else {
       setPhoneError("");
     }
   };
+
   const calculateTotal = () => {
     return Array.isArray(cart)
       ? cart.reduce(
@@ -60,7 +89,6 @@ const PaymentMethods = () => {
     setDiscountCode(code);
 
     if (code) {
-      // Check if email is available before making the API call
       if (!email && !authUser?.email) {
         setIsValidDiscount(false);
         setDiscountMessage(
@@ -94,7 +122,6 @@ const PaymentMethods = () => {
   };
 
   const calculateDiscountedTotal = () => {
-    // Apply 10% discount only if the code is valid
     return isValidDiscount
       ? Math.round(calculateTotal() * 0.9 * 100) / 100
       : calculateTotal();
@@ -107,6 +134,22 @@ const PaymentMethods = () => {
       });
       return;
     }
+    if (
+      cart.some(
+        (item) => item.product_id.sizes?.length > 0 && !item.selected_size
+      )
+    ) {
+      toast.error("Please select a size for all size-based products", {
+        position: "top-right",
+      });
+      return;
+    }
+    if (cart.some((item) => getStock(item) < item.quantity)) {
+      toast.error("One or more items are out of stock", {
+        position: "top-right",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -115,31 +158,26 @@ const PaymentMethods = () => {
         product_id: item.product_id?._id || item.product_id,
         quantity: item.quantity,
         selected_image: item.selected_image,
+        selected_size: item.selected_size,
       })),
-      total_amount: calculateTotal(), // Send original total to backend
-      shipping_address: shippingAddress, // Fixed: Use snake_case to match backend
+      total_amount: calculateTotal(),
+      shipping_address: shippingAddress,
       order_email: email,
       phone_number: phoneNumber,
       full_name: fullName,
       guestId,
-      discount_code: isValidDiscount ? discountCode : undefined, // Send discount code only if valid
+      discount_code: isValidDiscount ? discountCode : undefined,
     };
 
     try {
       const result = await dispatch(createOrder(orderData)).unwrap();
-
       toast.success("Order placed successfully!", {
         position: "top-right",
         autoClose: 3000,
       });
-
       setOrderPlaced(true);
       setOrderDetails(result);
-
-      // Clear cart and guestId after successful order
       localStorage.removeItem("guestId");
-
-      // Reset form
       setFullName(authUser?.username || "");
       setEmail(authUser?.email || "");
       setPhoneNumber("");
@@ -148,7 +186,7 @@ const PaymentMethods = () => {
       setIsValidDiscount(false);
       setDiscountMessage("");
     } catch (err) {
-      toast.error(err || "Failed to place order", {
+      toast.error(err?.message || err || "Failed to place order", {
         position: "top-right",
         autoClose: 5000,
       });
@@ -239,7 +277,7 @@ const PaymentMethods = () => {
               setPhoneNumber(e.target.value);
               validatePhone(e.target.value);
             }}
-            placeholder="Enter phone number (10-15 digits)"
+            placeholder="Enter phone number (e.g., +923001234567)"
             className={`w-full pl-12 pr-4 py-3 rounded-xl border 
                   bg-white/80 shadow
                   placeholder-gray-400
@@ -312,7 +350,6 @@ const PaymentMethods = () => {
                    text-dark font-semibold"
             />
           </div>
-
           {discountCode && (
             <p
               className={`text-sm mt-2 font-medium transition ${
@@ -327,20 +364,28 @@ const PaymentMethods = () => {
       {/* Cart Summary */}
       <div className="mb-4 p-3 bg-gray-50 rounded-lg">
         <h4 className="font-semibold text-dark mb-2">Order Items:</h4>
-        {cart.map((item) => (
-          <div
-            key={`${item.product_id?._id || item._id}-${item.selected_image}`}
-            className="flex justify-between text-sm text-dark py-1 border-b border-gray-200 last:border-b-0"
-          >
-            <span className="truncate">
-              {item.quantity}x {item.product_id?.product_name || "Product"}
-            </span>
-            <span className="font-medium">
-              Rs.{" "}
-              {(item.product_id?.product_discounted_price || 0) * item.quantity}
-            </span>
-          </div>
-        ))}
+        {cart.map((item) => {
+          const isSizeMissing =
+            item.product_id?.sizes?.length > 0 && !item.selected_size;
+          return (
+            <div
+              key={`${item.product_id?._id || item._id}-${item.selected_image}-${item.selected_size}`}
+              className="flex justify-between text-sm text-dark py-1 border-b border-gray-200 last:border-b-0"
+            >
+              <span className="truncate">
+                {item.quantity}x {item.product_id?.product_name || "Product"}
+                {item.selected_size && ` (Size: ${item.selected_size})`}
+                {isSizeMissing && (
+                  <span className="text-red-500 ml-2">(Select size)</span>
+                )}
+              </span>
+              <span className="font-medium">
+                Rs.{" "}
+                {(item.product_id?.product_discounted_price || 0) * item.quantity}
+              </span>
+            </div>
+          );
+        })}
       </div>
       <hr className="my-4" />
       {/* Total Display */}
@@ -349,7 +394,6 @@ const PaymentMethods = () => {
           <span>Subtotal:</span>
           <span>Rs. {calculateTotal()}</span>
         </div>
-
         {isValidDiscount && (
           <>
             <div className="flex justify-between text-sm text-green-600">
@@ -367,7 +411,6 @@ const PaymentMethods = () => {
             </div>
           </>
         )}
-
         <div className="flex justify-between text-xl font-bold text-dark border-t pt-2">
           <span>Total Amount:</span>
           <span className={isValidDiscount ? "text-green-600" : ""}>
@@ -385,7 +428,11 @@ const PaymentMethods = () => {
             !shippingAddress ||
             !email ||
             !phoneNumber ||
-            phoneError
+            phoneError ||
+            cart.some((item) => getStock(item) < item.quantity) ||
+            cart.some(
+              (item) => item.product_id.sizes?.length > 0 && !item.selected_size
+            )
           }
           className="w-full py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
@@ -408,7 +455,6 @@ const PaymentMethods = () => {
               ? "Hide Order Details"
               : `View Order #${orderDetails?._id?.slice(-6)}`}
           </button>
-
           {showDetails && orderDetails && (
             <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
               <h4 className="font-bold text-dark mb-3 border-b pb-2">
@@ -419,21 +465,16 @@ const PaymentMethods = () => {
                 <span className="font-mono text-right">
                   #{orderDetails._id?.slice(-6)}
                 </span>
-
                 <span className="text-gray-600">Name:</span>
                 <span className="text-right">{orderDetails.full_name}</span>
-
                 <span className="text-gray-600">Email:</span>
                 <span className="text-right">{orderDetails.order_email}</span>
-
                 <span className="text-gray-600">Phone:</span>
                 <span className="text-right">{orderDetails.phone_number}</span>
-
                 <span className="text-gray-600">Address:</span>
                 <span className="text-right">
                   {orderDetails.shipping_address}
                 </span>
-
                 {orderDetails.discount_code && (
                   <>
                     <span className="text-gray-600">Discount:</span>
@@ -442,14 +483,13 @@ const PaymentMethods = () => {
                     </span>
                   </>
                 )}
-
                 <span className="text-gray-600">Total:</span>
                 <span className="text-right font-bold text-lg text-primary">
                   Rs. {orderDetails.total_amount}
                 </span>
               </div>
               <div className="">
-                If you have any question please contect on whatsapp number{" "}
+                If you have any question please contact on WhatsApp number{" "}
                 <a
                   href="https://wa.me/923297609190?text=Hello%20I%20want%20to%20know%20more%20about%20your%20products"
                   target="_blank"

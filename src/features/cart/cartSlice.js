@@ -1,34 +1,39 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "https://bzbackend.online/api";
+const API_URL = "https://bzbackend.online";
 
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async ({ product_id, selected_image, guestId }, { rejectWithValue }) => {
+  async (cartData, { rejectWithValue }) => {
     try {
-      if (!product_id || !selected_image) {
+      if (!cartData.product_id || !cartData.selected_image) {
         return rejectWithValue("Product ID and selected image are required");
       }
 
       const payload = {
-        product_id,
-        selected_image,
-        guestId: guestId || null,
+        product_id: cartData.product_id,
+        selected_image: cartData.selected_image,
+        guestId: cartData.guestId || null,
       };
+
+      // Include selected_size only if provided
+      if (cartData.selected_size) {
+        payload.selected_size = cartData.selected_size;
+      }
+
+      console.log("cartSlice - addToCart payload:", payload);
 
       const response = await axios.post(`${API_URL}/products/cart`, payload);
       return response.data;
     } catch (error) {
+      console.error("cartSlice - addToCart error:", error.response?.data || error.message);
       return rejectWithValue(
-        error.response?.data?.message ||
-          error.message ||
-          "Failed to add to cart"
+        error.response?.data?.message || error.message || "Failed to add to cart"
       );
     }
   }
 );
-
 
 export const fetchCart = createAsyncThunk(
   "cart/fetchCart",
