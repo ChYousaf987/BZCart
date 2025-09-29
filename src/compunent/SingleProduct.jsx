@@ -234,7 +234,7 @@ const SingleProduct = () => {
           {/* Mobile: Big image with thumbnails below */}
 
           {/* Mobile: Slider for product images */}
-          <div className="md:hidden relative">
+          <div className="md:hidden relative mb-11">
             <Slider
               dots={true}
               infinite={true}

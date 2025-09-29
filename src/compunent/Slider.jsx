@@ -47,7 +47,7 @@ const HeroSection = () => {
   return (
     <div className="font-sans bg-white">
       {/* 🔹 Hero & Promo Banners */}
-      <div className="grid grid-cols-1 w-[95%] mx-auto md:grid-cols-[2fr_1fr] gap-3 md:gap-6 px- md:px-0 pb-10 mt-3">
+      <div className="grid grid-cols-1 w-[95%] mx-auto md:grid-cols-[2fr_1fr] gap-2 md:gap-6 md:px-0 pb-8 mt-3">
         {/* Left: Main Hero (Large Banner) */}
         {largeSlide && (
           <a
@@ -105,7 +105,7 @@ const HeroSection = () => {
         )}
 
         {/* Right: Promo Boxes (Medium and Small Banners) */}
-        <div className="space-y-2 md:space-y-6 flex flex-col">
+        <div className="space-y-1 md:space-y-6 flex flex-col">
           {sideBanners.length > 0 ? (
             sideBanners.map((slide, index) => (
               <a
