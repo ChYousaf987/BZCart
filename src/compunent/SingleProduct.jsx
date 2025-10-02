@@ -35,7 +35,7 @@ const SingleProduct = () => {
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
   const [selectedImage, setSelectedImage] = useState("");
-  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedSize, setSelectedSize] = useState(""); // Initialize as empty string
   const WHATSAPP_NUMBER = "923297609190";
   const [guestId] = useState(
     localStorage.getItem("guestId") || `guest_${uuidv4()}`
@@ -59,10 +59,7 @@ const SingleProduct = () => {
             (size) => size.stock > 0
           );
           setSelectedSize(availableSize ? availableSize.size : "");
-          console.log(
-            "SingleProduct - Initial selected size:",
-            availableSize ? availableSize.size : "None"
-          );
+          console.log("SingleProduct - Initial selected size:", availableSize ? availableSize.size : "None");
         }
       })
       .catch((err) => console.error("Error loading product:", err));
@@ -132,9 +129,7 @@ const SingleProduct = () => {
       product.sizes.length > 0 &&
       product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
     ) {
-      toast.error(`Size ${selectedSize} is out of stock`, {
-        position: "top-right",
-      });
+      toast.error(`Size ${selectedSize} is out of stock`, { position: "top-right" });
       return;
     }
 
@@ -145,7 +140,7 @@ const SingleProduct = () => {
       selected_size: selectedSize || undefined,
     };
 
-    console.log("SingleProduct - Adding to cart:", JSON.stringify(cartData, null, 2));
+    console.log("SingleProduct - Adding to cart:", cartData);
 
     dispatch(addToCart(cartData))
       .unwrap()
@@ -179,34 +174,28 @@ const SingleProduct = () => {
       product.sizes.length > 0 &&
       product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
     ) {
-      toast.error(`Size ${selectedSize} is out of stock`, {
-        position: "top-right",
-      });
+      toast.error(`Size ${selectedSize} is out of stock`, { position: "top-right" });
       return;
     }
 
-    const cartData = {
-      product_id: product._id,
-      selected_image: selectedImage,
-      guestId: user ? undefined : guestId,
-      selected_size: selectedSize || undefined,
+    const buyNowProduct = {
+      _id: product._id,
+      product_name: product.product_name,
+      product_discounted_price: product.product_discounted_price,
+      quantity: 1,
+      selected_image: selectedImage || product.product_images[0],
+      sizes: product.sizes,
+      selected_size: selectedSize || undefined, // Ensure undefined if no size
     };
 
-    console.log("SingleProduct - Buy Now (adding to cart):", JSON.stringify(cartData, null, 2));
+    console.log("SingleProduct - Buy Now product:", JSON.stringify(buyNowProduct, null, 2));
 
-    dispatch(addToCart(cartData))
-      .unwrap()
-      .then(() => {
-        dispatch(fetchCart({ guestId: user ? undefined : guestId }));
-        toast.success("Added to cart!", { position: "top-right" });
-        navigate("/payment"); // Navigate to cart page
-      })
-      .catch((err) => {
-        console.error("SingleProduct - Buy Now addToCart error:", JSON.stringify(err, null, 2));
-        toast.error(err?.message || err || "Failed to add to cart", {
-          position: "top-right",
-        });
-      });
+    navigate("/paymentMethod", {
+      state: {
+        buyNowProduct,
+        guestId: user ? undefined : guestId,
+      },
+    });
   };
 
   const handleOrderOnWhatsapp = () => {
