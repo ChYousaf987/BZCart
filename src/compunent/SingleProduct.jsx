@@ -1,3 +1,4 @@
+// SingleProduct.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -58,6 +59,10 @@ const SingleProduct = () => {
             (size) => size.stock > 0
           );
           setSelectedSize(availableSize ? availableSize.size : "");
+          console.log(
+            "SingleProduct - Initial selected size:",
+            availableSize ? availableSize.size : "None"
+          );
         }
       })
       .catch((err) => console.error("Error loading product:", err));
@@ -122,19 +127,25 @@ const SingleProduct = () => {
       toast.error("Please select a size", { position: "top-right" });
       return;
     }
+    if (
+      product.sizes &&
+      product.sizes.length > 0 &&
+      product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
+    ) {
+      toast.error(`Size ${selectedSize} is out of stock`, {
+        position: "top-right",
+      });
+      return;
+    }
 
     const cartData = {
       product_id: product._id,
       selected_image: selectedImage,
       guestId: user ? undefined : guestId,
+      selected_size: selectedSize || undefined,
     };
 
-    // Only include selected_size if it’s a valid non-empty string
-    if (selectedSize) {
-      cartData.selected_size = selectedSize;
-    }
-
-    console.log("SingleProduct - Adding to cart:", cartData);
+    console.log("SingleProduct - Adding to cart:", JSON.stringify(cartData, null, 2));
 
     dispatch(addToCart(cartData))
       .unwrap()
@@ -159,25 +170,43 @@ const SingleProduct = () => {
       return;
     }
     if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+      console.error("SingleProduct - Missing selected_size for Buy Now");
       toast.error("Please select a size", { position: "top-right" });
       return;
     }
+    if (
+      product.sizes &&
+      product.sizes.length > 0 &&
+      product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
+    ) {
+      toast.error(`Size ${selectedSize} is out of stock`, {
+        position: "top-right",
+      });
+      return;
+    }
 
-    const buyNowProduct = {
-      _id: product._id,
-      product_name: product.product_name,
-      product_discounted_price: product.product_discounted_price,
-      quantity: 1,
-      selected_image: selectedImage || product.product_images[0],
+    const cartData = {
+      product_id: product._id,
+      selected_image: selectedImage,
+      guestId: user ? undefined : guestId,
       selected_size: selectedSize || undefined,
     };
 
-    navigate("/paymentMethod", {
-      state: {
-        buyNowProduct,
-        guestId: user ? undefined : guestId,
-      },
-    });
+    console.log("SingleProduct - Buy Now (adding to cart):", JSON.stringify(cartData, null, 2));
+
+    dispatch(addToCart(cartData))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchCart({ guestId: user ? undefined : guestId }));
+        toast.success("Added to cart!", { position: "top-right" });
+        navigate("/payment"); // Navigate to cart page
+      })
+      .catch((err) => {
+        console.error("SingleProduct - Buy Now addToCart error:", JSON.stringify(err, null, 2));
+        toast.error(err?.message || err || "Failed to add to cart", {
+          position: "top-right",
+        });
+      });
   };
 
   const handleOrderOnWhatsapp = () => {
@@ -325,7 +354,11 @@ const SingleProduct = () => {
                 <label className="block text-gray-700 mb-1">Select Size</label>
                 <select
                   value={selectedSize}
-                  onChange={(e) => setSelectedSize(e.target.value)}
+                  onChange={(e) => {
+                    const size = e.target.value;
+                    console.log("SingleProduct - Selected size:", size);
+                    setSelectedSize(size);
+                  }}
                   className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-600"
                 >
                   <option value="" disabled>
