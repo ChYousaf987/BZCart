@@ -119,6 +119,7 @@ const Cashout = () => {
         product_id: item.product_id?._id || item._id,
         quantity: item.quantity,
         selected_image: item.selected_image,
+        selected_size: item.selected_size,
       })),
       total_amount: calculateDiscountedTotal(),
       shipping_address: shippingAddress,
