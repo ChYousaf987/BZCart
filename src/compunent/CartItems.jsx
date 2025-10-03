@@ -81,14 +81,17 @@ const CartItems = () => {
     }
     const stock = getStock(item);
     if (stock <= item.quantity) {
-      toast.error(`Cannot add more: ${item.selected_size || "Item"} out of stock`, {
-        position: "top-right",
-      });
+      toast.error(
+        `Cannot add more: ${item.selected_size || "Item"} out of stock`,
+        {
+          position: "top-right",
+        }
+      );
       return;
     }
     dispatch(
       addToCart({
-        prod_id: item.product_id._id,
+        product_id: item.product_id._id, // ✅ changed here
         selected_image: item.selected_image,
         selected_size: item.selected_size,
         guestId,
@@ -108,21 +111,47 @@ const CartItems = () => {
       toast.error("Invalid product data", { position: "top-right" });
       return;
     }
-    dispatch(
-      removeFromCart({
-        prod_id: item.product_id._id,
-        selected_image: item.selected_image,
-        selected_size: item.selected_size,
-        guestId,
-      })
-    )
-      .unwrap()
-      .then(() => toast.success("Item removed!", { position: "top-right" }))
-      .catch((err) =>
-        toast.error(err?.message || err || "Failed to remove item", {
-          position: "top-right",
+
+    if (item.quantity > 1) {
+      // Decrease quantity
+      dispatch(
+        removeFromCart({
+          product_id: item.product_id._id,
+          selected_image:
+            item.selected_image || item.product_id?.product_images?.[0] || null,
+          selected_size: item.selected_size || null,
+          guestId,
+          removeAll: item.quantity <= 1, // optional flag
         })
-      );
+      )
+        .unwrap()
+        .then(() =>
+          toast.success("Quantity decreased!", { position: "top-right" })
+        )
+        .catch((err) =>
+          toast.error(err?.message || "Failed to decrease quantity", {
+            position: "top-right",
+          })
+        );
+    } else {
+      // Remove item completely
+      dispatch(
+        removeFromCart({
+          product_id: item.product_id._id,
+          selected_image: item.selected_image,
+          selected_size: item.selected_size,
+          guestId,
+          removeAll: true, // optional flag if backend supports it
+        })
+      )
+        .unwrap()
+        .then(() => toast.success("Item removed!", { position: "top-right" }))
+        .catch((err) =>
+          toast.error(err?.message || "Failed to remove item", {
+            position: "top-right",
+          })
+        );
+    }
   };
 
   const totalItems = () =>
@@ -201,7 +230,9 @@ const CartItems = () => {
             item.product_id?.sizes?.length > 0 && !item.selected_size;
           return (
             <div
-              key={`${item.product_id?._id || index}-${item.selected_image}-${item.selected_size}`}
+              key={`${item.product_id?._id || index}-${item.selected_image}-${
+                item.selected_size
+              }`}
               className="flex items-center justify-between border-b last:border-0 pb-4 mb-4"
             >
               <div className="flex items-center gap-4">
@@ -252,6 +283,7 @@ const CartItems = () => {
                 >
                   <FaTrash size={12} />
                 </button>
+
                 <span className="font-medium text-dark">{item.quantity}</span>
                 <button
                   onClick={() => handleAddItem(item)}
@@ -271,7 +303,7 @@ const CartItems = () => {
           Total: <span className="text-primary">Rs. {totalPrice()}</span>
         </h3>
         <button
-          onClick={() => navigate("/paymentMethods")}
+          onClick={() => navigate("/Checkout")}
           className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition"
         >
           Proceed to Payment <FaArrowRight />

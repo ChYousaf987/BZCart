@@ -63,7 +63,7 @@ const NewArrival = () => {
       ) : filteredProducts.length === 0 ? (
         <p className="text-center w-full">No new arrival products found</p>
       ) : (
-        <div className="flex overflow-x-auto md:overflow-hidden gap-6 sm:gap-10 snap-x snap-mandatory scrollbar-hide">
+        <div className="flex overflow-x-auto  gap-6 sm:gap-10 snap-x snap-mandatory scrollbar-hide">
           {filteredProducts.map((product, index) => (
             <Link
               to={`/product/${product._id}`}

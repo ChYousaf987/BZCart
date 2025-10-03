@@ -20,6 +20,7 @@ import About from "./compunent/About";
 import PrivacyPolicy from "./compunent/PrivacyPolicy";
 import ReturnRefund from "./compunent/ReturnRefund";
 import TermsAndCondition from "./compunent/TermsAndCondition";
+import Checkout from "./compunent/Checkout";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -43,6 +44,7 @@ const App = () => {
       <Route path="/cart" element={<Cart />} />
       <Route path="/payment" element={<Payment />} />
       <Route path="/paymentMethod" element={<Cashout />} />
+      <Route path="/Checkout" element={<Checkout />} />
       <Route path="/paymentMethods" element={<PaymentMethods />} />
       <Route path="/track-order/:id" element={<TrackOrder />} />
       <Route path="/deal/:id" element={<SingleDeal />} /> {/* New route */}
@@ -56,7 +58,7 @@ const App = () => {
       <Route path="/about" element={<About />} />
       <Route path="/privacypolicy" element={<PrivacyPolicy />} />
       <Route path="/returnandrefund" element={<ReturnRefund />} />
-      <Route path="/termsandconditions" element={<TermsAndCondition/>} />
+      <Route path="/termsandconditions" element={<TermsAndCondition />} />
     </Routes>
   );
 };

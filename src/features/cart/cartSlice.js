@@ -55,11 +55,11 @@ export const fetchCart = createAsyncThunk(
 
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
-  async ({ prod_id, selected_image, guestId }, { rejectWithValue }) => {
+  async ({ product_id, selected_image, guestId }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${API_URL}/products/cart/remove`,
-        { product_id: prod_id, selected_image, guestId },
+        { product_id, selected_image, guestId },
         { timeout: 5000 }
       );
       return response.data;
@@ -71,6 +71,7 @@ export const removeFromCart = createAsyncThunk(
     }
   }
 );
+
 
 export const createOrder = createAsyncThunk(
   "cart/createOrder",
