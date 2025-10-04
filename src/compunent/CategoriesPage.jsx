@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { PulseLoader } from "react-spinners";
 import Navbar from "./Navbar";
 import Loader from "./Loader";
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filterType, setFilterType] = useState("category"); // category | subcategory
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -17,6 +18,7 @@ const CategoriesPage = () => {
           "https://bzbackend.online/api/categories/categories"
         );
         setCategories(response.data);
+        setFilteredData(response.data); // default view
       } catch (err) {
         console.error(
           "Fetch categories error:",
@@ -29,25 +31,60 @@ const CategoriesPage = () => {
     fetchCategories();
   }, []);
 
+  const handleFilter = (type) => {
+    setFilterType(type);
+    if (type === "category") {
+      const mainCats = categories.filter((cat) => !cat.parent_category);
+      setFilteredData(mainCats);
+    } else {
+      const subCats = categories.filter((cat) => cat.parent_category);
+      setFilteredData(subCats);
+    }
+  };
+
   if (loading) {
-    return (
-     <Loader/>
-    );
+    return <Loader />;
   }
 
   return (
     <>
-    <Navbar/>
+      <Navbar />
       <div className="w-[95%] mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6 text-center border-b-2 border-[#f06621] inline-block pb-1">
-          All <span className="text-[#f06621]">Categories</span>
+          Browse <span className="text-[#f06621]">Categories</span>
         </h1>
 
-        {categories.length === 0 ? (
-          <p className="text-center">No categories found</p>
+        {/* 🔘 Filter Buttons */}
+        <div className="flex justify-center mb-8 gap-3">
+          <button
+            onClick={() => handleFilter("category")}
+            className={`px-5 py-2 rounded-full border transition-all duration-300 ${
+              filterType === "category"
+                ? "bg-[#f06621] text-white border-[#f06621]"
+                : "bg-white text-[#f06621] border-[#f06621] hover:bg-[#f06621] hover:text-white"
+            }`}
+          >
+            Categories
+          </button>
+
+          <button
+            onClick={() => handleFilter("subcategory")}
+            className={`px-5 py-2 rounded-full border transition-all duration-300 ${
+              filterType === "subcategory"
+                ? "bg-[#f06621] text-white border-[#f06621]"
+                : "bg-white text-[#f06621] border-[#f06621] hover:bg-[#f06621] hover:text-white"
+            }`}
+          >
+            Subcategories
+          </button>
+        </div>
+
+        {/* 🧩 Categories Grid */}
+        {filteredData.length === 0 ? (
+          <p className="text-center">No {filterType}s found</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {categories.map((category, index) => (
+            {filteredData.map((category, index) => (
               <Link
                 key={`${category._id}-${index}`}
                 to={`/category/${category._id}`}
