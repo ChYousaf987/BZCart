@@ -59,7 +59,10 @@ const SingleProduct = () => {
             (size) => size.stock > 0
           );
           setSelectedSize(availableSize ? availableSize.size : "");
-          console.log("SingleProduct - Initial selected size:", availableSize ? availableSize.size : "None");
+          console.log(
+            "SingleProduct - Initial selected size:",
+            availableSize ? availableSize.size : "None"
+          );
         }
       })
       .catch((err) => console.error("Error loading product:", err));
@@ -129,7 +132,9 @@ const SingleProduct = () => {
       product.sizes.length > 0 &&
       product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
     ) {
-      toast.error(`Size ${selectedSize} is out of stock`, { position: "top-right" });
+      toast.error(`Size ${selectedSize} is out of stock`, {
+        position: "top-right",
+      });
       return;
     }
 
@@ -174,23 +179,30 @@ const SingleProduct = () => {
       product.sizes.length > 0 &&
       product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
     ) {
-      toast.error(`Size ${selectedSize} is out of stock`, { position: "top-right" });
+      toast.error(`Size ${selectedSize} is out of stock`, {
+        position: "top-right",
+      });
       return;
     }
 
     const buyNowProduct = {
-      _id: product._id,
+      _id: product._id, // Use _id for consistency
+      product_id: product, // Full product object for compatibility
       product_name: product.product_name,
       product_discounted_price: product.product_discounted_price,
       quantity: 1,
       selected_image: selectedImage || product.product_images[0],
       sizes: product.sizes,
-      selected_size: selectedSize || undefined, // Ensure undefined if no size
+      selected_size: selectedSize || undefined,
+      product_stock: product.product_stock, // Add if needed
     };
 
-    console.log("SingleProduct - Buy Now product:", JSON.stringify(buyNowProduct, null, 2));
+    console.log(
+      "SingleProduct - Buy Now product:",
+      JSON.stringify(buyNowProduct, null, 2)
+    );
 
-    navigate("/paymentMethod", {
+    navigate("/Cashout", {
       state: {
         buyNowProduct,
         guestId: user ? undefined : guestId,
@@ -388,12 +400,15 @@ const SingleProduct = () => {
             </p>
             {product.warranty && (
               <p className="mb-2">
-                Warranty: <span className="font-semibold">{product.warranty}</span>
+                Warranty:{" "}
+                <span className="font-semibold">{product.warranty}</span>
               </p>
             )}
             <p className="mb-2">
               Payment Methods:{" "}
-              <span className="font-semibold">{product.payment.join(", ")}</span>
+              <span className="font-semibold">
+                {product.payment.join(", ")}
+              </span>
             </p>
             {product.sizes && product.sizes.length > 0 && (
               <div className="mb-2">
@@ -413,16 +428,17 @@ const SingleProduct = () => {
                 onClick={handleAddToCart}
                 className="w-1/2 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 disabled:bg-gray-400"
                 disabled={
-                  (product.sizes && product.sizes.length > 0
+                  product.sizes && product.sizes.length > 0
                     ? !selectedSize ||
-                      product.sizes.find((s) => s.size === selectedSize)?.stock <=
-                        0
-                    : product.product_stock <= 0)
+                      product.sizes.find((s) => s.size === selectedSize)
+                        ?.stock <= 0
+                    : product.product_stock <= 0
                 }
               >
                 {product.sizes && product.sizes.length > 0
                   ? selectedSize &&
-                    product.sizes.find((s) => s.size === selectedSize)?.stock > 0
+                    product.sizes.find((s) => s.size === selectedSize)?.stock >
+                      0
                     ? "Add to Cart"
                     : "Out of Stock"
                   : product.product_stock > 0
@@ -434,11 +450,11 @@ const SingleProduct = () => {
                 onClick={handleBuyNow}
                 className="w-1/2 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 disabled:bg-gray-400"
                 disabled={
-                  (product.sizes && product.sizes.length > 0
+                  product.sizes && product.sizes.length > 0
                     ? !selectedSize ||
-                      product.sizes.find((s) => s.size === selectedSize)?.stock <=
-                        0
-                    : product.product_stock <= 0)
+                      product.sizes.find((s) => s.size === selectedSize)
+                        ?.stock <= 0
+                    : product.product_stock <= 0
                 }
               >
                 Buy Now
@@ -449,10 +465,11 @@ const SingleProduct = () => {
               onClick={handleOrderOnWhatsapp}
               className="mt-3 w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20b954] text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 disabled:bg-gray-400"
               disabled={
-                (product.sizes && product.sizes.length > 0
+                product.sizes && product.sizes.length > 0
                   ? !selectedSize ||
-                    product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
-                  : product.product_stock <= 0)
+                    product.sizes.find((s) => s.size === selectedSize)?.stock <=
+                      0
+                  : product.product_stock <= 0
               }
             >
               <svg
@@ -561,14 +578,10 @@ const SingleProduct = () => {
             <div className="mt-4">
               {user && (
                 <div className="mb-6 p-4 bg-gray-50 rounded-md">
-                  <h3 className="font-semibold text-lg mb-2">
-                    Write a Review
-                  </h3>
+                  <h3 className="font-semibold text-lg mb-2">Write a Review</h3>
                   <form onSubmit={handleReviewSubmit}>
                     <div className="mb-3">
-                      <label className="block text-gray-700 mb-1">
-                        Rating
-                      </label>
+                      <label className="block text-gray-700 mb-1">Rating</label>
                       <select
                         value={rating}
                         onChange={(e) => setRating(Number(e.target.value))}

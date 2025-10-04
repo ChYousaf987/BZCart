@@ -20,7 +20,8 @@ const Cashout = () => {
   });
   const [errors, setErrors] = useState({});
 
-  const { user: authUser, items: cart } = useSelector((state) => state.auth);
+  const { user: authUser } = useSelector((state) => state.auth);
+  const { items: cart } = useSelector((state) => state.cart); // Fixed: select from state.cart
   const location = useLocation();
   const buyNowProduct = location.state?.buyNowProduct;
   const guestIdFromState = location.state?.guestId;
