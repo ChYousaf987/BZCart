@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import ShippingForm from "./ShippingForm";
 import PaymentForm from "./PaymentForm";
-import TrackOrder from "./TrackOrder";
+import TrackOrders from "./TrackOrders";
 import { ArrowLeft } from "lucide-react";
 import { FaMapMarkerAlt, FaCreditCard, FaCheckCircle } from "react-icons/fa";
 
@@ -63,7 +63,7 @@ const Checkout = () => {
         />
       )}
       {step === 3 && (
-        <TrackOrder
+        <TrackOrders
           orderData={orderData}
           formData={formData}
           authUser={authUser}

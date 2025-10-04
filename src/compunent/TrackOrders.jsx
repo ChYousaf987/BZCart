@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { FaMapMarkerAlt, FaCreditCard, FaCheckCircle } from "react-icons/fa";
 import { User, Mail, Phone, MapPin } from "lucide-react";
 
-const TrackOrder = ({ orderData, formData, authUser }) => {
+const TrackOrders = ({ orderData, formData, authUser }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   if (!orderData) {
@@ -115,4 +115,4 @@ const TrackOrder = ({ orderData, formData, authUser }) => {
   );
 };
 
-export default TrackOrder;
+export default TrackOrders;

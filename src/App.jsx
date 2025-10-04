@@ -21,6 +21,7 @@ import PrivacyPolicy from "./compunent/PrivacyPolicy";
 import ReturnRefund from "./compunent/ReturnRefund";
 import TermsAndCondition from "./compunent/TermsAndCondition";
 import Checkout from "./compunent/Checkout";
+import FAQS from "./compunent/FAQS";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -59,6 +60,7 @@ const App = () => {
       <Route path="/privacypolicy" element={<PrivacyPolicy />} />
       <Route path="/returnandrefund" element={<ReturnRefund />} />
       <Route path="/termsandconditions" element={<TermsAndCondition />} />
+      <Route path="/faqs" element={<FAQS />} />
     </Routes>
   );
 };

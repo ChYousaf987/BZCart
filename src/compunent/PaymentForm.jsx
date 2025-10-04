@@ -265,6 +265,7 @@ const PaymentForm = ({
       <h2 className="text-2xl font-bold mb-6">Payment</h2>
 
       {/* Payment Methods */}
+      {/* Payment Methods */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {[
           { type: "cash", label: "Cash", icon: <FaMoneyBillAlt /> },
@@ -290,54 +291,81 @@ const PaymentForm = ({
         ))}
       </div>
 
-      {/* Card Preview */}
-      {paymentMethod === "credit" && (
-        <div className="mb-6">
-          <img
-            src="https://www.visa.co.in/dam/VCOM/regional/ap/india/global-elements/images/in-visa-gold-card-498x280.png"
-            alt="Credit card"
-            className="rounded-xl shadow-lg"
-          />
+      {/* Show "Coming Soon" for Card or Other */}
+      {(paymentMethod === "credit" || paymentMethod === "other") && (
+        <div className="mb-6 animate-fade-in">
+          <div className="bg-yellow-100 text-yellow-800 text-sm font-medium px-4 py-3 rounded-lg flex items-center justify-center shadow-sm">
+            <svg
+              className="w-5 h-5 mr-2 text-yellow-600 animate-bounce"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M12 18a9 9 0 100-18 9 9 0 000 18z"
+              />
+            </svg>
+            Payment method{" "}
+            <span className="font-semibold mx-1 capitalize">
+              {paymentMethod}
+            </span>{" "}
+            coming soon!
+          </div>
         </div>
       )}
 
-      {/* Alternative Payments */}
-      <div className="mb-6">
-        <p className="text-sm text-gray-600 mb-3 text-center">
-          Or checkout quickly with
-        </p>
-        <div className="flex gap-5 items-center justify-center flex-wrap">
-          {[
-            {
-              src: "https://www.logo.wine/a/logo/PayPal/PayPal-Logo.wine.svg",
-              alt: "PayPal",
-            },
-            {
-              src: "https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg",
-              alt: "Visa",
-            },
-            {
-              src: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg",
-              alt: "Mastercard",
-            },
-            {
-              src: "https://upload.wikimedia.org/wikipedia/commons/1/16/Alipay_logo.svg",
-              alt: "Alipay",
-            },
-            {
-              src: "https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg",
-              alt: "Amex",
-            },
-          ].map((logo, i) => (
+      {/* Card Preview */}
+      {paymentMethod === "credit" && (
+        <div className="">
+          <div className="mb-6">
             <img
-              key={i}
-              src={logo.src}
-              alt={logo.alt}
-              className="h-7 hover:scale-110 transition-transform cursor-pointer drop-shadow-md"
+              src="https://www.visa.co.in/dam/VCOM/regional/ap/india/global-elements/images/in-visa-gold-card-498x280.png"
+              alt="Credit card"
+              className="rounded-xl w-[60%] mx-auto"
             />
-          ))}
+          </div>
+          {/* Alternative Payments */}
+          <div className="mb-6">
+            <p className="text-sm text-gray-600 my-7 text-">
+              Or check out with
+            </p>
+            <div className="flex gap-5 items-center justify-center flex-wrap">
+              {[
+                {
+                  src: "https://www.logo.wine/a/logo/PayPal/PayPal-Logo.wine.svg",
+                  alt: "PayPal",
+                },
+                {
+                  src: "https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg",
+                  alt: "Visa",
+                },
+                {
+                  src: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg",
+                  alt: "Mastercard",
+                },
+                {
+                  src: "https://upload.wikimedia.org/wikipedia/commons/1/16/Alipay_logo.svg",
+                  alt: "Alipay",
+                },
+                {
+                  src: "https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg",
+                  alt: "Amex",
+                },
+              ].map((logo, i) => (
+                <img
+                  key={i}
+                  src={logo.src}
+                  alt={logo.alt}
+                  className="h-7 hover:scale-110 transition-transform cursor-pointer drop-shadow-md"
+                />
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Discount Code */}
       {authUser && (
@@ -456,11 +484,13 @@ const PaymentForm = ({
       </div>
 
       {/* Order Button */}
+      {/* Order Button */}
       <button
         onClick={handlePlaceOrder}
         disabled={
           isSubmitting ||
           !agree ||
+          paymentMethod !== "cash" || // ✅ disable when Card or Other selected
           !formData.fullName ||
           !formData.shippingAddress ||
           !formData.email ||
@@ -471,9 +501,31 @@ const PaymentForm = ({
             (item) => item.product_id.sizes?.length > 0 && !item.selected_size
           )
         }
-        className="w-full py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className={`w-full py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2
+    ${
+      paymentMethod !== "cash"
+        ? "bg-gray-400 cursor-not-allowed text-gray-100"
+        : "bg-primary hover:bg-primary/90 text-white"
+    }`}
       >
-        {isSubmitting ? (
+        {paymentMethod !== "cash" ? (
+          <>
+            <svg
+              className="w-4 h-4 mr-2 text-yellow-300 animate-bounce"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M12 18a9 9 0 100-18 9 9 0 000 18z"
+              />
+            </svg>
+            Coming Soon
+          </>
+        ) : isSubmitting ? (
           <>
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             Placing Order...

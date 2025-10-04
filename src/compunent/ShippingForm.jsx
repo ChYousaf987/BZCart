@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, User, Mail, Phone, MapPin } from "lucide-react";
+import { ArrowLeft, User, Mail, Phone, MapPin, Tag } from "lucide-react";
 import { FaMapMarkerAlt, FaCreditCard, FaCheckCircle } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import axios from "axios";
 
 const ShippingForm = ({
   onNext,
@@ -16,8 +16,13 @@ const ShippingForm = ({
     email: authUser?.email || formData.email || "",
     phoneNumber: formData.phoneNumber || "",
     shippingAddress: formData.shippingAddress || "",
+    discountCode: formData.discountCode || "",
   });
+
   const [phoneError, setPhoneError] = useState("");
+  const [discountMessage, setDiscountMessage] = useState("");
+  const [isValidDiscount, setIsValidDiscount] = useState(false);
+  const [loadingDiscount, setLoadingDiscount] = useState(false);
 
   useEffect(() => {
     setLocalFormData({
@@ -25,19 +30,62 @@ const ShippingForm = ({
       email: authUser?.email || formData.email || "",
       phoneNumber: formData.phoneNumber || "",
       shippingAddress: formData.shippingAddress || "",
+      discountCode: formData.discountCode || "",
     });
   }, [authUser, formData]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setLocalFormData({ ...localFormData, [name]: value });
+  const validatePhone = (value) => {
+    const phoneRegex = /^\+?\d{10,15}$/;
+    if (!phoneRegex.test(value)) {
+      setPhoneError("Phone number must be 10-15 digits, optional + prefix");
+    } else {
+      setPhoneError("");
+    }
+  };
 
-    if (name === "phoneNumber") {
-      const phoneRegex = /^\+?\d{10,15}$/;
-      if (!phoneRegex.test(value)) {
-        setPhoneError("Phone number must be 10-15 digits, optional + prefix");
-      } else {
-        setPhoneError("");
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    const updatedValue =
+      name === "discountCode" ? value.toUpperCase().trim() : value;
+
+    setLocalFormData({ ...localFormData, [name]: updatedValue });
+
+    if (name === "phoneNumber") validatePhone(value);
+
+    // Handle Discount Code Validation
+    if (name === "discountCode") {
+      const code = updatedValue;
+
+      if (!code) {
+        setDiscountMessage("");
+        setIsValidDiscount(false);
+        return;
+      }
+
+      if (!localFormData.email && !authUser?.email) {
+        setIsValidDiscount(false);
+        setDiscountMessage("Please enter your email first.");
+        return;
+      }
+
+      try {
+        setLoadingDiscount(true);
+        const response = await axios.post(
+          "https://bzbackend.online/api/users/validate-discount",
+          { email: localFormData.email || authUser?.email, code }
+        );
+        if (response.data.isValid) {
+          setIsValidDiscount(true);
+          setDiscountMessage("10% discount applied!");
+        } else {
+          setIsValidDiscount(false);
+          setDiscountMessage(response.data.message || "Invalid discount code");
+        }
+      } catch (error) {
+        setIsValidDiscount(false);
+        setDiscountMessage("Failed to validate discount code");
+      } finally {
+        setLoadingDiscount(false);
       }
     }
   };
@@ -48,7 +96,7 @@ const ShippingForm = ({
     if (!localFormData.fullName) newErrors.fullName = "Full name is required";
     if (!localFormData.email) newErrors.email = "Email is required";
     if (!localFormData.phoneNumber || phoneError)
-      newErrors.phoneNumber = phoneError || "Phone is required";
+      newErrors.phoneNumber = phoneError || "Phone number is required";
     if (!localFormData.shippingAddress)
       newErrors.shippingAddress = "Shipping address is required";
 
@@ -57,29 +105,37 @@ const ShippingForm = ({
     if (Object.keys(newErrors).length === 0) {
       setFormData({
         ...formData,
-        fullName: localFormData.fullName,
-        email: localFormData.email,
-        phoneNumber: localFormData.phoneNumber,
-        shippingAddress: localFormData.shippingAddress,
+        ...localFormData,
+        isValidDiscount,
       });
       onNext();
     }
   };
 
+  // 🧠 Disable button logic
+  const isButtonDisabled =
+    !localFormData.fullName ||
+    !localFormData.email ||
+    !localFormData.phoneNumber ||
+    !localFormData.shippingAddress ||
+    phoneError ||
+    loadingDiscount ||
+    (localFormData.discountCode && !isValidDiscount);
+
   return (
-    <div className="py-6 px-4">
+    <div className="py-6 px-4 font-daraz">
       {/* Header */}
       <div className="flex items-center mb-6">
         <button className="text-gray-600 hover:text-black">
           <ArrowLeft size={22} />
         </button>
         <h1 className="text-lg font-semibold flex-1 text-center">Checkout</h1>
-        <div className="w-6" /> {/* spacing */}
+        <div className="w-6" />
       </div>
 
       {/* Stepper */}
       <div className="flex items-center justify-between mb-12 w-full max-w-2xl mx-auto">
-        <div className="flex ">
+        <div className="flex">
           <FaMapMarkerAlt size={25} className="text-black" />
         </div>
         <div className="flex-1 flex items-center justify-center gap-5">
@@ -111,57 +167,44 @@ const ShippingForm = ({
       <h2 className="text-2xl font-semibold mb-8">Shipping Details</h2>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
         {/* Full Name */}
-        <div className="mb-6">
-          <label
-            htmlFor="fullName"
-            className="block text-gray-600 mb-2 font-semibold tracking-wide"
-          >
-            Full Name
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Full Name <span className="text-red-500">*</span>
           </label>
-          <div className="relative group">
+          <div className="relative">
             <User
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
-              size={22}
+              className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400"
+              size={20}
             />
             <input
               type="text"
-              id="fullName"
               name="fullName"
               value={localFormData.fullName}
               onChange={handleChange}
-              placeholder="Enter your full name..."
               disabled={!!authUser?.username}
-              className={`w-full pl-12 pr-4 py-3 rounded-xl border 
-                   bg-white/80  shadow
-                   placeholder-gray-400
-                   focus:border-transparent focus:ring-2 focus:ring-primary/70 
-                   focus:shadow-lg focus:shadow-primary/20
-                   hover:shadow-md hover:border-gray-300
-                   outline-none transition-all duration-300
-                   disabled:bg-gray-100 disabled:cursor-not-allowed 
-                   text-dark font-medium
-                   ${
-                     errors.fullName
-                       ? "border-red-500 focus:ring-red-500 focus:shadow-red-200"
-                       : "border-gray-200"
-                   }`}
+              placeholder="Enter your full name"
+              className={`w-full border-b py-2 pl-8 pr-2 bg-transparent outline-none transition-all duration-200 ${
+                errors.fullName
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-gray-300 focus:border-black"
+              } disabled:text-gray-500 disabled:border-gray-200`}
             />
           </div>
           {errors.fullName && (
-            <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
+            <p className="text-xs text-red-500 mt-1">{errors.fullName}</p>
           )}
         </div>
 
         {/* Email */}
-        <div className="mb-6">
-          <label className="block text-gray-600 mb-2 font-semibold tracking-wide">
-            Email Address
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Email Address <span className="text-red-500">*</span>
           </label>
-          <div className="relative group">
+          <div className="relative">
             <Mail
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
+              className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400"
               size={20}
             />
             <input
@@ -169,37 +212,28 @@ const ShippingForm = ({
               name="email"
               value={localFormData.email}
               onChange={handleChange}
-              placeholder="Enter email address"
               disabled={!!authUser?.email}
-              className={`w-full pl-12 pr-4 py-3 rounded-xl border 
-                   bg-white/80 shadow
-                   placeholder-gray-400
-                   focus:border-transparent focus:ring-2 focus:ring-primary/70 
-                   focus:shadow-lg focus:shadow-primary/20
-                   hover:shadow-md hover:border-gray-300
-                   outline-none transition-all duration-300
-                   disabled:bg-gray-100 disabled:cursor-not-allowed 
-                   text-dark font-medium
-                   ${
-                     errors.email
-                       ? "border-red-500 focus:ring-red-500 focus:shadow-red-200"
-                       : "border-gray-200"
-                   }`}
+              placeholder="Enter your email address"
+              className={`w-full border-b py-2 pl-8 pr-2 bg-transparent outline-none transition-all duration-200 ${
+                errors.email
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-gray-300 focus:border-black"
+              } disabled:text-gray-500 disabled:border-gray-200`}
             />
           </div>
           {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            <p className="text-xs text-red-500 mt-1">{errors.email}</p>
           )}
         </div>
 
         {/* Phone */}
-        <div className="mb-6">
-          <label className="block text-gray-600 mb-2 font-semibold tracking-wide">
-            Phone Number
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Phone Number <span className="text-red-500">*</span>
           </label>
-          <div className="relative group">
+          <div className="relative">
             <Phone
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
+              className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400"
               size={20}
             />
             <input
@@ -208,36 +242,28 @@ const ShippingForm = ({
               value={localFormData.phoneNumber}
               onChange={handleChange}
               placeholder="Enter phone number (e.g., +923001234567)"
-              className={`w-full pl-12 pr-4 py-3 rounded-xl border 
-                    bg-white/80 shadow
-                    placeholder-gray-400
-                    focus:border-transparent focus:ring-2 focus:ring-primary/70 
-                    focus:shadow-lg focus:shadow-primary/20
-                    hover:shadow-md hover:border-gray-300
-                    outline-none transition-all duration-300
-                    text-dark font-medium
-                    ${
-                      errors.phoneNumber || phoneError
-                        ? "border-red-500 focus:ring-red-500 focus:shadow-red-200"
-                        : "border-gray-200"
-                    }`}
+              className={`w-full border-b py-2 pl-8 pr-2 bg-transparent outline-none transition-all duration-200 ${
+                errors.phoneNumber || phoneError
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-gray-300 focus:border-black"
+              }`}
             />
           </div>
           {(errors.phoneNumber || phoneError) && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-xs text-red-500 mt-1">
               {errors.phoneNumber || phoneError}
             </p>
           )}
         </div>
 
         {/* Address */}
-        <div className="mb-6">
-          <label className="block text-gray-600 mb-2 font-semibold tracking-wide">
-            Shipping Address
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Shipping Address <span className="text-red-500">*</span>
           </label>
-          <div className="relative group">
+          <div className="relative">
             <MapPin
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
+              className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400"
               size={20}
             />
             <input
@@ -245,35 +271,58 @@ const ShippingForm = ({
               name="shippingAddress"
               value={localFormData.shippingAddress}
               onChange={handleChange}
-              placeholder="Enter shipping address"
-              className={`w-full pl-12 pr-4 py-3 rounded-xl border 
-                   bg-white/80 shadow
-                   placeholder-gray-400
-                   focus:border-transparent focus:ring-2 focus:ring-primary/70 
-                   focus:shadow-lg focus:shadow-primary/20
-                   hover:shadow-md hover:border-gray-300
-                   outline-none transition-all duration-300
-                   text-dark font-medium
-                   ${
-                     errors.shippingAddress
-                       ? "border-red-500 focus:ring-red-500 focus:shadow-red-200"
-                       : "border-gray-200"
-                   }`}
+              placeholder="Enter your shipping address"
+              className={`w-full border-b py-2 pl-8 pr-2 bg-transparent outline-none transition-all duration-200 ${
+                errors.shippingAddress
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-gray-300 focus:border-black"
+              }`}
             />
           </div>
           {errors.shippingAddress && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-xs text-red-500 mt-1">
               {errors.shippingAddress}
             </p>
           )}
         </div>
 
-        {/* Continue Button */}
+        {/* Discount */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Discount Code (Optional)
+          </label>
+          <div className="relative">
+            <Tag
+              className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400"
+              size={20}
+            />
+            <input
+              type="text"
+              name="discountCode"
+              value={localFormData.discountCode}
+              onChange={handleChange}
+              placeholder="Enter discount code"
+              maxLength={8}
+              className="w-full border-b py-2 pl-8 pr-2 bg-transparent uppercase tracking-widest outline-none transition-all duration-200 border-gray-300 focus:border-black"
+            />
+          </div>
+          {discountMessage && (
+            <p
+              className={`text-xs mt-1 ${
+                isValidDiscount ? "text-green-600" : "text-red-500"
+              }`}
+            >
+              {loadingDiscount ? "Checking code..." : discountMessage}
+            </p>
+          )}
+        </div>
+
+        {/* Continue */}
         <div className="sticky bottom-0 left-0 right-0 bg-white pt-4 pb-2 mt-6">
           <button
             type="submit"
+            disabled={isButtonDisabled}
             className="w-full py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            disabled={Object.keys(errors).length > 0 || phoneError}
           >
             Continue
           </button>
