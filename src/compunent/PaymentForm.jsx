@@ -19,9 +19,13 @@ const PaymentForm = ({
   setFormData,
   authUser,
   guestId,
+  displayCart, // Add this prop
 }) => {
   const dispatch = useDispatch();
-  const { items: cart } = useSelector((state) => state.cart);
+  // Use displayCart if provided (for buy-now), else fallback to Redux cart
+  const reduxCart = useSelector((state) => state.cart.items);
+  const cart = displayCart || reduxCart;
+
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [agree, setAgree] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,29 +41,28 @@ const PaymentForm = ({
 
   // Check stock for a specific size or product_stock
   const getStock = (item) => {
-    if (!item.product_id) {
-      console.warn("PaymentForm - Missing product_id for item:", item);
+    if (!item.product_id && !item._id) {
+      console.warn("PaymentForm - Missing product_id or _id for item:", item);
       return 0;
     }
-    if (item.product_id.sizes?.length > 0) {
+    const product = item.product_id || item; // Handle both structures
+    if (product.sizes?.length > 0) {
       if (!item.selected_size) {
         console.warn(
-          `PaymentForm - Missing selected_size for size-based product: ${item.product_id.product_name}`
+          `PaymentForm - Missing selected_size for size-based product: ${product.product_name}`
         );
         return 0;
       }
-      const size = item.product_id.sizes.find(
-        (s) => s.size === item.selected_size
-      );
+      const size = product.sizes.find((s) => s.size === item.selected_size);
       if (!size) {
         console.warn(
-          `PaymentForm - Size ${item.selected_size} not found for product ${item.product_id.product_name}`
+          `PaymentForm - Size ${item.selected_size} not found for product ${product.product_name}`
         );
         return 0;
       }
       return size.stock || 0;
     }
-    return item.product_id.product_stock || 0;
+    return product.product_stock || 0;
   };
 
   const validatePhone = (value) => {
@@ -79,13 +82,14 @@ const PaymentForm = ({
 
   const calculateTotal = () => {
     return Array.isArray(cart)
-      ? cart.reduce(
-          (total, item) =>
-            total +
-            (item.product_id?.product_discounted_price || 0) *
-              (item.quantity || 1),
-          0
-        )
+      ? cart.reduce((total, item) => {
+          const price =
+            item.product_id?.product_discounted_price ||
+            item.product_discounted_price ||
+            0;
+          const qty = item.quantity || 1;
+          return total + price * qty;
+        }, 0)
       : 0;
   };
 
@@ -153,7 +157,9 @@ const PaymentForm = ({
     }
     if (
       cart.some(
-        (item) => item.product_id.sizes?.length > 0 && !item.selected_size
+        (item) =>
+          (item.product_id?.sizes?.length > 0 || item.sizes?.length > 0) &&
+          !item.selected_size
       )
     ) {
       toast.error("Please select a size for all size-based products", {
@@ -161,7 +167,7 @@ const PaymentForm = ({
       });
       return;
     }
-    if (cart.some((item) => getStock(item) < item.quantity)) {
+    if (cart.some((item) => getStock(item) < (item.quantity || 1))) {
       toast.error("One or more items are out of stock", {
         position: "top-right",
       });
@@ -170,10 +176,10 @@ const PaymentForm = ({
 
     setIsSubmitting(true);
 
-    const orderData = {
+    const orderDataToSend = {
       products: cart.map((item) => ({
-        product_id: item.product_id?._id || item.product_id,
-        quantity: item.quantity,
+        product_id: item.product_id?._id || item.product_id || item._id,
+        quantity: item.quantity || 1,
         selected_image: item.selected_image,
         selected_size: item.selected_size,
       })),
@@ -187,7 +193,7 @@ const PaymentForm = ({
     };
 
     try {
-      const result = await dispatch(createOrder(orderData)).unwrap();
+      const result = await dispatch(createOrder(orderDataToSend)).unwrap();
       toast.success("Order placed successfully!", {
         position: "top-right",
         autoClose: 3000,
@@ -264,7 +270,6 @@ const PaymentForm = ({
       </h3>
       <h2 className="text-2xl font-bold mb-6">Payment</h2>
 
-      {/* Payment Methods */}
       {/* Payment Methods */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {[
@@ -410,17 +415,18 @@ const PaymentForm = ({
       <div className="mb-4 p-3 bg-gray-50 rounded-lg">
         <h4 className="font-semibold text-dark mb-2">Order Items:</h4>
         {cart.map((item) => {
+          const product = item.product_id || item;
           const isSizeMissing =
-            item.product_id?.sizes?.length > 0 && !item.selected_size;
+            product.sizes?.length > 0 && !item.selected_size;
           return (
             <div
-              key={`${item.product_id?._id || item._id}-${
+              key={`${item.product_id?._id || item._id || item.product_id}-${
                 item.selected_image
               }-${item.selected_size}`}
               className="flex justify-between text-sm text-dark py-1 border-b border-gray-200 last:border-b-0"
             >
               <span className="truncate">
-                {item.quantity}x {item.product_id?.product_name || "Product"}
+                {item.quantity || 1}x {product.product_name || "Product"}
                 {item.selected_size && ` (Size: ${item.selected_size})`}
                 {isSizeMissing && (
                   <span className="text-red-500 ml-2">(Select size)</span>
@@ -428,8 +434,7 @@ const PaymentForm = ({
               </span>
               <span className="font-medium">
                 Rs.{" "}
-                {(item.product_id?.product_discounted_price || 0) *
-                  item.quantity}
+                {(product.product_discounted_price || 0) * (item.quantity || 1)}
               </span>
             </div>
           );
@@ -484,7 +489,6 @@ const PaymentForm = ({
       </div>
 
       {/* Order Button */}
-      {/* Order Button */}
       <button
         onClick={handlePlaceOrder}
         disabled={
@@ -496,10 +500,11 @@ const PaymentForm = ({
           !formData.email ||
           !formData.phoneNumber ||
           phoneError ||
-          cart.some((item) => getStock(item) < item.quantity) ||
-          cart.some(
-            (item) => item.product_id.sizes?.length > 0 && !item.selected_size
-          )
+          cart.some((item) => getStock(item) < (item.quantity || 1)) ||
+          cart.some((item) => {
+            const product = item.product_id || item;
+            return product.sizes?.length > 0 && !item.selected_size;
+          })
         }
         className={`w-full py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2
     ${
