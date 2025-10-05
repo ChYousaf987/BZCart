@@ -31,13 +31,15 @@ const Cashout = () => {
     isValidDiscount: false,
   });
   const [errors, setErrors] = useState({});
+  const [phoneError, setPhoneError] = useState("");
+  const [discountMessage, setDiscountMessage] = useState("");
+  const [loadingDiscount, setLoadingDiscount] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { user: authUser } = useSelector((state) => state.auth);
-  const { items: cart } = useSelector((state) => state.cart); // Fixed: select from state.cart
-  const location = useLocation();
-  const buyNowProduct = location.state?.buyNowProduct;
-  const guestIdFromState = location.state?.guestId;
-  const guestId = localStorage.getItem("guestId") || `guest_${Date.now()}`;
+  // Use this cart for calculation (Buy Now or full cart)
   const displayCart = buyNowProduct ? [buyNowProduct] : cart;
 
   useEffect(() => {
