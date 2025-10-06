@@ -1,4 +1,4 @@
-// SingleProduct.jsx
+// src/compunent/SingleProduct.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -195,6 +195,7 @@ const SingleProduct = () => {
       sizes: product.sizes,
       selected_size: selectedSize || undefined,
       product_stock: product.product_stock, // Add if needed
+      shipping: product.shipping || 0, // Ensure shipping is included
     };
 
     console.log(
