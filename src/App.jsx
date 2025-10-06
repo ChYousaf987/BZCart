@@ -22,6 +22,7 @@ import ReturnRefund from "./compunent/ReturnRefund";
 import TermsAndCondition from "./compunent/TermsAndCondition";
 import Checkout from "./compunent/Checkout";
 import FAQS from "./compunent/FAQS";
+import OrdersList from "./compunent/OrdersList";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -48,6 +49,7 @@ const App = () => {
       <Route path="/Checkout" element={<Checkout />} />
       <Route path="/paymentMethods" element={<PaymentMethods />} />
       <Route path="/track-order/:id" element={<TrackOrder />} />
+      <Route path="/orders" element={<OrdersList />} />
       <Route path="/deal/:id" element={<SingleDeal />} /> {/* New route */}
       <Route path="/product/:id" element={<SingleProduct />} />
       <Route path="/category/:categoryId" element={<CategoryProducts />} />

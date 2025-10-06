@@ -304,6 +304,9 @@ const Navbar = () => {
             <Link to="/faqs" className="hover:text-primary">
               FAQS
             </Link>
+            <Link to="/orders" className="hover:text-primary">
+              Track Order
+            </Link>
           </div>
         </div>
       </div>
@@ -325,6 +328,8 @@ const Navbar = () => {
                 { to: "/privacypolicy", label: " Privacy Policy" },
                 { to: "/returnandrefund", label: " Return & Refund Policy" },
                 { to: "/termsandconditions", label: "Terms & Conditions" },
+                { to: "/faqs", label: "FAQS" },
+                { to: "/orders", label: "Track Order" },
               ].map((link) => (
                 <Link
                   key={link.to}

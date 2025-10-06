@@ -1,3 +1,4 @@
+// Updated Checkout.jsx - Remove auto-fetch and auto-jump to step 3 on mount
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import ShippingForm from "./ShippingForm";
@@ -38,6 +39,7 @@ const Checkout = () => {
 
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
+  const resetToCheckout = () => setStep(1); // Add a way to reset to step 1 if needed (e.g., button in TrackOrders)
 
   return (
     <div className="md:w-[35%] font-daraz bg-white p-4 rounded-xl shadow">
@@ -65,8 +67,11 @@ const Checkout = () => {
       {step === 3 && (
         <TrackOrders
           orderData={orderData}
+          setOrderData={setOrderData}
           formData={formData}
           authUser={authUser}
+          guestId={guestId}
+          onBackToCheckout={resetToCheckout} // Pass a callback to go back to checkout
         />
       )}
     </div>

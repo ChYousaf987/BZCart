@@ -1,3 +1,4 @@
+// src/compunent/PaymentForm.jsx
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -19,10 +20,9 @@ const PaymentForm = ({
   setFormData,
   authUser,
   guestId,
-  displayCart, // Add this prop
+  displayCart,
 }) => {
   const dispatch = useDispatch();
-  // Use displayCart if provided (for buy-now), else fallback to Redux cart
   const reduxCart = useSelector((state) => state.cart.items);
   const cart = displayCart || reduxCart;
 
@@ -34,18 +34,24 @@ const PaymentForm = ({
   const [discountMessage, setDiscountMessage] = useState("");
   const [phoneError, setPhoneError] = useState("");
 
-  // Log cart for debugging
+  useEffect(() => {
+    setDiscountCode(formData.discountCode || "");
+    setIsValidDiscount(formData.isValidDiscount || false);
+    if (formData.discountCode && formData.isValidDiscount) {
+      setDiscountMessage("10% discount applied!");
+    }
+  }, [formData]);
+
   useEffect(() => {
     console.log("PaymentForm - Cart items:", cart);
   }, [cart]);
 
-  // Check stock for a specific size or product_stock
   const getStock = (item) => {
     if (!item.product_id && !item._id) {
       console.warn("PaymentForm - Missing product_id or _id for item:", item);
       return 0;
     }
-    const product = item.product_id || item; // Handle both structures
+    const product = item.product_id || item;
     if (product.sizes?.length > 0) {
       if (!item.selected_size) {
         console.warn(
@@ -80,7 +86,7 @@ const PaymentForm = ({
     }
   }, [formData.phoneNumber]);
 
-  const calculateTotal = () => {
+  const calculateSubtotal = () => {
     return Array.isArray(cart)
       ? cart.reduce((total, item) => {
           const price =
@@ -89,6 +95,17 @@ const PaymentForm = ({
             0;
           const qty = item.quantity || 1;
           return total + price * qty;
+        }, 0)
+      : 0;
+  };
+
+  const calculateShipping = () => {
+    return Array.isArray(cart)
+      ? cart.reduce((total, item) => {
+          const product = item.product_id || item;
+          const shipping = product.shipping || 0;
+          const qty = item.quantity || 1;
+          return total + shipping * qty;
         }, 0)
       : 0;
   };
@@ -108,7 +125,7 @@ const PaymentForm = ({
 
       try {
         const response = await axios.post(
-          "https://bzbackend.online/api/users/validate-discount",
+          "http://localhost:3003/api/users/validate-discount",
           { email: formData.email || authUser?.email, code }
         );
         if (response.data.isValid) {
@@ -130,11 +147,14 @@ const PaymentForm = ({
     }
   };
 
-  const calculateDiscountedTotal = () => {
-    return isValidDiscount
-      ? Math.round(calculateTotal() * 0.9 * 100) / 100
-      : calculateTotal();
-  };
+  const subtotal = calculateSubtotal();
+  const shipping = calculateShipping();
+  const originalTotal = subtotal + shipping;
+  const discountedSubtotal = isValidDiscount
+    ? Math.round(subtotal * 0.9 * 100) / 100
+    : subtotal;
+  const grandTotal = discountedSubtotal + shipping;
+  const discountAmount = subtotal - discountedSubtotal;
 
   const handlePlaceOrder = async () => {
     if (!agree) {
@@ -183,7 +203,7 @@ const PaymentForm = ({
         selected_image: item.selected_image,
         selected_size: item.selected_size,
       })),
-      total_amount: calculateTotal(),
+      total_amount: subtotal,
       shipping_address: formData.shippingAddress,
       order_email: formData.email,
       phone_number: formData.phoneNumber,
@@ -198,7 +218,6 @@ const PaymentForm = ({
         position: "top-right",
         autoClose: 3000,
       });
-      localStorage.removeItem("guestId");
       setFormData({
         ...formData,
         fullName: authUser?.username || "",
@@ -206,6 +225,7 @@ const PaymentForm = ({
         phoneNumber: "",
         shippingAddress: "",
         discountCode: "",
+        isValidDiscount: false,
       });
       setIsValidDiscount(false);
       setDiscountMessage("");
@@ -223,7 +243,6 @@ const PaymentForm = ({
 
   return (
     <div className="py-8 px-5 max-w-lg mx-auto bg-white rounded-2xl shadow-xl">
-      {/* Header */}
       <div className="flex items-center mb-6">
         <button
           onClick={onBack}
@@ -237,7 +256,6 @@ const PaymentForm = ({
         <div className="w-6" />
       </div>
 
-      {/* Stepper */}
       <div className="flex items-center justify-between mb-12 w-full max-w-2xl mx-auto">
         <div className="flex ">
           <FaMapMarkerAlt size={25} className="text-black" />
@@ -264,13 +282,11 @@ const PaymentForm = ({
         </div>
       </div>
 
-      {/* Step Title */}
       <h3 className="text-xs font-medium tracking-wider text-gray-500 mb-1">
         STEP 2
       </h3>
       <h2 className="text-2xl font-bold mb-6">Payment</h2>
 
-      {/* Payment Methods */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {[
           { type: "cash", label: "Cash", icon: <FaMoneyBillAlt /> },
@@ -296,7 +312,6 @@ const PaymentForm = ({
         ))}
       </div>
 
-      {/* Show "Coming Soon" for Card or Other */}
       {(paymentMethod === "credit" || paymentMethod === "other") && (
         <div className="mb-6 animate-fade-in">
           <div className="bg-yellow-100 text-yellow-800 text-sm font-medium px-4 py-3 rounded-lg flex items-center justify-center shadow-sm">
@@ -322,7 +337,6 @@ const PaymentForm = ({
         </div>
       )}
 
-      {/* Card Preview */}
       {paymentMethod === "credit" && (
         <div className="">
           <div className="mb-6">
@@ -332,7 +346,6 @@ const PaymentForm = ({
               className="rounded-xl w-[60%] mx-auto"
             />
           </div>
-          {/* Alternative Payments */}
           <div className="mb-6">
             <p className="text-sm text-gray-600 my-7 text-">
               Or check out with
@@ -372,7 +385,6 @@ const PaymentForm = ({
         </div>
       )}
 
-      {/* Discount Code */}
       {authUser && (
         <div className="mb-6">
           <label className="block text-gray-600 mb-2 font-semibold tracking-wide">
@@ -411,7 +423,6 @@ const PaymentForm = ({
         </div>
       )}
 
-      {/* Cart Summary */}
       <div className="mb-4 p-3 bg-gray-50 rounded-lg">
         <h4 className="font-semibold text-dark mb-2">Order Items:</h4>
         {cart.map((item) => {
@@ -441,22 +452,20 @@ const PaymentForm = ({
         })}
       </div>
       <hr className="my-4" />
-      {/* Total Display */}
       <div className="space-y-2 mb-4">
         <div className="flex justify-between text-sm text-gray-600">
-          <span>Subtotal:</span>
-          <span>Rs. {calculateTotal()}</span>
+          <span>Product Price:</span>
+          <span>Rs. {subtotal}</span>
+        </div>
+        <div className="flex justify-between text-sm text-gray-600">
+          <span>Shipping:</span>
+          <span>Rs. {shipping}</span>
         </div>
         {isValidDiscount && (
           <>
             <div className="flex justify-between text-sm text-green-600">
               <span>Discount (10%):</span>
-              <span>
-                -Rs.{" "}
-                {Math.round(
-                  (calculateTotal() - calculateDiscountedTotal()) * 100
-                ) / 100}
-              </span>
+              <span>-Rs. {discountAmount}</span>
             </div>
             <div className="flex justify-between text-sm text-gray-500">
               <span>Code Applied:</span>
@@ -467,12 +476,11 @@ const PaymentForm = ({
         <div className="flex justify-between text-xl font-bold text-dark border-t pt-2">
           <span>Total Amount:</span>
           <span className={isValidDiscount ? "text-green-600" : ""}>
-            Rs. {calculateDiscountedTotal()}
+            Rs. {grandTotal}
           </span>
         </div>
       </div>
 
-      {/* Terms */}
       <div className="flex items-start mb-6">
         <input
           type="checkbox"
@@ -488,13 +496,12 @@ const PaymentForm = ({
         </p>
       </div>
 
-      {/* Order Button */}
       <button
         onClick={handlePlaceOrder}
         disabled={
           isSubmitting ||
           !agree ||
-          paymentMethod !== "cash" || // ✅ disable when Card or Other selected
+          paymentMethod !== "cash" ||
           !formData.fullName ||
           !formData.shippingAddress ||
           !formData.email ||
@@ -540,12 +547,9 @@ const PaymentForm = ({
         )}
       </button>
 
-      {/* Payment Info */}
       <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
         <p className="font-medium mb-1">Payment Method: Cash on Delivery</p>
-        <p className="text-xs">
-          Pay Rs. {calculateDiscountedTotal()} to the delivery person
-        </p>
+        <p className="text-xs">Pay Rs. {grandTotal} to the delivery person</p>
       </div>
     </div>
   );

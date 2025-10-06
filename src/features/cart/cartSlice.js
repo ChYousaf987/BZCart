@@ -1,3 +1,4 @@
+// Updated cartSlice.js - Fix for removeFromCart thunk
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -27,9 +28,14 @@ export const addToCart = createAsyncThunk(
       const response = await axios.post(`${API_URL}/products/cart`, payload);
       return response.data;
     } catch (error) {
-      console.error("cartSlice - addToCart error:", error.response?.data || error.message);
+      console.error(
+        "cartSlice - addToCart error:",
+        error.response?.data || error.message
+      );
       return rejectWithValue(
-        error.response?.data?.message || error.message || "Failed to add to cart"
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to add to cart"
       );
     }
   }
@@ -55,11 +61,27 @@ export const fetchCart = createAsyncThunk(
 
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
-  async ({ product_id, selected_image, guestId }, { rejectWithValue }) => {
+  async (
+    { product_id, selected_image, guestId, selected_size },
+    { rejectWithValue }
+  ) => {
     try {
+      const payload = {
+        product_id,
+        selected_image,
+        guestId,
+      };
+
+      // Include selected_size only if provided (not null/undefined)
+      if (selected_size) {
+        payload.selected_size = selected_size;
+      }
+
+      console.log("cartSlice - removeFromCart payload:", payload);
+
       const response = await axios.post(
         `${API_URL}/products/cart/remove`,
-        { product_id, selected_image, guestId },
+        payload,
         { timeout: 5000 }
       );
       return response.data;
@@ -71,7 +93,6 @@ export const removeFromCart = createAsyncThunk(
     }
   }
 );
-
 
 export const createOrder = createAsyncThunk(
   "cart/createOrder",
@@ -87,6 +108,8 @@ export const createOrder = createAsyncThunk(
           },
         }
       );
+      // Store lastOrderId in localStorage
+      localStorage.setItem("lastOrderId", response.data._id);
       return response.data;
     } catch (err) {
       console.error("createOrder error:", err.response?.data || err.message);
@@ -177,8 +200,8 @@ const cartSlice = createSlice({
         state.orderLoading = false;
         state.orderSuccess = true;
         state.orderMessage = "Order placed successfully!";
-        state.lastOrder = action.payload; // Store order details
-        state.items = []; // Clear cart after successful order
+        state.lastOrder = action.payload;
+        state.items = [];
         state.error = null;
       })
       .addCase(createOrder.rejected, (state, action) => {

@@ -5,6 +5,7 @@ import productReducer from "../features/products/productSlice"; // Adjust the pa
 import cartReducer from "../features/cart/cartSlice"; // Import cart reducer
 import slideReducer from "../features/slides/slideSlice";
 import dealReducer from "../features/deals/dealSlice";
+import orderReducer from "../features/order/orderSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,5 +14,6 @@ export const store = configureStore({
     cart: cartReducer,
     slides: slideReducer,
     deals: dealReducer,
+    order: orderReducer,
   },
 });
