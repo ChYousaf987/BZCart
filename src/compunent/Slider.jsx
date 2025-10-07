@@ -105,13 +105,13 @@ const HeroSection = () => {
         )}
 
         {/* Right: Promo Boxes (Medium and Small Banners) */}
-        <div className="space-y-1 md:space-y-6 flex flex-col">
+        <div className="space-y-3 md:space-y-6 flex flex-col">
           {sideBanners.length > 0 ? (
             sideBanners.map((slide, index) => (
               <a
                 href={slide.link}
                 key={index}
-                className="rounded-2xl relative flex flex-col justify-center bg-contain bg-center w-full h-[165px] md:h-[200px] bg-gray-100"
+                className="rounded-2xl relative flex flex-col justify-center bg-contain bg-center w-full h-[165px] md:min-h-[200px] bg-gray-100"
                 style={{
                   backgroundImage: slide.image
                     ? `url(${slide.image})`
@@ -122,7 +122,8 @@ const HeroSection = () => {
                     : "url('/image-3.jpg')", // Fallback to default images
                   backgroundColor: slide.bgColor || "#f4f4f4", // Consistent fallback color
                   backgroundRepeat: "no-repeat", // Prevent image repeating
-                  aspectRatio: "480/280", // Maintain proportions
+                  backgroundSize: "cover", // Ensure image covers container
+                  backgroundPosition: "center", // Center the image
                 }}
               >
                 <div className="relative z-10 text-start">

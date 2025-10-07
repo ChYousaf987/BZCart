@@ -443,12 +443,12 @@ const SingleProduct = () => {
               Order on WhatsApp
             </button>
 
-            <div className="mb-6 mt-3">
+            {/* <div className="mb-6 mt-3">
               <h3 className="font-semibold text-lg mb-2">Product Highlights:</h3>
               <p className="whitespace-pre-line text-gray-700">{product.product_description}</p>
-            </div>
+            </div> */}
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
               <div className="flex items-center gap-3 p-3 border rounded shadow-sm">
                 <FaTruck className="text-red-600 text-xl" />
                 <div>
