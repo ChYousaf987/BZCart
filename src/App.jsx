@@ -23,6 +23,7 @@ import TermsAndCondition from "./compunent/TermsAndCondition";
 import Checkout from "./compunent/Checkout";
 import FAQS from "./compunent/FAQS";
 import OrdersList from "./compunent/OrdersList";
+import BottomNav from "./compunent/BottomNav";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -40,30 +41,33 @@ const App = () => {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/auth" element={<Auth />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/payment" element={<Payment />} />
-      <Route path="/Cashout" element={<Cashout />} />
-      <Route path="/Checkout" element={<Checkout />} />
-      <Route path="/paymentMethods" element={<PaymentMethods />} />
-      <Route path="/track-order/:id" element={<TrackOrder />} />
-      <Route path="/orders" element={<OrdersList />} />
-      <Route path="/deal/:id" element={<SingleDeal />} /> {/* New route */}
-      <Route path="/product/:id" element={<SingleProduct />} />
-      <Route path="/category/:categoryId" element={<CategoryProducts />} />
-      <Route path="/categories" element={<CategoriesPage />} />
-      <Route path="/deals" element={<AllDeals />} /> {/* New route */}
-      <Route path="/Contact" element={<ContactPage />} />
-      <Route path="/products" element={<AllProducts />} /> {/* New route */}
-      <Route path="/search" element={<SearchPage />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-      <Route path="/returnandrefund" element={<ReturnRefund />} />
-      <Route path="/termsandconditions" element={<TermsAndCondition />} />
-      <Route path="/faqs" element={<FAQS />} />
-    </Routes>
+    <>
+      <BottomNav />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/Cashout" element={<Cashout />} />
+        <Route path="/Checkout" element={<Checkout />} />
+        <Route path="/paymentMethods" element={<PaymentMethods />} />
+        <Route path="/track-order/:id" element={<TrackOrder />} />
+        <Route path="/orders" element={<OrdersList />} />
+        <Route path="/deal/:id" element={<SingleDeal />} /> {/* New route */}
+        <Route path="/product/:id" element={<SingleProduct />} />
+        <Route path="/category/:categoryId" element={<CategoryProducts />} />
+        <Route path="/categories" element={<CategoriesPage />} />
+        <Route path="/deals" element={<AllDeals />} /> {/* New route */}
+        <Route path="/Contact" element={<ContactPage />} />
+        <Route path="/products" element={<AllProducts />} /> {/* New route */}
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+        <Route path="/returnandrefund" element={<ReturnRefund />} />
+        <Route path="/termsandconditions" element={<TermsAndCondition />} />
+        <Route path="/faqs" element={<FAQS />} />
+      </Routes>
+    </>
   );
 };
 
