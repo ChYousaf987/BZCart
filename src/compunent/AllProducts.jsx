@@ -22,14 +22,21 @@ const AllProducts = () => {
       .catch(() => {});
   }, [dispatch]);
 
-  // Filter products based on query parameter
+  // Filter + sort products
   const filteredProducts = useMemo(() => {
+    let list = products;
+
+    // Apply filters if any
     if (filter === "new-arrivals") {
-      return products.filter((item) => item.isNewArrival === true);
+      list = list.filter((item) => item.isNewArrival === true);
     } else if (filter === "best-sellers") {
-      return products.filter((item) => item.isBestSeller === true);
+      list = list.filter((item) => item.isBestSeller === true);
     }
-    return products; // Show all products if no filter is applied
+
+    // Sort by latest first (newest at top)
+    return [...list].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
   }, [products, filter]);
 
   return (
@@ -78,6 +85,14 @@ const AllProducts = () => {
                         % OFF
                       </div>
                     )}
+
+                  {/* NEW Badge */}
+                  {new Date() - new Date(product.createdAt) <
+                    24 * 60 * 60 * 1000 && (
+                    <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-br-lg z-10">
+                      NEW
+                    </div>
+                  )}
 
                   {/* Product Image */}
                   <Link to={`/product/${product._id}`}>
@@ -151,7 +166,7 @@ const AllProducts = () => {
           </div>
         )}
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };
