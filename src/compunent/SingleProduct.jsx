@@ -1,5 +1,4 @@
-// src/compunent/SingleProduct.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -28,52 +27,69 @@ const SingleProduct = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { product, loading, error, reviews, reviewsLoading, reviewsError } =
-    useSelector((state) => state.products);
-  const { user } = useSelector((state) => state.auth);
+  const { product, loading, error, reviews, reviewsLoading, reviewsError } = useSelector((state) => state.products);
+  const { user, userLoading, userSuccess, userError, token } = useSelector((state) => state.auth);
   const [activeTab, setActiveTab] = useState("description");
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
   const [selectedImage, setSelectedImage] = useState("");
-  const [selectedSize, setSelectedSize] = useState(""); // Initialize as empty string
+  const [selectedSize, setSelectedSize] = useState("");
   const WHATSAPP_NUMBER = "923297609190";
-  const [guestId] = useState(
-    localStorage.getItem("guestId") || `guest_${uuidv4()}`
-  );
+  const [guestId] = useState(() => {
+    const storedGuestId = localStorage.getItem("guestId");
+    if (!storedGuestId) {
+      const newGuestId = `guest_${uuidv4()}`;
+      localStorage.setItem("guestId", newGuestId);
+      console.log("SingleProduct - Generated new guestId:", newGuestId);
+      return newGuestId;
+    }
+    return storedGuestId;
+  });
+  const hasFetchedCart = useRef(false);
 
   useEffect(() => {
-    localStorage.setItem("guestId", guestId);
+    console.log("SingleProduct - Initializing with:", { userId: user?._id, guestId, userLoading, userSuccess, userError, token });
+
     Promise.all([dispatch(fetchProductById(id)), dispatch(fetchReviews(id))])
       .then(([productResult]) => {
-        if (
-          productResult.payload?.product_images &&
-          productResult.payload?.product_images[0]
-        ) {
+        if (productResult.payload?.product_images?.[0]) {
           setSelectedImage(productResult.payload.product_images[0]);
         }
-        if (
-          productResult.payload?.sizes &&
-          productResult.payload?.sizes.length > 0
-        ) {
-          const availableSize = productResult.payload.sizes.find(
-            (size) => size.stock > 0
-          );
+        if (productResult.payload?.sizes?.length > 0) {
+          const availableSize = productResult.payload.sizes.find((size) => size.stock > 0);
           setSelectedSize(availableSize ? availableSize.size : "");
-          console.log(
-            "SingleProduct - Initial selected size:",
-            availableSize ? availableSize.size : "None"
-          );
+          console.log("SingleProduct - Initial selected size:", availableSize ? availableSize.size : "None");
         }
       })
-      .catch((err) => console.error("Error loading product:", err));
-  }, [dispatch, id, guestId]);
+      .catch((err) => {
+        console.error("SingleProduct - Error loading product or reviews:", err);
+        toast.error(err?.message || "Failed to load product", { position: "top-right" });
+      });
+
+    if (!hasFetchedCart.current && !userLoading) {
+      if (!user && !guestId) {
+        console.error("SingleProduct - Neither user nor guestId available");
+        toast.error("Unable to load cart: No user or guest ID", { position: "top-right" });
+        return;
+      }
+
+      hasFetchedCart.current = true;
+      console.log("SingleProduct - Fetching cart with:", { guestId: user ? undefined : guestId });
+      dispatch(fetchCart({ guestId: user ? undefined : guestId }))
+        .unwrap()
+        .catch((err) => {
+          console.error("SingleProduct - Error fetching cart:", err);
+          toast.error(err?.message || "Failed to load cart", { position: "top-right" });
+        });
+    } else if (userLoading) {
+      console.log("SingleProduct - Waiting for auth to resolve");
+    }
+  }, [dispatch, id, guestId, user, userLoading, token]);
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
     if (!user) {
-      toast.error("Please log in to submit a review", {
-        position: "top-right",
-      });
+      toast.error("Please log in to submit a review", { position: "top-right" });
       return;
     }
     if (!reviewText.trim()) {
@@ -81,36 +97,24 @@ const SingleProduct = () => {
       return;
     }
     if (reviewText.length < 3 || reviewText.length > 500) {
-      toast.error("Review must be between 3 and 500 characters", {
-        position: "top-right",
-      });
+      toast.error("Review must be between 3 and 500 characters", { position: "top-right" });
       return;
     }
     if (rating < 1 || rating > 5) {
-      toast.error("Please select a valid rating (1–5)", {
-        position: "top-right",
-      });
+      toast.error("Please select a valid rating (1–5)", { position: "top-right" });
       return;
     }
-    dispatch(
-      submitReview({
-        productId: id,
-        reviewData: { user_id: user._id, comment: reviewText, rating },
-      })
-    )
+    dispatch(submitReview({ productId: id, reviewData: { user_id: user._id, comment: reviewText, rating } }))
       .unwrap()
       .then(() => {
-        toast.success("Review submitted successfully!", {
-          position: "top-right",
-        });
+        toast.success("Review submitted successfully!", { position: "top-right" });
         setReviewText("");
         setRating(5);
         dispatch(fetchReviews(id));
       })
       .catch((err) => {
-        toast.error(err?.message || err || "Failed to submit review", {
-          position: "top-right",
-        });
+        console.error("SingleProduct - Error submitting review:", err);
+        toast.error(err?.message || "Failed to submit review", { position: "top-right" });
       });
   };
 
@@ -123,40 +127,39 @@ const SingleProduct = () => {
       toast.error("Please select an image", { position: "top-right" });
       return;
     }
-    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+    if (product.sizes?.length > 0 && !selectedSize) {
+      console.error("SingleProduct - Missing selected_size for Add to Cart");
       toast.error("Please select a size", { position: "top-right" });
       return;
     }
-    if (
-      product.sizes &&
-      product.sizes.length > 0 &&
-      product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
-    ) {
-      toast.error(`Size ${selectedSize} is out of stock`, {
-        position: "top-right",
-      });
+    if (product.sizes?.length > 0 && product.sizes.find((s) => s.size === selectedSize)?.stock <= 0) {
+      toast.error(`Size ${selectedSize} is out of stock`, { position: "top-right" });
+      return;
+    }
+    if (userLoading) {
+      console.error("SingleProduct - Auth not resolved for addToCart");
+      toast.error("Please wait, authentication is still loading", { position: "top-right" });
       return;
     }
 
     const cartData = {
       product_id: product._id,
       selected_image: selectedImage,
-      guestId: user ? undefined : guestId,
-      selected_size: selectedSize || undefined,
+      guestId: user && token ? undefined : guestId,
+      selected_size: selectedSize || null,
     };
 
-    console.log("SingleProduct - Adding to cart:", cartData);
+    console.log("SingleProduct - Adding to cart:", { cartData, userId: user?._id, token });
 
-    dispatch(addToCart(cartData))
+    dispatch(addToCart({ cartData, userId: user?._id, token }))
       .unwrap()
       .then(() => {
-        dispatch(fetchCart({ guestId: user ? undefined : guestId }));
+        dispatch(fetchCart({ guestId: user && token ? undefined : guestId }));
         toast.success("Added to cart!", { position: "top-right" });
       })
       .catch((err) => {
-        toast.error(err?.message || err || "Failed to add to cart", {
-          position: "top-right",
-        });
+        console.error("SingleProduct - addToCart error:", err);
+        toast.error(err?.message || "Failed to add to cart", { position: "top-right" });
       });
   };
 
@@ -169,45 +172,38 @@ const SingleProduct = () => {
       toast.error("Please select an image", { position: "top-right" });
       return;
     }
-    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+    if (product.sizes?.length > 0 && !selectedSize) {
       console.error("SingleProduct - Missing selected_size for Buy Now");
       toast.error("Please select a size", { position: "top-right" });
       return;
     }
-    if (
-      product.sizes &&
-      product.sizes.length > 0 &&
-      product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
-    ) {
-      toast.error(`Size ${selectedSize} is out of stock`, {
-        position: "top-right",
-      });
+    if (product.sizes?.length > 0 && product.sizes.find((s) => s.size === selectedSize)?.stock <= 0) {
+      toast.error(`Size ${selectedSize} is out of stock`, { position: "top-right" });
+      return;
+    }
+    if (userLoading) {
+      console.error("SingleProduct - Auth not resolved for Buy Now");
+      toast.error("Please wait, authentication is still loading", { position: "top-right" });
       return;
     }
 
     const buyNowProduct = {
-      _id: product._id, // Use _id for consistency
-      product_id: product, // Full product object for compatibility
+      _id: product._id,
+      product_id: product,
       product_name: product.product_name,
       product_discounted_price: product.product_discounted_price,
       quantity: 1,
       selected_image: selectedImage || product.product_images[0],
       sizes: product.sizes,
-      selected_size: selectedSize || undefined,
-      product_stock: product.product_stock, // Add if needed
-      shipping: product.shipping || 0, // Ensure shipping is included
+      selected_size: selectedSize || null,
+      product_stock: product.product_stock,
+      shipping: product.shipping || 0,
     };
 
-    console.log(
-      "SingleProduct - Buy Now product:",
-      JSON.stringify(buyNowProduct, null, 2)
-    );
+    console.log("SingleProduct - Buy Now product:", JSON.stringify(buyNowProduct, null, 2));
 
     navigate("/Cashout", {
-      state: {
-        buyNowProduct,
-        guestId: user ? undefined : guestId,
-      },
+      state: { buyNowProduct, guestId: user && token ? undefined : guestId },
     });
   };
 
@@ -220,9 +216,7 @@ const SingleProduct = () => {
       (selectedSize ? `📏 Size: ${selectedSize}\n` : "") +
       `🔗 Product Link: ${productUrl}`;
 
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-      message
-    )}`;
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
   };
 
@@ -232,9 +226,7 @@ const SingleProduct = () => {
         {[1, 2, 3, 4, 5].map((star) => (
           <FaStar
             key={star}
-            className={`${
-              star <= rating ? "text-yellow-400" : "text-gray-300"
-            } text-lg`}
+            className={`${star <= rating ? "text-yellow-400" : "text-gray-300"} text-lg`}
           />
         ))}
       </div>
@@ -307,20 +299,14 @@ const SingleProduct = () => {
                   key={i}
                   src={img}
                   alt={`${product.product_name} thumbnail ${i}`}
-                  className={`w-20 h-20 border rounded-md cursor-pointer hover:border-red-600 ${
-                    selectedImage === img ? "border-red-600" : ""
-                  }`}
+                  className={`w-20 h-20 border rounded-md cursor-pointer hover:border-red-600 ${selectedImage === img ? "border-red-600" : ""}`}
                   onClick={() => setSelectedImage(img)}
                 />
               ))}
             </div>
             <div className="flex-1 bg-gray-50 p-2 rounded-md border">
               <img
-                src={
-                  selectedImage ||
-                  product.product_images?.[0] ||
-                  "https://via.placeholder.com/500"
-                }
+                src={selectedImage || product.product_images?.[0] || "https://via.placeholder.com/500"}
                 alt={product.product_name}
                 className="w-full h-[450px] object-contain"
               />
@@ -328,30 +314,22 @@ const SingleProduct = () => {
           </div>
 
           <div className="mt-4 md:mt-0">
-            <h2 className="text-xl md:text-2xl font-semibold mb-2">
-              {product.product_name}
-            </h2>
+            <h2 className="text-xl md:text-2xl font-semibold mb-2">{product.product_name}</h2>
             <p className="text-gray-600 mb-2">Brand: {product.brand_name}</p>
 
             <div className="flex items-center mb-3">
               {renderStars(product.rating || 0)}
               <p className="text-gray-500 text-sm ml-2">
-                {reviews.length > 0
-                  ? `${reviews.length} review(s)`
-                  : "No reviews yet"}
+                {reviews.length > 0 ? `${reviews.length} review(s)` : "No reviews yet"}
               </p>
             </div>
 
-            <p className="text-2xl font-bold text-red-600 mb-1">
-              Rs. {product.product_discounted_price}
-            </p>
+            <p className="text-2xl font-bold text-red-600 mb-1">Rs. {product.product_discounted_price}</p>
             {product.product_base_price > product.product_discounted_price && (
-              <p className="text-gray-400 line-through text-sm mb-2">
-                Rs. {product.product_base_price}
-              </p>
+              <p className="text-gray-400 line-through text-sm mb-2">Rs. {product.product_base_price}</p>
             )}
 
-            {product.sizes && product.sizes.length > 0 ? (
+            {product.sizes?.length > 0 ? (
               <div className="mb-2">
                 <label className="block text-gray-700 mb-1">Select Size</label>
                 <select
@@ -367,11 +345,7 @@ const SingleProduct = () => {
                     Select a size
                   </option>
                   {product.sizes.map((size) => (
-                    <option
-                      key={size.size}
-                      value={size.size}
-                      disabled={size.stock === 0}
-                    >
+                    <option key={size.size} value={size.size} disabled={size.stock === 0}>
                       {size.size} ({size.stock} available)
                     </option>
                   ))}
@@ -394,24 +368,17 @@ const SingleProduct = () => {
             )}
 
             <p className="mb-2">
-              Shipping:{" "}
-              <span className="font-semibold">
-                {product.shipping === 0 ? "Free" : `Rs. ${product.shipping}`}
-              </span>
+              Shipping: <span className="font-semibold">{product.shipping === 0 ? "Free" : `Rs. ${product.shipping}`}</span>
             </p>
             {product.warranty && (
               <p className="mb-2">
-                Warranty:{" "}
-                <span className="font-semibold">{product.warranty}</span>
+                Warranty: <span className="font-semibold">{product.warranty}</span>
               </p>
             )}
             <p className="mb-2">
-              Payment Methods:{" "}
-              <span className="font-semibold">
-                {product.payment.join(", ")}
-              </span>
+              Payment Methods: <span className="font-semibold">{product.payment?.join(", ")}</span>
             </p>
-            {product.sizes && product.sizes.length > 0 && (
+            {product.sizes?.length > 0 && (
               <div className="mb-2">
                 <p className="text-gray-700">
                   Available Sizes and Stock:
@@ -429,17 +396,13 @@ const SingleProduct = () => {
                 onClick={handleAddToCart}
                 className="w-1/2 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 disabled:bg-gray-400"
                 disabled={
-                  product.sizes && product.sizes.length > 0
-                    ? !selectedSize ||
-                      product.sizes.find((s) => s.size === selectedSize)
-                        ?.stock <= 0
+                  product.sizes?.length > 0
+                    ? !selectedSize || product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
                     : product.product_stock <= 0
                 }
               >
-                {product.sizes && product.sizes.length > 0
-                  ? selectedSize &&
-                    product.sizes.find((s) => s.size === selectedSize)?.stock >
-                      0
+                {product.sizes?.length > 0
+                  ? selectedSize && product.sizes.find((s) => s.size === selectedSize)?.stock > 0
                     ? "Add to Cart"
                     : "Out of Stock"
                   : product.product_stock > 0
@@ -451,10 +414,8 @@ const SingleProduct = () => {
                 onClick={handleBuyNow}
                 className="w-1/2 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 disabled:bg-gray-400"
                 disabled={
-                  product.sizes && product.sizes.length > 0
-                    ? !selectedSize ||
-                      product.sizes.find((s) => s.size === selectedSize)
-                        ?.stock <= 0
+                  product.sizes?.length > 0
+                    ? !selectedSize || product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
                     : product.product_stock <= 0
                 }
               >
@@ -466,10 +427,8 @@ const SingleProduct = () => {
               onClick={handleOrderOnWhatsapp}
               className="mt-3 w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20b954] text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 disabled:bg-gray-400"
               disabled={
-                product.sizes && product.sizes.length > 0
-                  ? !selectedSize ||
-                    product.sizes.find((s) => s.size === selectedSize)?.stock <=
-                      0
+                product.sizes?.length > 0
+                  ? !selectedSize || product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
                   : product.product_stock <= 0
               }
             >
@@ -485,12 +444,8 @@ const SingleProduct = () => {
             </button>
 
             <div className="mb-6 mt-3">
-              <h3 className="font-semibold text-lg mb-2">
-                Product Highlights:
-              </h3>
-              <p className="whitespace-pre-line text-gray-700">
-                {product.product_description}
-              </p>
+              <h3 className="font-semibold text-lg mb-2">Product Highlights:</h3>
+              <p className="whitespace-pre-line text-gray-700">{product.product_description}</p>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -530,9 +485,7 @@ const SingleProduct = () => {
           <div className="flex border-b">
             <button
               className={`py-2 px-4 font-semibold ${
-                activeTab === "description"
-                  ? "border-b-2 border-red-600 text-red-600"
-                  : "text-gray-600"
+                activeTab === "description" ? "border-b-2 border-red-600 text-red-600" : "text-gray-600"
               }`}
               onClick={() => setActiveTab("description")}
             >
@@ -540,9 +493,7 @@ const SingleProduct = () => {
             </button>
             <button
               className={`py-2 px-4 font-semibold ${
-                activeTab === "reviews"
-                  ? "border-b-2 border-red-600 text-red-600"
-                  : "text-gray-600"
+                activeTab === "reviews" ? "border-b-2 border-red-600 text-red-600" : "text-gray-600"
               }`}
               onClick={() => setActiveTab("reviews")}
             >
@@ -560,7 +511,7 @@ const SingleProduct = () => {
                   <strong>Warranty:</strong> {product.warranty}
                 </p>
               )}
-              {product.sizes && product.sizes.length > 0 && (
+              {product.sizes?.length > 0 && (
                 <div className="mt-2">
                   <p className="text-gray-700">
                     <strong>Available Sizes and Stock:</strong>
@@ -596,9 +547,7 @@ const SingleProduct = () => {
                       </select>
                     </div>
                     <div className="mb-3">
-                      <label className="block text-gray-700 mb-1">
-                        Your Review
-                      </label>
+                      <label className="block text-gray-700 mb-1">Your Review</label>
                       <textarea
                         value={reviewText}
                         onChange={(e) => setReviewText(e.target.value)}
@@ -632,9 +581,7 @@ const SingleProduct = () => {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold">
-                            {review.user_id?.username || "Anonymous"}
-                          </p>
+                          <p className="font-semibold">{review.user_id?.username || "Anonymous"}</p>
                           {renderStars(review.rating)}
                         </div>
                         <p className="text-gray-500 text-sm">

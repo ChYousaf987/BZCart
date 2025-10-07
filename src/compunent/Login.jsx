@@ -10,8 +10,7 @@ export default function Login({ setIsSignIn }) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, userLoading, userError, userMessage, userSuccess } =
-    useSelector((state) => state.auth);
+  const { user, userLoading, userError, userMessage, userSuccess } = useSelector((state) => state.auth);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,18 +23,20 @@ export default function Login({ setIsSignIn }) {
 
   useEffect(() => {
     if (userSuccess && user) {
-      toast.success(`Welcome back, ${user.username}!`, {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      console.log("Login - Success, storing user:", { id: user._id, username: user.username, token: user.token });
+      localStorage.setItem("myUser", JSON.stringify({ ...user, token: user.token }));
+      toast.success(`Welcome back, ${user.username}!`, { position: "top-right", autoClose: 3000 });
       navigate("/");
       dispatch(userReset());
     }
-  }, [userSuccess, user, navigate, dispatch]);
+    if (userError) {
+      console.error("Login - Error:", userMessage);
+      toast.error(userMessage || "Failed to login", { position: "top-right" });
+    }
+  }, [userSuccess, userError, userMessage, user, navigate, dispatch]);
 
   return (
-    <div className="flex flex-col-reverse md:flex-row  font-cabin">
-      {/* Left Panel - Form */}
+    <div className="flex flex-col-reverse md:flex-row font-cabin">
       <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center p-8 md:p-12 shadow-lg">
         <h2 className="text-3xl sm:text-4xl font-extrabold mb-8 text-center text-gray-800">
           Sign in to <span className="text-primary">BZCart</span>
@@ -45,9 +46,7 @@ export default function Login({ setIsSignIn }) {
           <p className="text-red-500 text-sm mb-4 text-center">{userMessage}</p>
         )}
         {userSuccess && (
-          <p className="text-green-500 text-sm mb-4 text-center">
-            Login successful!
-          </p>
+          <p className="text-green-500 text-sm mb-4 text-center">Login successful!</p>
         )}
 
         <form onSubmit={handleSubmit} className="w-full max-w-sm">
@@ -70,9 +69,7 @@ export default function Login({ setIsSignIn }) {
 
           <div className="flex items-center mb-6 mt-2">
             <input type="checkbox" id="remember" className="mr-2 w-4 h-4" />
-            <label htmlFor="remember" className="text-sm text-gray-600">
-              Remember me
-            </label>
+            <label htmlFor="remember" className="text-sm text-gray-600">Remember me</label>
           </div>
 
           <button
@@ -97,24 +94,17 @@ export default function Login({ setIsSignIn }) {
         </p>
       </div>
 
-      {/* Right Panel */}
       <div
         className="w-full md:w-1/2 relative text-white flex flex-col justify-between items-center p-10 bg-cover bg-center rounded-tl-3xl md:rounded-tr-none md:rounded-br-3xl"
         style={{ backgroundImage: "url('./logo.png')" }}
       >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-dark/90  md:rounded-tr-none md:rounded-br-3xl" />
-
-        {/* Center Text */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-dark/90 md:rounded-tr-none md:rounded-br-3xl" />
         <div className="z-10 flex-1 flex flex-col justify-center items-center text-center my-3 md:my-0">
           <h2 className="text-3xl font-bold mb-4">Welcome Back!</h2>
           <p className="max-w-xs">
-            Enter your credentials to access your account and enjoy shopping
-            with BZCart.
+            Enter your credentials to access your account and enjoy shopping with BZCart.
           </p>
         </div>
-
-        {/* Buttons */}
         <div className="z-10 flex flex-col gap-4 w-full max-w-xs">
           <button
             onClick={() => setIsSignIn(false)}

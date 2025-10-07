@@ -1,4 +1,3 @@
-// Updated cartSlice.js - Fix for removeFromCart thunk
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -6,36 +5,37 @@ const API_URL = "https://bzbackend.online/api";
 
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async (cartData, { rejectWithValue }) => {
+  async ({ cartData, userId, token }, { rejectWithValue }) => {
     try {
+      console.log("cartSlice - addToCart params:", { userId, token, cartData });
+
       if (!cartData.product_id || !cartData.selected_image) {
+        console.error("cartSlice - addToCart: Missing required fields", cartData);
         return rejectWithValue("Product ID and selected image are required");
       }
 
       const payload = {
         product_id: cartData.product_id,
         selected_image: cartData.selected_image,
-        guestId: cartData.guestId || null,
+        guestId: userId && token ? undefined : cartData.guestId,
+        selected_size: cartData.selected_size || null,
       };
-
-      // Include selected_size only if provided
-      if (cartData.selected_size) {
-        payload.selected_size = cartData.selected_size;
-      }
 
       console.log("cartSlice - addToCart payload:", payload);
 
-      const response = await axios.post(`${API_URL}/products/cart`, payload);
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      console.log("cartSlice - addToCart headers:", headers);
+
+      const response = await axios.post(`${API_URL}/products/cart`, payload, {
+        headers,
+        timeout: 5000,
+      });
+      console.log("cartSlice - addToCart response:", response.data);
       return response.data;
     } catch (error) {
-      console.error(
-        "cartSlice - addToCart error:",
-        error.response?.data || error.message
-      );
+      console.error("cartSlice - addToCart error:", error.response?.data || error.message);
       return rejectWithValue(
-        error.response?.data?.message ||
-          error.message ||
-          "Failed to add to cart"
+        error.response?.data?.message || error.message || "Failed to add to cart"
       );
     }
   }
@@ -43,17 +43,33 @@ export const addToCart = createAsyncThunk(
 
 export const fetchCart = createAsyncThunk(
   "cart/fetchCart",
-  async ({ guestId }, { rejectWithValue }) => {
+  async ({ guestId }, { rejectWithValue, getState }) => {
     try {
-      const response = await axios.get(
-        `${API_URL}/products/cart?guestId=${guestId}`,
-        { timeout: 5000 }
-      );
+      const { auth } = getState();
+      const userId = auth?.user?._id;
+      const token = auth?.token;
+      console.log("cartSlice - fetchCart params:", { userId, guestId, token });
+
+      if (!userId && !guestId) {
+        console.error("cartSlice - fetchCart: Neither userId nor guestId provided");
+        return rejectWithValue("User or guest ID required");
+      }
+
+      const query = userId && token ? "" : `?guestId=${encodeURIComponent(guestId)}`;
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      console.log("cartSlice - fetchCart URL:", `${API_URL}/products/cart${query}`);
+      console.log("cartSlice - fetchCart headers:", headers);
+
+      const response = await axios.get(`${API_URL}/products/cart${query}`, {
+        timeout: 5000,
+        headers,
+      });
+      console.log("cartSlice - fetchCart response:", response.data);
       return response.data;
     } catch (err) {
-      console.error("fetchCart error:", err.response?.data || err.message);
+      console.error("cartSlice - fetchCart error:", err.response?.data || err.message);
       return rejectWithValue(
-        err.response?.data?.message || "Failed to fetch cart"
+        err.response?.data?.message || err.message || "Failed to fetch cart"
       );
     }
   }
@@ -61,34 +77,34 @@ export const fetchCart = createAsyncThunk(
 
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
-  async (
-    { product_id, selected_image, guestId, selected_size },
-    { rejectWithValue }
-  ) => {
+  async ({ product_id, selected_image, guestId, selected_size, removeAll }, { rejectWithValue, getState }) => {
     try {
+      const { auth } = getState();
+      const userId = auth?.user?._id;
+      const token = auth?.token;
       const payload = {
         product_id,
         selected_image,
-        guestId,
+        guestId: userId && token ? undefined : guestId,
+        selected_size: selected_size || null,
+        removeAll: removeAll || false,
       };
-
-      // Include selected_size only if provided (not null/undefined)
-      if (selected_size) {
-        payload.selected_size = selected_size;
-      }
 
       console.log("cartSlice - removeFromCart payload:", payload);
 
-      const response = await axios.post(
-        `${API_URL}/products/cart/remove`,
-        payload,
-        { timeout: 5000 }
-      );
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      console.log("cartSlice - removeFromCart headers:", headers);
+
+      const response = await axios.post(`${API_URL}/products/cart/remove`, payload, {
+        timeout: 5000,
+        headers,
+      });
+      console.log("cartSlice - removeFromCart response:", response.data);
       return response.data;
     } catch (err) {
-      console.error("removeFromCart error:", err.response?.data || err.message);
+      console.error("cartSlice - removeFromCart error:", err.response?.data || err.message);
       return rejectWithValue(
-        err.response?.data?.message || "Failed to remove item from cart"
+        err.response?.data?.message || err.message || "Failed to remove item from cart"
       );
     }
   }
@@ -96,25 +112,24 @@ export const removeFromCart = createAsyncThunk(
 
 export const createOrder = createAsyncThunk(
   "cart/createOrder",
-  async (orderData, { rejectWithValue }) => {
+  async (orderData, { rejectWithValue, getState }) => {
     try {
-      const response = await axios.post(
-        `${API_URL}/orders/create-order`,
-        orderData,
-        {
-          timeout: 5000,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // Store lastOrderId in localStorage
+      const { auth } = getState();
+      const token = auth?.token;
+      const headers = token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
+      console.log("cartSlice - createOrder headers:", headers);
+
+      const response = await axios.post(`${API_URL}/orders/create-order`, orderData, {
+        timeout: 5000,
+        headers,
+      });
+      console.log("cartSlice - createOrder response:", response.data);
       localStorage.setItem("lastOrderId", response.data._id);
       return response.data;
     } catch (err) {
-      console.error("createOrder error:", err.response?.data || err.message);
+      console.error("cartSlice - createOrder error:", err.response?.data || err.message);
       return rejectWithValue(
-        err.response?.data?.message || "Failed to create order"
+        err.response?.data?.message || err.message || "Failed to create order"
       );
     }
   }
@@ -123,14 +138,14 @@ export const createOrder = createAsyncThunk(
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
-    items: [], // Cart items
-    loading: false, // General loading state for cart operations
-    error: null, // General error state
-    orderLoading: false, // Specific loading state for order creation
-    orderError: null, // Specific error state for order creation
-    orderSuccess: false, // Flag for successful order
-    orderMessage: "", // Message for order creation status
-    lastOrder: null, // Store last created order details
+    items: [],
+    loading: false,
+    error: null,
+    orderLoading: false,
+    orderError: null,
+    orderSuccess: false,
+    orderMessage: "",
+    lastOrder: null,
   },
   reducers: {
     clearCart: (state) => {
@@ -147,21 +162,19 @@ const cartSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Add to Cart
       .addCase(addToCart.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(addToCart.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload; // Always expect an array
+        state.items = Array.isArray(action.payload) ? action.payload : [];
         state.error = null;
       })
       .addCase(addToCart.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      // Fetch Cart
       .addCase(fetchCart.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -175,7 +188,6 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Remove from Cart
       .addCase(removeFromCart.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -189,7 +201,6 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Create Order
       .addCase(createOrder.pending, (state) => {
         state.orderLoading = true;
         state.orderError = null;
