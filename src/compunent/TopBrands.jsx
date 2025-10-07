@@ -14,19 +14,46 @@ const TopBrands = () => {
   } = useSelector((state) => state.products || {});
 
   const [visibleCount, setVisibleCount] = useState(8);
+  const [sortedProducts, setSortedProducts] = useState([]);
   const loadMoreRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchProducts())
       .unwrap()
+      .then((fetchedProducts) => {
+        const now = new Date();
+        const oneDay = 24 * 60 * 60 * 1000;
+
+        // Split new and old
+        const newProducts = fetchedProducts.filter((p) => {
+          const createdAt = new Date(p.createdAt);
+          return now - createdAt < oneDay;
+        });
+
+        const oldProducts = fetchedProducts.filter((p) => {
+          const createdAt = new Date(p.createdAt);
+          return now - createdAt >= oneDay;
+        });
+
+        // Sort new products by latest first
+        const sortedNew = [...newProducts].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        // Randomize old products
+        const shuffledOld = [...oldProducts].sort(() => Math.random() - 0.5);
+
+        // Combine
+        const finalList = [...sortedNew, ...shuffledOld];
+        setSortedProducts(finalList);
+      })
       .catch(() => {});
   }, [dispatch]);
 
   useEffect(() => {
-    if (visibleCount >= products.length || loading || error) return;
+    if (visibleCount >= sortedProducts.length || loading || error) return;
     if (!("IntersectionObserver" in window)) {
-      // Fallback for browsers without IntersectionObserver
-      setVisibleCount((prev) => Math.min(prev + 8, products.length));
+      setVisibleCount((prev) => Math.min(prev + 8, sortedProducts.length));
       return;
     }
 
@@ -36,10 +63,7 @@ const TopBrands = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          setVisibleCount((prev) => {
-            const newCount = Math.min(prev + 8, products.length);
-            return newCount;
-          });
+          setVisibleCount((prev) => Math.min(prev + 8, sortedProducts.length));
         }
       },
       { root: null, rootMargin: "100px", threshold: 0.1 }
@@ -47,18 +71,24 @@ const TopBrands = () => {
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [visibleCount, products.length, loading, error]);
+  }, [visibleCount, sortedProducts.length, loading, error]);
 
   const getDiscountPercent = (base, discounted) => {
     if (!base || !discounted || base <= 0) return null;
     return Math.round(((base - discounted) / base) * 100);
   };
 
+  const isNewProduct = (createdAt) => {
+    const now = new Date();
+    const productDate = new Date(createdAt);
+    return now - productDate < 24 * 60 * 60 * 1000;
+  };
+
   return (
     <div className="md:w-[95%] mx-auto px-2 md:px-0 pb-7 mt-10">
       <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-gray-500 border-b-2 border-[#f06621] inline-block pb-1">
-          Explore From 
+          Explore From
           <span className="text-[#f06621]"> All Product</span>
         </h2>
         <Link
@@ -70,7 +100,7 @@ const TopBrands = () => {
       </div>
 
       {loading ? (
-        // Skeleton Grid Loader
+        // Skeleton Loader
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
           {Array(8)
             .fill(0)
@@ -84,13 +114,13 @@ const TopBrands = () => {
         </div>
       ) : error ? (
         <p className="text-center w-full text-red-500">{error}</p>
-      ) : products.length === 0 ? (
+      ) : sortedProducts.length === 0 ? (
         <p className="text-center w-full">No products found</p>
       ) : (
         <>
-          {/* Products Grid */}
+          {/* Product Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
-            {products.slice(0, visibleCount).map((product) => (
+            {sortedProducts.slice(0, visibleCount).map((product) => (
               <div key={product._id} className="snap-start flex-shrink-0">
                 <div className="group mb-3 bg-white rounded-2xl border shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
                   {/* Discount Badge */}
@@ -104,6 +134,13 @@ const TopBrands = () => {
                         product.product_discounted_price
                       )}
                       % OFF
+                    </div>
+                  )}
+
+                  {/* NEW Badge */}
+                  {isNewProduct(product.createdAt) && (
+                    <div className="absolute top-2 left-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-br-lg z-10">
+                      NEW
                     </div>
                   )}
 
@@ -176,8 +213,8 @@ const TopBrands = () => {
             ))}
           </div>
 
-          {/* Invisible trigger for loading more */}
-          {visibleCount < products.length && (
+          {/* Infinite scroll trigger */}
+          {visibleCount < sortedProducts.length && (
             <div ref={loadMoreRef} className="h-10"></div>
           )}
         </>
