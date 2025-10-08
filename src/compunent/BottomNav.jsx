@@ -1,16 +1,14 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { GiOpenBook, GiCompass } from "react-icons/gi";
-import { MdMenuBook } from "react-icons/md";
-import { ImHome } from "react-icons/im";
+import React, { useState, useEffect } from "react";
 import {
   FaHome,
   FaList,
-  FaPrayingHands,
   FaSearch,
   FaShoppingCart,
   FaUser,
+  FaTruck,
 } from "react-icons/fa";
+import { GoHomeFill } from "react-icons/go";
+import { Link, useLocation } from "react-router-dom";
 
 const BottomNav = () => {
   const location = useLocation();
@@ -24,22 +22,33 @@ const BottomNav = () => {
       icon: <FaList />,
       key: "categories",
     },
-    { path: "/", label: "Home", icon: <FaHome />, key: "home" },
-    { path: "/search", label: "Search", icon: <FaSearch />, key: "search" },
+    { path: "/", label: "Home", icon: <GoHomeFill />, key: "home" },
+    {
+      path: "/orders",
+      label: "Tracking",
+      icon: <FaTruck />, // Replaced FaSearch with FaTruck for tracking
+      key: "tracking",
+    },
     { path: "/auth", label: "Account", icon: <FaUser />, key: "account" },
   ];
 
+  useEffect(() => {
+    setActive(location.pathname);
+  }, [location.pathname]);
+
   const getIndicatorPosition = (path) => {
     const index = navItems.findIndex((item) => item.path === path);
-    return `${(index * 100) / navItems.length + 50 / navItems.length}%`;
+    const defaultIndex = 0;
+    const positionIndex = index !== -1 ? index : defaultIndex;
+    return `${(positionIndex * 100) / navItems.length + 50 / navItems.length}%`;
   };
 
   return (
-    <div className="fixed md:hidden bottom-0 w-full z-50">
-      <div className="relative max-w-md mx-auto backdrop-blur-sm border-t rounded-t-3xl shadow-2xl bg-white border-gray-200 dark:bg-[#1e1e1e] dark:border-gray-700">
-        {/* Floating Active Indicator */}
+    <div className="fixed bottom-0 left-0 w-full flex justify-center z-40 md:hidden">
+      <div className="relative w-[100%] max-w-md bg-white backdrop-blur-md h-20 flex items-center justify-around shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-white/10 transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.2)]">
+        {/* Floating Circle */}
         <div
-          className="absolute top-0 w-14 h-14 bg-primary rounded-full shadow-lg transform -translate-y-1/2 flex items-center justify-center transition-all duration-500 ease-out"
+          className="absolute top-0 z-50 w-16 h-16 bg-primary rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.3)] flex items-center justify-center transition-all duration-500 ease-in-out glow-effect"
           style={{
             left: getIndicatorPosition(active),
             transform: "translateX(-50%) translateY(-50%)",
@@ -48,38 +57,47 @@ const BottomNav = () => {
           <div className="text-white text-2xl">
             {React.cloneElement(
               navItems.find((item) => item.path === active)?.icon ||
-                navItems.find((item) => item.path === "/")?.icon,
-              { className: "w-6 h-6" }
+                navItems[0].icon,
+              { className: "w-8 h-8" }
             )}
           </div>
         </div>
 
+        {/* Bar curve under floating circle */}
+        <div
+          className="absolute top-0 w-20 h-10 bg-gray-200 backdrop-blur-md rounded-b-full transition-all duration-500"
+          style={{
+            left: getIndicatorPosition(active),
+            transform: "translateX(-50%) translateY(-1px)",
+          }}
+        ></div>
+
         {/* Navigation Items */}
-        <div className="flex justify-around items-center h-16">
-          {navItems.map((item) => (
-            <Link
-              to={item.path}
-              key={item.key}
-              onClick={() => setActive(item.path)}
-              className={`relative flex flex-col items-center justify-center w-full h-full transition-all duration-300 ${
+        {navItems.map((item) => (
+          <Link
+            key={item.path}
+            to={item.path}
+            onClick={() => setActive(item.path)}
+            className={`flex flex-col items-center justify-center w-full text-center transition-all duration-300 group hover:-translate-y-1 ${
+              active === item.path
+                ? "text-blue-600"
+                : "text-gray-500 hover:text-blue-500"
+            }`}
+          >
+            <div
+              className={`text-xl transition-all duration-300 transform group-hover:scale-110 ${
                 active === item.path
-                  ? "text-primary font-semibold"
-                  : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  ? "opacity-0 scale-0"
+                  : "opacity-100 scale-100"
               }`}
             >
-              <div
-                className={`text-xl transition-all duration-300 ${
-                  active === item.path
-                    ? "opacity-0 scale-0"
-                    : "opacity-100 scale-100"
-                }`}
-              >
-                {React.cloneElement(item.icon, { className: "w-6 h-6" })}
-              </div>
-              <span className="text-xs mt-1 font-medium">{item.label}</span>
-            </Link>
-          ))}
-        </div>
+              {React.cloneElement(item.icon, { className: "w-5 h-5" })}
+            </div>
+            <span className="text-[13px] mt-1 font-semibold tracking-tight group-hover:text-blue-500 transition-colors duration-200">
+              {item.label}
+            </span>
+          </Link>
+        ))}
       </div>
     </div>
   );

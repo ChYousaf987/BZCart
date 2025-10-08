@@ -1,11 +1,19 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMyOrders } from "../features/order/orderSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ArrowLeft, RefreshCw } from "lucide-react";
-import Footer from "./Footer";
+import {
+  ArrowLeft,
+  RefreshCw,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Truck,
+  PackageCheck,
+} from "lucide-react";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
+import { fetchMyOrders } from "../features/order/orderSlice";
 
 const OrdersList = ({ guestId: propGuestId }) => {
   const dispatch = useDispatch();
@@ -13,7 +21,6 @@ const OrdersList = ({ guestId: propGuestId }) => {
   const { orders, loading, error } = useSelector((state) => state.order);
   const { user } = useSelector((state) => state.auth);
 
-  // Initialize guestId
   const guestId =
     propGuestId || localStorage.getItem("guestId") || `guest_${Date.now()}`;
 
@@ -22,134 +29,206 @@ const OrdersList = ({ guestId: propGuestId }) => {
       localStorage.setItem("guestId", guestId);
     }
 
-    console.log("OrdersList - Fetching orders with:", {
-      guestId,
-      userId: user?._id,
-    });
-
-    // Fetch orders
     dispatch(fetchMyOrders({ guestId }))
       .unwrap()
-      .then((data) => {
-        console.log("OrdersList - Fetched orders:", data);
-      })
       .catch((err) => {
-        console.error("OrdersList - fetchMyOrders error:", err);
-        toast.error(err || "Failed to fetch orders", { position: "top-right" });
+        console.error("OrdersList error:", err);
+        toast.error(err || "Failed to fetch orders");
       });
   }, [dispatch, guestId, user]);
 
   const handleRefresh = () => {
     dispatch(fetchMyOrders({ guestId }))
       .unwrap()
-      .then((data) => {
-        console.log("OrdersList - Refreshed orders:", data);
-        toast.success("Orders refreshed", { position: "top-right" });
-      })
-      .catch((err) => {
-        console.error("OrdersList - Refresh error:", err);
-        toast.error(err || "Failed to refresh orders", {
-          position: "top-right",
-        });
-      });
+      .then(() => toast.success("Orders refreshed"))
+      .catch((err) => toast.error(err || "Failed to refresh orders"));
   };
 
-  if (loading) {
+  // Loader
+  if (loading)
     return (
-      <div className="py-6 px-4 text-center">
-        <h3 className="text-2xl font-bold mb-5">Loading Orders...</h3>
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="animate-spin h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full mb-4"></div>
+        <p className="text-gray-600 font-medium">Loading your orders...</p>
       </div>
     );
-  }
 
-  if (error) {
+  // Error
+  if (error)
     return (
-      <div className="py-6 px-4 text-center">
-        <h3 className="text-2xl font-bold mb-5">Error Loading Orders</h3>
-        <p className="text-red-500">{error}</p>
-        <div className="flex gap-4 mt-4 justify-center">
-          <button
-            onClick={handleRefresh}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg"
-          >
-            <RefreshCw size={18} /> Retry
-          </button>
-          <button
-            onClick={() => navigate("/Checkout")}
-            className="bg-primary text-white px-4 py-2 rounded-lg"
-          >
-            Go to Checkout
-          </button>
-        </div>
+      <div className="text-center min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <p className="text-red-500 font-medium mb-3">{error}</p>
+        <button
+          onClick={handleRefresh}
+          className="bg-blue-600 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:bg-blue-700 transition"
+        >
+          <RefreshCw size={18} /> Retry
+        </button>
       </div>
     );
-  }
 
-  if (orders.length === 0) {
+  // Empty state
+  if (orders.length === 0)
     return (
-      <div className="py-6 px-4 text-center">
-        <h3 className="text-2xl font-bold mb-5">No Orders Found</h3>
-        <p className="text-gray-600">You haven't placed any orders yet.</p>
-        <div className="flex gap-4 mt-4 justify-center">
-          <button
-            onClick={handleRefresh}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg"
-          >
-            <RefreshCw size={18} /> Refresh
-          </button>
-          <button
-            onClick={() => navigate("/Checkout")}
-            className="bg-primary text-white px-4 py-2 rounded-lg"
-          >
-            Go to Checkout
-          </button>
-        </div>
+      <div className="text-center min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <p className="text-gray-600 mb-4 text-lg">You have no orders yet.</p>
+        <button
+          onClick={handleRefresh}
+          className="bg-blue-600 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:bg-blue-700 transition"
+        >
+          <RefreshCw size={18} /> Refresh
+        </button>
       </div>
     );
-  }
+
+  const statusSteps = [
+    { key: "pending", label: "Pending", icon: Clock },
+    { key: "processing", label: "Processing", icon: PackageCheck },
+    { key: "shipped", label: "Shipped", icon: Truck },
+    { key: "delivered", label: "Delivered", icon: CheckCircle2 },
+  ];
+
+  const getCurrentStep = (status) =>
+    statusSteps.findIndex((s) => s.key === status);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "pending":
+        return "text-yellow-500";
+      case "processing":
+        return "text-blue-500";
+      case "shipped":
+        return "text-indigo-500";
+      case "delivered":
+        return "text-green-600";
+      case "cancelled":
+        return "text-red-500";
+      default:
+        return "text-gray-400";
+    }
+  };
 
   return (
     <>
       <Navbar />
-      <div className="py-6 px-4 max-w-4xl mx-auto">
-        <div className="flex items-center mb-6">
-          <button onClick={() => navigate("/")} className="mr-2">
-            <ArrowLeft size={22} />
-          </button>
-          <h1 className="text-lg font-semibold flex-1">My Orders</h1>
-          <button
-            onClick={handleRefresh}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg"
-          >
-            <RefreshCw size={18} /> Refresh
-          </button>
-        </div>
-        <div className="space-y-4">
-          {orders.map((order) => (
-            <div
-              key={order._id}
-              className="bg-gray-50 p-4 rounded-lg border cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => navigate(`/track-order/${order._id}`)}
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 py-12 px-4">
+        <div className="max-w-4xl mx-auto backdrop-blur-md bg-white/70 shadow-xl rounded-2xl p-8 border border-white/40">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-10">
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center gap-1 text-gray-700 hover:text-indigo-700 transition"
             >
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-base">
-                  Order #{order._id.slice(-6)}
-                </span>
-                <span className="text-sm text-gray-600 capitalize">
-                  {order.status}
-                </span>
-              </div>
-              <p className="text-sm mt-1">Total: Rs. {order.total_amount}</p>
-              <p className="text-xs text-gray-500 mt-1">
-                {new Date(order.createdAt).toLocaleDateString()}
-              </p>
-              <div className="mt-2 text-sm">
-                <p>Items: {order.products.length}</p>
-                <p>Email: {order.order_email}</p>
-              </div>
-            </div>
-          ))}
+              <ArrowLeft size={20} /> Back
+            </button>
+            <h1 className="text-2xl font-semibold text-gray-800">My Orders</h1>
+            <button
+              onClick={handleRefresh}
+              className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition"
+            >
+              <RefreshCw size={18} /> Refresh
+            </button>
+          </div>
+
+          {/* Orders List */}
+          <div className="space-y-8">
+            {orders.map((order) => {
+              const currentStep = getCurrentStep(order.status);
+              const isCancelled = order.status === "cancelled";
+
+              return (
+                <div
+                  key={order._id}
+                  className="relative bg-white rounded-2xl border border-gray-100 shadow-md hover:shadow-lg transition-all duration-200 p-6 cursor-pointer group"
+                  onClick={() => navigate(`/track-order/${order._id}`)}
+                >
+                  {/* Floating glow */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-100 to-transparent opacity-0 group-hover:opacity-100 blur-2xl transition"></div>
+
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-4 relative z-10">
+                    <p className="font-semibold text-gray-800">
+                      Order #{order._id.slice(-6)}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  {/* Timeline */}
+                  {isCancelled ? (
+                    <div className="flex items-center gap-2 text-red-500 relative z-10">
+                      <XCircle size={20} />
+                      <p className="font-medium">Order Cancelled</p>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between mt-6 relative z-10">
+                      {statusSteps.map((step, index) => {
+                        const StepIcon = step.icon;
+                        const isActive = index <= currentStep;
+                        return (
+                          <div
+                            key={step.key}
+                            className={`flex flex-col items-center relative ${
+                              index !== statusSteps.length - 1 ? "flex-1" : ""
+                            }`}
+                          >
+                            {/* Connecting line */}
+                            {index !== statusSteps.length - 1 && (
+                              <div
+                                className={`absolute top-4 left-1/2 w-full h-[2px] ${
+                                  index < currentStep
+                                    ? "bg-indigo-500"
+                                    : "bg-gray-200"
+                                }`}
+                              ></div>
+                            )}
+
+                            {/* Step icon */}
+                            <div
+                              className={`z-10 w-10 h-10 flex items-center justify-center rounded-full ${
+                                isActive
+                                  ? "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-md"
+                                  : "bg-gray-200 text-gray-400"
+                              }`}
+                            >
+                              <StepIcon size={18} />
+                            </div>
+
+                            {/* Label */}
+                            <p
+                              className={`mt-2 text-xs font-medium ${
+                                isActive ? "text-gray-800" : "text-gray-400"
+                              }`}
+                            >
+                              {step.label}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Footer Info */}
+                  <div className="mt-8 flex justify-between items-center text-sm relative z-10">
+                    <p className="text-gray-600">
+                      Items: {order.products.length}
+                    </p>
+                    <p
+                      className={`font-semibold capitalize ${getStatusColor(
+                        order.status
+                      )}`}
+                    >
+                      {order.status}
+                    </p>
+                    <p className="text-gray-800 font-semibold">
+                      Rs. {order.total_amount}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
       <Footer />
