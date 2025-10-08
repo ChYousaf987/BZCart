@@ -5,26 +5,29 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/logg.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- ✅ Site Title (shows in Google & Browser Tab) -->
+    <!-- ✅ Site Title -->
     <title>
-      BZCARTSTORE-Your One-Stop E-Commerce Store in Pakistan | Shop Beauty,
+      BZCARTSTORE - Your One-Stop E-Commerce Store in Pakistan | Shop Beauty,
       Skincare, Men’s Fashion & More
     </title>
 
-    <!-- ✅ Meta Description (Google search snippet) -->
+    <!-- ✅ Meta Description -->
     <meta
       name="description"
       content="Shop the latest in beauty, skincare, and men’s fashion at BZCart.Store. A trusted e-commerce platform in Pakistan offering premium products with endless possibilities."
     />
 
-    <!-- ✅ Keywords (optional, Google mostly ignores but helps in other engines) -->
+    <!-- ✅ Keywords -->
     <meta
       name="keywords"
       content="BZCARTSTORE, online shopping Pakistan, beauty products, skincare, men fashion, e-commerce Pakistan"
     />
 
-    <!-- ✅ Open Graph (for social sharing + Google sometimes uses it) -->
-    <meta property="og:title" content="BZCARTSTORE-Your One-Stop E-Commerce Store in Pakistan" />
+    <!-- ✅ Open Graph -->
+    <meta
+      property="og:title"
+      content="BZCARTSTORE - Your One-Stop E-Commerce Store in Pakistan"
+    />
     <meta
       property="og:description"
       content="Shop the latest in beauty, skincare, and men’s fashion at BZCart.Store. A trusted e-commerce platform in Pakistan offering premium products with endless possibilities."
@@ -33,17 +36,45 @@
     <meta property="og:url" content="https://www.bzcart.store" />
     <meta property="og:type" content="website" />
 
-    <!-- ✅ Twitter Card (for Twitter sharing) -->
+    <!-- ✅ Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="BZCARTSTORE-Your One-Stop E-Commerce Store in Pakistan" />
+    <meta
+      name="twitter:title"
+      content="BZCARTSTORE - Your One-Stop E-Commerce Store in Pakistan"
+    />
     <meta
       name="twitter:description"
       content="Shop the latest in beauty, skincare, and men’s fashion at BZCart.Store."
     />
     <meta name="twitter:image" content="https://www.bzcart.store/logg.png" />
+
+    <!-- ✅ Meta Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){
+      n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];
+      t=b.createElement(e);t.async=!0;t.src=v;
+      s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+      (window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '2398393803875504'); 
+      fbq('track', 'PageView');
+    </script>
+    <!-- ✅ End Meta Pixel Code -->
   </head>
+
   <body>
     <div id="root"></div>
+
+    <!-- ✅ Noscript must be inside body -->
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display:none"
+        src="https://www.facebook.com/tr?id=2398393803875504&ev=PageView&noscript=1"
+      />
+    </noscript>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
