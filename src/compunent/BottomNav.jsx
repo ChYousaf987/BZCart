@@ -47,7 +47,8 @@ const BottomNav = () => {
         >
           <div className="text-white text-2xl">
             {React.cloneElement(
-              navItems.find((item) => item.path === active)?.icon,
+              navItems.find((item) => item.path === active)?.icon ||
+                navItems.find((item) => item.path === "/")?.icon,
               { className: "w-6 h-6" }
             )}
           </div>

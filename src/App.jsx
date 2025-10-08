@@ -42,7 +42,17 @@ const App = () => {
 
   return (
     <>
-      <BottomNav />
+      {/* Conditionally show BottomNav */}
+      {![
+        "/auth",
+        "/checkout",
+        "/Cashout",
+        "/payment",
+        "/paymentMethods",
+        "/track-order",
+        "/orders",
+      ].some((path) => location.pathname.startsWith(path)) && <BottomNav />}
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
@@ -53,13 +63,13 @@ const App = () => {
         <Route path="/paymentMethods" element={<PaymentMethods />} />
         <Route path="/track-order/:id" element={<TrackOrder />} />
         <Route path="/orders" element={<OrdersList />} />
-        <Route path="/deal/:id" element={<SingleDeal />} /> {/* New route */}
+        <Route path="/deal/:id" element={<SingleDeal />} />
         <Route path="/product/:id" element={<SingleProduct />} />
         <Route path="/category/:categoryId" element={<CategoryProducts />} />
         <Route path="/categories" element={<CategoriesPage />} />
-        <Route path="/deals" element={<AllDeals />} /> {/* New route */}
+        <Route path="/deals" element={<AllDeals />} />
         <Route path="/Contact" element={<ContactPage />} />
-        <Route path="/products" element={<AllProducts />} /> {/* New route */}
+        <Route path="/products" element={<AllProducts />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/privacypolicy" element={<PrivacyPolicy />} />
@@ -69,6 +79,7 @@ const App = () => {
       </Routes>
     </>
   );
+
 };
 
 export default App;

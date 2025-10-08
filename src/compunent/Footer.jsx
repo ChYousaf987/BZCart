@@ -19,7 +19,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-black text-white pt-10 pb-6 mb-[65px] px-6 md:px-12 lg:px-20">
+    <footer className="bg-black text-white pt-10 pb-6 mb-[65px] md:mb-0 px-6 md:px-12 lg:px-20">
       <div className="grid md:grid-cols-4 gap-4 md:gap-10  border-b border-white/20 md:pb-10">
         {/* Contact Details */}
         <div>
