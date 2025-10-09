@@ -48,7 +48,7 @@ const OrdersList = ({ guestId: propGuestId }) => {
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="animate-spin h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full mb-4"></div>
+        <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
         <p className="text-gray-600 font-medium">Loading your orders...</p>
       </div>
     );
@@ -60,7 +60,7 @@ const OrdersList = ({ guestId: propGuestId }) => {
         <p className="text-red-500 font-medium mb-3">{error}</p>
         <button
           onClick={handleRefresh}
-          className="bg-blue-600 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:bg-blue-700 transition"
+          className="bg-primary text-white px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:bg-orange-700 transition"
         >
           <RefreshCw size={18} /> Retry
         </button>
@@ -74,7 +74,7 @@ const OrdersList = ({ guestId: propGuestId }) => {
         <p className="text-gray-600 mb-4 text-lg">You have no orders yet.</p>
         <button
           onClick={handleRefresh}
-          className="bg-blue-600 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:bg-blue-700 transition"
+          className="bg-primary text-white px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:bg-orange-700 transition"
         >
           <RefreshCw size={18} /> Refresh
         </button>
@@ -98,7 +98,7 @@ const OrdersList = ({ guestId: propGuestId }) => {
       case "processing":
         return "text-blue-500";
       case "shipped":
-        return "text-indigo-500";
+        return "text-orange-700";
       case "delivered":
         return "text-green-600";
       case "cancelled":
@@ -117,16 +117,16 @@ const OrdersList = ({ guestId: propGuestId }) => {
           <div className="flex items-center justify-between mb-10">
             <button
               onClick={() => navigate("/")}
-              className="flex items-center gap-1 text-gray-700 hover:text-indigo-700 transition"
+              className="flex items-center gap-1 text-gray-700 hover:text-orange-700 transition"
             >
               <ArrowLeft size={20} /> Back
             </button>
             <h1 className="text-2xl font-semibold text-gray-800">My Orders</h1>
             <button
               onClick={handleRefresh}
-              className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition"
+              className="flex items-center gap-2 bg-primary text-white px-5 py-2 rounded-lg shadow-md hover:bg-orange-700 transition"
             >
-              <RefreshCw size={18} /> Refresh
+              <RefreshCw size={18} /> <p className="hidden md:block">Refresh</p>
             </button>
           </div>
 
@@ -143,7 +143,7 @@ const OrdersList = ({ guestId: propGuestId }) => {
                   onClick={() => navigate(`/track-order/${order._id}`)}
                 >
                   {/* Floating glow */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-100 to-transparent opacity-0 group-hover:opacity-100 blur-2xl transition"></div>
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-100 to-transparent opacity-0 group-hover:opacity-100 blur-2xl transition"></div>
 
                   {/* Header */}
                   <div className="flex justify-between items-center mb-4 relative z-10">
@@ -178,7 +178,7 @@ const OrdersList = ({ guestId: propGuestId }) => {
                               <div
                                 className={`absolute top-4 left-1/2 w-full h-[2px] ${
                                   index < currentStep
-                                    ? "bg-indigo-500"
+                                    ? "bg-orange-700"
                                     : "bg-gray-200"
                                 }`}
                               ></div>
@@ -188,7 +188,7 @@ const OrdersList = ({ guestId: propGuestId }) => {
                             <div
                               className={`z-10 w-10 h-10 flex items-center justify-center rounded-full ${
                                 isActive
-                                  ? "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-md"
+                                  ? "bg-gradient-to-br from-orange-700 to-primary text-white shadow-md"
                                   : "bg-gray-200 text-gray-400"
                               }`}
                             >
