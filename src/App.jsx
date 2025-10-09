@@ -27,14 +27,53 @@ import BottomNav from "./compunent/BottomNav";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
+  const [isPop, setIsPop] = useState(false);
   const location = useLocation(); // detect route change
 
+  // Detect back/forward navigation (POP) via popstate
   useEffect(() => {
-    // show loader for 700ms when route changes
-    setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, [location.pathname]); // run effect every time the path changes
+    const handlePopState = () => {
+      setIsPop(true);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  // Loader logic: Skip on back navigation, show brief loader on forward
+  useEffect(() => {
+    if (isPop) {
+      // Instant transition on back/forward (no loader)
+      setLoading(false);
+      setIsPop(false); // Reset flag
+    } else {
+      // Brief loader on push/replace (e.g., clicking a link)
+      setLoading(true);
+      const timer = setTimeout(() => setLoading(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, isPop]);
+
+  // Scroll restoration: Save on scroll, restore per pathname (preserves on back)
+  useEffect(() => {
+    const handleScroll = () => {
+      sessionStorage.setItem(`scrollY-${location.pathname}`, window.pageYOffset.toString());
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Restore saved scroll (or 0 for new visits)
+    const savedScrollY = sessionStorage.getItem(`scrollY-${location.pathname}`);
+    if (savedScrollY !== null) {
+      // Use setTimeout to ensure DOM is ready after loader
+      setTimeout(() => window.scrollTo(0, parseInt(savedScrollY)), 0);
+    } else {
+      window.scrollTo(0, 0);
+    }
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [location.pathname]);
 
   if (loading) {
     return <Loader />;
@@ -79,7 +118,6 @@ const App = () => {
       </Routes>
     </>
   );
-
 };
 
 export default App;
