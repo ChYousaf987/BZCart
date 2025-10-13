@@ -22,11 +22,7 @@ const LazyWrapper = ({ children, height = "250px" }) => {
 
   return (
     <div ref={ref} style={{ minHeight: height }}>
-      {isVisible ? (
-        children
-      ) : (
-        <Loader/>
-      )}
+      {isVisible ? children : <Loader />}
     </div>
   );
 };

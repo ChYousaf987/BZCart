@@ -1,39 +1,53 @@
 import React, { useState, useEffect } from "react";
-import {
-  FaHome,
-  FaList,
-  FaSearch,
-  FaShoppingCart,
-  FaUser,
-  FaTruck,
-} from "react-icons/fa";
+import { FaList, FaShoppingCart, FaUser, FaTruck } from "react-icons/fa";
 import { GoHomeFill } from "react-icons/go";
 import { Link, useLocation } from "react-router-dom";
 
 const BottomNav = () => {
   const location = useLocation();
-  const [active, setActive] = useState(location.pathname);
+  const [active, setActive] = useState("/");
 
   const navItems = [
-    { path: "/payment", label: "Cart", icon: <FaShoppingCart />, key: "cart" },
+    { path: "/", label: "Home", icon: <GoHomeFill />, key: "home" },
     {
       path: "/categories",
       label: "Categories",
       icon: <FaList />,
       key: "categories",
     },
-    { path: "/", label: "Home", icon: <GoHomeFill />, key: "home" },
+    { path: "/payment", label: "Cart", icon: <FaShoppingCart />, key: "cart" },
     {
       path: "/orders",
       label: "Tracking",
-      icon: <FaTruck />, // Replaced FaSearch with FaTruck for tracking
+      icon: <FaTruck />,
       key: "tracking",
     },
     { path: "/auth", label: "Account", icon: <FaUser />, key: "account" },
   ];
 
+  // Determine which nav item should be active based on route
+  const getActiveKey = (pathname) => {
+    if (pathname === "/") return "/";
+    if (pathname.startsWith("/categories")) return "/categories";
+    if (pathname.startsWith("/orders")) return "/orders";
+    if (pathname.startsWith("/payment") || pathname.startsWith("/cart"))
+      return "/payment";
+    if (pathname.startsWith("/auth")) return "/auth";
+
+    // Product, deal, or search pages should highlight Home
+    if (
+      pathname.startsWith("/product") ||
+      pathname.startsWith("/deal") ||
+      pathname.startsWith("/search")
+    ) {
+      return "/";
+    }
+
+    return "/";
+  };
+
   useEffect(() => {
-    setActive(location.pathname);
+    setActive(getActiveKey(location.pathname));
   }, [location.pathname]);
 
   const getIndicatorPosition = (path) => {

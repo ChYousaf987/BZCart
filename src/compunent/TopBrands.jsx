@@ -5,50 +5,21 @@ import { fetchProducts } from "../features/products/productSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-const TopBrands = () => {
+const TopBrands = ({ sortedProducts }) => {
   const dispatch = useDispatch();
   const {
     products = [],
     loading,
     error,
   } = useSelector((state) => state.products || {});
-
   const [visibleCount, setVisibleCount] = useState(8);
-  const [sortedProducts, setSortedProducts] = useState([]);
   const loadMoreRef = useRef(null);
 
   useEffect(() => {
-    dispatch(fetchProducts())
-      .unwrap()
-      .then((fetchedProducts) => {
-        const now = new Date();
-        const oneDay = 24 * 60 * 60 * 1000;
-
-        // Split new and old
-        const newProducts = fetchedProducts.filter((p) => {
-          const createdAt = new Date(p.createdAt);
-          return now - createdAt < oneDay;
-        });
-
-        const oldProducts = fetchedProducts.filter((p) => {
-          const createdAt = new Date(p.createdAt);
-          return now - createdAt >= oneDay;
-        });
-
-        // Sort new products by latest first
-        const sortedNew = [...newProducts].sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
-
-        // Randomize old products
-        const shuffledOld = [...oldProducts].sort(() => Math.random() - 0.5);
-
-        // Combine
-        const finalList = [...sortedNew, ...shuffledOld];
-        setSortedProducts(finalList);
-      })
-      .catch(() => {});
-  }, [dispatch]);
+    if (!products.length && !sortedProducts.length) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, products, sortedProducts]);
 
   useEffect(() => {
     if (visibleCount >= sortedProducts.length || loading || error) return;
@@ -99,8 +70,7 @@ const TopBrands = () => {
         </Link>
       </div>
 
-      {loading ? (
-        // Skeleton Loader
+      {loading && !sortedProducts.length ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
           {Array(8)
             .fill(0)
@@ -118,7 +88,6 @@ const TopBrands = () => {
         <p className="text-center w-full">No products found</p>
       ) : (
         <>
-          {/* Product Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
             {sortedProducts.slice(0, visibleCount).map((product) => (
               <div key={product._id} className="snap-start flex-shrink-0">

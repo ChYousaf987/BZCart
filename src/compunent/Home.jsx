@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchProducts } from "../features/products/productSlice";
@@ -15,7 +15,6 @@ import "react-loading-skeleton/dist/skeleton.css";
 import axios from "axios";
 import NewArrival from "./NewArrival";
 import BeatSeller from "./BeatSeller";
-import { FaWhatsapp } from "react-icons/fa";
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false };
@@ -36,50 +35,58 @@ class ErrorBoundary extends React.Component {
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { products, loading, error, searchTerm } = useSelector(
+  const { products, sortedProducts, loading, error, searchTerm } = useSelector(
     (state) => state.products
   );
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [categoriesError, setCategoriesError] = useState(null);
 
-  // Fetch products
+  // Fetch products only if not already in store and not loading
   useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    if (!products.length && !loading && !error) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, products.length, loading, error]);
 
-  // Fetch categories
+  // Fetch categories only if not already fetched
   useEffect(() => {
-    const fetchCategories = async () => {
-      setCategoriesLoading(true);
-      try {
-        const response = await axios.get(
-          "https://bzbackend.online/api/categories/categories"
-        );
-        setCategories(response.data);
-      } catch (err) {
-        setCategoriesError(
-          err.response?.data?.message || "Failed to fetch categories"
-        );
-      } finally {
-        setCategoriesLoading(false);
-      }
-    };
-    fetchCategories();
-  }, []);
+    if (!categories.length) {
+      const fetchCategories = async () => {
+        setCategoriesLoading(true);
+        try {
+          const response = await axios.get(
+            "https://bzbackend.online/api/categories/categories"
+          );
+          setCategories(response.data);
+        } catch (err) {
+          setCategoriesError(
+            err.response?.data?.message || "Failed to fetch categories"
+          );
+        } finally {
+          setCategoriesLoading(false);
+        }
+      };
+      fetchCategories();
+    }
+  }, [categories.length]);
 
-  // Filter products and categories containing searchTerm anywhere (case-insensitive)
-  const filteredProducts = searchTerm
-    ? products.filter((product) =>
-        product.product_name?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
+  // Memoize filtered products and categories
+  const filteredProducts = useMemo(() => {
+    return searchTerm
+      ? products.filter((product) =>
+          product.product_name?.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : [];
+  }, [products, searchTerm]);
 
-  const filteredCategories = searchTerm
-    ? categories.filter((category) =>
-        category.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
+  const filteredCategories = useMemo(() => {
+    return searchTerm
+      ? categories.filter((category) =>
+          category.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : [];
+  }, [categories, searchTerm]);
 
   const getDiscountPercent = (base, discounted) => {
     if (!base || !discounted || base <= 0) return null;
@@ -88,27 +95,12 @@ const Home = () => {
 
   return (
     <div className="relative font-daraz bg-white">
-      {/* <div className="fixed bottom-16 left-5 z-50">
-        <a
-          href="https://wa.me/923297609190?text=Hello%20I%20want%20to%20know%20more%20about%20your%20products"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="p- rounded-full shadow-lg transition-transform transform hover:scale-110"
-        >
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png"
-            alt="WhatsApp"
-            className="w-16 h-16"
-          />
-        </a>
-      </div> */}
-
       <ErrorBoundary>
         <Navbar />
 
         {/* Search Results Section */}
         {searchTerm && (
-          <div className="md:w-[95%] mx-auto px-2 md:px-0 py-8">
+          <div className="single-product md:w-[95%] mx-auto px-2 md:px-0 py-8">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-500 mb-8">
               Search Results for{" "}
               <span className="text-[#f06621]">"{searchTerm}"</span>
@@ -147,6 +139,7 @@ const Home = () => {
                     <Link
                       key={`${category._id}-${index}`}
                       to={`/category/${category._id}`}
+                      state={{ scrollY: window.scrollY }}
                       className="flex flex-col items-center ml-4 sm:ml-0 text-center snap-start flex-shrink-0 w-24 sm:w-36"
                     >
                       <div className="w-32 h-32 mt-5 ml-8 md:ml-2 sm:w-36 sm:h-36 rounded-full border border-[#f06621] bg-[#fbf6f4] p-1 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-105">
@@ -173,7 +166,7 @@ const Home = () => {
               <h3 className="text-lg md:text-xl font-bold text-gray-500 mb-4">
                 Matching Products
               </h3>
-              {loading ? (
+              {loading && !products.length ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
                   {Array(8)
                     .fill(0)
@@ -287,7 +280,6 @@ const Home = () => {
 
         {/* Existing Homepage Components */}
         <Slider />
-
         <LazyWrapper>
           <TopCategories />
         </LazyWrapper>
@@ -298,10 +290,7 @@ const Home = () => {
           <BeatSeller />
         </LazyWrapper>
         <LazyWrapper>
-          <ProductDeals />
-        </LazyWrapper>
-        <LazyWrapper>
-          <TopBrands />
+          <TopBrands sortedProducts={sortedProducts} />
         </LazyWrapper>
         <PromoBanner />
         <Footer />

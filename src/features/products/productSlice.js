@@ -1,21 +1,39 @@
-// productSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+
+const API_URL = "https://bzbackend.online/api";
+
+// Utility function for retrying API calls
+const retryRequest = async (requestFn, retries = 3, delay = 1000) => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await requestFn();
+    } catch (err) {
+      if (attempt === retries || err.code !== "ECONNABORTED") {
+        throw err;
+      }
+      console.warn(
+        `Retry attempt ${attempt} failed: ${err.message}. Retrying after ${delay}ms...`
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+};
 
 export const fetchProductById = createAsyncThunk(
   "products/fetchProductById",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `https://bzbackend.online/api/products/product/${id}`,
-        { timeout: 5000 }
+      const response = await retryRequest(() =>
+        axios.get(`${API_URL}/products/product/${id}`, { timeout: 10000 })
       );
+      console.log("fetchProductById - Success:", response.data);
       return response.data;
     } catch (err) {
       console.error("fetchProductById error:", err.message, err.code);
-      if (err.code === "ERR_NETWORK") {
+      if (err.code === "ERR_NETWORK" || err.code === "ECONNABORTED") {
         return rejectWithValue(
-          "Unable to connect to the server. Please check if the server is running or try again later."
+          "Unable to connect to the server. Please check your internet connection or try again later."
         );
       }
       return rejectWithValue(
@@ -29,10 +47,13 @@ export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("https://bzbackend.online/api/products/products");
+      const response = await retryRequest(() =>
+        axios.get(`${API_URL}/products/products`, { timeout: 10000 })
+      );
+      console.log("fetchProducts - Success:", response.data);
       return response.data;
     } catch (err) {
-      console.error("fetchProducts error:", err);
+      console.error("fetchProducts error:", err.message, err.code);
       return rejectWithValue(
         err.response?.data?.message || "Failed to fetch products"
       );
@@ -44,12 +65,15 @@ export const fetchProductsByCategory = createAsyncThunk(
   "products/fetchProductsByCategory",
   async (categoryId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `https://bzbackend.online/api/products/category/${categoryId}`
+      const response = await retryRequest(() =>
+        axios.get(`${API_URL}/products/category/${categoryId}`, {
+          timeout: 10000,
+        })
       );
+      console.log("fetchProductsByCategory - Success:", response.data);
       return response.data;
     } catch (err) {
-      console.error("fetchProductsByCategory error:", err);
+      console.error("fetchProductsByCategory error:", err.message, err.code);
       return rejectWithValue(
         err.response?.data?.message || "Failed to fetch products by category"
       );
@@ -61,16 +85,18 @@ export const fetchReviews = createAsyncThunk(
   "products/fetchReviews",
   async (productId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `https://bzbackend.online/api/products/reviews/${productId}`,
-        { timeout: 5000 }
+      const response = await retryRequest(() =>
+        axios.get(`${API_URL}/products/reviews/${productId}`, {
+          timeout: 10000,
+        })
       );
+      console.log("fetchReviews - Success:", response.data);
       return response.data;
     } catch (err) {
       console.error("fetchReviews error:", err.message, err.code);
-      if (err.code === "ERR_NETWORK") {
+      if (err.code === "ERR_NETWORK" || err.code === "ECONNABORTED") {
         return rejectWithValue(
-          "Unable to connect to the server. Please check if the server is running or try again later."
+          "Unable to connect to the server. Please check your internet connection or try again later."
         );
       }
       return rejectWithValue(
@@ -94,12 +120,12 @@ export const submitReview = createAsyncThunk(
         user_id: user._id,
       };
       console.log("submitReview - Sending request with body:", payload);
-      const response = await axios.post(
-        `https://bzbackend.online/api/products/reviews/${productId}`,
-        payload,
-        { timeout: 5000 }
+      const response = await retryRequest(() =>
+        axios.post(`${API_URL}/products/reviews/${productId}`, payload, {
+          timeout: 10000,
+        })
       );
-      console.log("submitReview - Response:", response.data);
+      console.log("submitReview - Success:", response.data);
       return response.data;
     } catch (err) {
       console.error("submitReview error:", err.response?.data || err.message);
@@ -119,6 +145,7 @@ const productSlice = createSlice({
   name: "products",
   initialState: {
     products: [],
+    sortedProducts: [],
     product: null,
     relatedProducts: [],
     reviews: [],
@@ -128,7 +155,7 @@ const productSlice = createSlice({
     error: null,
     relatedError: null,
     reviewsError: null,
-    searchTerm: "", // Added searchTerm
+    searchTerm: "",
   },
   reducers: {
     setSearchTerm: (state, action) => {
@@ -156,6 +183,22 @@ const productSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.products = action.payload;
+        // Compute sortedProducts
+        const now = new Date();
+        const oneDay = 24 * 60 * 60 * 1000;
+        const newProducts = action.payload.filter((p) => {
+          const createdAt = new Date(p.createdAt);
+          return now - createdAt < oneDay;
+        });
+        const oldProducts = action.payload.filter((p) => {
+          const createdAt = new Date(p.createdAt);
+          return now - createdAt >= oneDay;
+        });
+        const sortedNew = [...newProducts].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        const shuffledOld = [...oldProducts].sort(() => Math.random() - 0.5);
+        state.sortedProducts = [...sortedNew, ...shuffledOld];
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
