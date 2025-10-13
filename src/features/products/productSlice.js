@@ -27,7 +27,6 @@ export const fetchProductById = createAsyncThunk(
       const response = await retryRequest(() =>
         axios.get(`${API_URL}/products/product/${id}`, { timeout: 10000 })
       );
-      console.log("fetchProductById - Success:", response.data);
       return response.data;
     } catch (err) {
       console.error("fetchProductById error:", err.message, err.code);
@@ -50,7 +49,6 @@ export const fetchProducts = createAsyncThunk(
       const response = await retryRequest(() =>
         axios.get(`${API_URL}/products/products`, { timeout: 10000 })
       );
-      console.log("fetchProducts - Success:", response.data);
       return response.data;
     } catch (err) {
       console.error("fetchProducts error:", err.message, err.code);
@@ -70,7 +68,6 @@ export const fetchProductsByCategory = createAsyncThunk(
           timeout: 10000,
         })
       );
-      console.log("fetchProductsByCategory - Success:", response.data);
       return response.data;
     } catch (err) {
       console.error("fetchProductsByCategory error:", err.message, err.code);
@@ -90,7 +87,6 @@ export const fetchReviews = createAsyncThunk(
           timeout: 10000,
         })
       );
-      console.log("fetchReviews - Success:", response.data);
       return response.data;
     } catch (err) {
       console.error("fetchReviews error:", err.message, err.code);
@@ -111,7 +107,6 @@ export const submitReview = createAsyncThunk(
   async ({ productId, reviewData }, { rejectWithValue }) => {
     try {
       const user = JSON.parse(localStorage.getItem("myUser"));
-      console.log("submitReview - User from localStorage:", user);
       if (!user?._id) {
         throw new Error("Please log in to submit a review");
       }
@@ -119,13 +114,11 @@ export const submitReview = createAsyncThunk(
         ...reviewData,
         user_id: user._id,
       };
-      console.log("submitReview - Sending request with body:", payload);
       const response = await retryRequest(() =>
         axios.post(`${API_URL}/products/reviews/${productId}`, payload, {
           timeout: 10000,
         })
       );
-      console.log("submitReview - Success:", response.data);
       return response.data;
     } catch (err) {
       console.error("submitReview error:", err.response?.data || err.message);

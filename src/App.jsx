@@ -60,25 +60,28 @@ const App = () => {
   }, [location.pathname]);
 
   // Handle route change and restore scroll position
+  // Handle route change and restore scroll position
   useEffect(() => {
     // Only show loader if products are actually loading and no products are in store
     if (productsLoading && !products.length) {
       setLoading(true);
-    } else {
-      setLoading(false);
-      // Restore scroll position, but force scroll to top for SingleProduct
-      const scrollY = location.pathname.startsWith("/product/")
-        ? 0
-        : location.state?.scrollY || scrollPositions[location.pathname] || 0;
-      window.scrollTo({ top: scrollY, behavior: "instant" });
+      return;
     }
-  }, [
-    location.pathname,
-    location.state,
-    scrollPositions,
-    productsLoading,
-    products.length,
-  ]);
+
+    setLoading(false);
+
+    // ✅ Only run scroll restore on location change, not on re-renders
+    let restored = false;
+    const scrollY = location.pathname.startsWith("/product/")
+      ? 0
+      : location.state?.scrollY || scrollPositions[location.pathname] || 0;
+
+    if (!restored) {
+      window.scrollTo({ top: scrollY, behavior: "instant" });
+      restored = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   if (loading) {
     return <Loader />;
