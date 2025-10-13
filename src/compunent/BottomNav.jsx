@@ -62,7 +62,7 @@ const BottomNav = () => {
       <div className="relative w-[100%] max-w-md bg-white backdrop-blur-md h-20 flex items-center justify-around shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-white/10 transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.2)]">
         {/* Floating Circle */}
         <div
-          className="absolute top-0 z-50 w-16 h-16 bg-primary rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.3)] flex items-center justify-center transition-all duration-500 ease-in-out glow-effect"
+          className="absolute top-1 z-50 w-14 h-14 bg-primary rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.3)] flex items-center justify-center transition-all duration-500 ease-in-out glow-effect"
           style={{
             left: getIndicatorPosition(active),
             transform: "translateX(-50%) translateY(-50%)",
@@ -79,7 +79,7 @@ const BottomNav = () => {
 
         {/* Bar curve under floating circle */}
         <div
-          className="absolute top-0 w-20 h-10 bg-gray-200 backdrop-blur-md rounded-b-full transition-all duration-500"
+          className="absolute top-0 w-16 h-10 bg-gray-200 backdrop-blur-md rounded-b-full transition-all duration-500"
           style={{
             left: getIndicatorPosition(active),
             transform: "translateX(-50%) translateY(-1px)",

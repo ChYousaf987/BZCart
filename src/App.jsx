@@ -93,10 +93,7 @@ const App = () => {
         "/auth",
         "/checkout",
         "/Cashout",
-        "/payment",
         "/paymentMethods",
-        "/track-order",
-        "/orders",
       ].some((path) => location.pathname.startsWith(path)) && <BottomNav />}
 
       <Routes>
