@@ -23,8 +23,8 @@ import ReturnRefund from "./compunent/ReturnRefund";
 import TermsAndCondition from "./compunent/TermsAndCondition";
 import Checkout from "./compunent/Checkout";
 import FAQS from "./compunent/FAQS";
-import OrdersList from "./compunent/OrdersList";
 import BottomNav from "./compunent/BottomNav";
+import OrdersList from "./compunent/OrdersList";
 
 const App = () => {
   const [loading, setLoading] = useState(false);
