@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FaList, FaShoppingCart, FaUser, FaTruck } from "react-icons/fa";
-import { GoHomeFill } from "react-icons/go";
+import { AiFillHome } from "react-icons/ai";
+import { BiCategoryAlt } from "react-icons/bi";
+import { PiShoppingCartSimpleFill } from "react-icons/pi";
+import { LuPackageSearch } from "react-icons/lu";
+import { IoPersonCircleSharp } from "react-icons/io5";
 import { Link, useLocation } from "react-router-dom";
 
 const BottomNav = () => {
@@ -8,24 +11,13 @@ const BottomNav = () => {
   const [active, setActive] = useState("/");
 
   const navItems = [
-    { path: "/", label: "Home", icon: <GoHomeFill />, key: "home" },
-    {
-      path: "/categories",
-      label: "Categories",
-      icon: <FaList />,
-      key: "categories",
-    },
-    { path: "/payment", label: "Cart", icon: <FaShoppingCart />, key: "cart" },
-    {
-      path: "/orders",
-      label: "Tracking",
-      icon: <FaTruck />,
-      key: "tracking",
-    },
-    { path: "/auth", label: "Account", icon: <FaUser />, key: "account" },
+    { path: "/categories", label: "Categories", icon: <BiCategoryAlt /> },
+    { path: "/payment", label: "Cart", icon: <PiShoppingCartSimpleFill /> },
+    { path: "/", label: "Home", icon: <AiFillHome /> },
+    { path: "/orders", label: "Tracking", icon: <LuPackageSearch /> },
+    { path: "/auth", label: "Account", icon: <IoPersonCircleSharp /> },
   ];
 
-  // Determine which nav item should be active based on route
   const getActiveKey = (pathname) => {
     if (pathname === "/") return "/";
     if (pathname.startsWith("/categories")) return "/categories";
@@ -33,16 +25,12 @@ const BottomNav = () => {
     if (pathname.startsWith("/payment") || pathname.startsWith("/cart"))
       return "/payment";
     if (pathname.startsWith("/auth")) return "/auth";
-
-    // Product, deal, or search pages should highlight Home
     if (
       pathname.startsWith("/product") ||
       pathname.startsWith("/deal") ||
       pathname.startsWith("/search")
-    ) {
+    )
       return "/";
-    }
-
     return "/";
   };
 
@@ -52,67 +40,97 @@ const BottomNav = () => {
 
   const getIndicatorPosition = (path) => {
     const index = navItems.findIndex((item) => item.path === path);
-    const defaultIndex = 0;
+    const defaultIndex = 2; // Home in center
     const positionIndex = index !== -1 ? index : defaultIndex;
     return `${(positionIndex * 100) / navItems.length + 50 / navItems.length}%`;
   };
 
   return (
-    <div className="fixed bottom-0 left-0 w-full flex justify-center z-40 md:hidden">
-      <div className="relative w-[100%] max-w-md bg-white backdrop-blur-md h-20 flex items-center justify-around shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-white/10 transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.2)]">
-        {/* Floating Circle */}
+    <div className="fixed bottom-0 left-0 w-full flex justify-center z-50 md:hidden">
+      <div
+        className="relative w-full max-w-md h-20 flex items-center justify-around 
+        bg-white/10 backdrop-blur-xl border-t border-white/10 
+        shadow-[0_-5px_25px_rgba(0,0,0,0.4)] rounded-t-3xl "
+      >
+        {/* Floating Active Circle */}
         <div
-          className="absolute top-1 z-50 w-14 h-14 bg-primary rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.3)] flex items-center justify-center transition-all duration-500 ease-in-out glow-effect"
+          className={`absolute z-50 w-16 h-16 bg-gradient-to-br from-primary to-orange-400 
+          rounded-full flex items-center justify-center text-white text-3xl
+          transition-all duration-500 ease-in-out animate-orange-glow`}
           style={{
+            bottom: "40px",
             left: getIndicatorPosition(active),
-            transform: "translateX(-50%) translateY(-50%)",
+            transform: "translateX(-50%)",
           }}
         >
-          <div className="text-white text-2xl">
-            {React.cloneElement(
-              navItems.find((item) => item.path === active)?.icon ||
-                navItems[0].icon,
-              { className: "w-8 h-8" }
-            )}
-          </div>
+          {React.cloneElement(
+            navItems.find((item) => item.path === active)?.icon ||
+              navItems[2].icon,
+            { className: "w-8 h-8" }
+          )}
         </div>
 
-        {/* Bar curve under floating circle */}
+        {/* Curved Bar Under Floating Circle */}
         <div
-          className="absolute top-0 w-16 h-10 bg-gray-200 backdrop-blur-md rounded-b-full transition-all duration-500"
+          className="absolute bottom-0 w-20 h-10 bg-gradient-to-t from-primary/30 to-transparent 
+          rounded-t-full blur-sm transition-all duration-500"
           style={{
             left: getIndicatorPosition(active),
-            transform: "translateX(-50%) translateY(-1px)",
+            transform: "translateX(-50%) translateY(3px)",
           }}
         ></div>
 
-        {/* Navigation Items */}
+        {/* Nav Items */}
         {navItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
             onClick={() => setActive(item.path)}
-            className={`flex flex-col items-center justify-center w-full text-center transition-all duration-300 group hover:-translate-y-1 ${
-              active === item.path
-                ? "text-blue-600"
-                : "text-gray-500 hover:text-blue-500"
-            }`}
+            className="relative flex flex-col items-center justify-center w-full text-center 
+              transition-all duration-300 group pt-2"
           >
             <div
-              className={`text-xl transition-all duration-300 transform group-hover:scale-110 ${
+              className={`text-xl transition-all duration-300 transform ${
                 active === item.path
                   ? "opacity-0 scale-0"
-                  : "opacity-100 scale-100"
+                  : "opacity-100 scale-100 text-gray-700 group-hover:text-primary group-hover:scale-110"
               }`}
             >
-              {React.cloneElement(item.icon, { className: "w-5 h-5" })}
+              {React.cloneElement(item.icon, { className: "w-6 h-6" })}
             </div>
-            <span className="text-[13px] mt-1 font-semibold tracking-tight group-hover:text-blue-500 transition-colors duration-200">
+            <span
+              className={`text-[12px] mt-1 font-semibold tracking-tight transition-all duration-300 ${
+                active === item.path
+                  ? "text-primary"
+                  : "text-gray-400 group-hover:text-primary"
+              }`}
+            >
               {item.label}
             </span>
           </Link>
         ))}
       </div>
+
+      {/* Glow Animation */}
+      <style jsx>{`
+        @keyframes orange-glow {
+          0% {
+            box-shadow: 0 0 10px rgba(242, 108, 43, 0.6),
+              0 0 20px rgba(242, 108, 43, 0.4);
+          }
+          50% {
+            box-shadow: 0 0 25px rgba(242, 108, 43, 0.9),
+              0 0 45px rgba(242, 108, 43, 0.6);
+          }
+          100% {
+            box-shadow: 0 0 10px rgba(242, 108, 43, 0.6),
+              0 0 20px rgba(242, 108, 43, 0.4);
+          }
+        }
+        .animate-orange-glow {
+          animation: orange-glow 2.8s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 };
