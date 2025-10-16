@@ -279,9 +279,11 @@ const Home = () => {
         )}
 
         {/* Existing Homepage Components */}
-        <Slider />
         <LazyWrapper>
-          <TopCategories />
+          <Slider />
+        </LazyWrapper>
+        <LazyWrapper>
+          <TopCategories categories={categories} loading={categoriesLoading} />
         </LazyWrapper>
         <LazyWrapper>
           <NewArrival />
@@ -290,9 +292,11 @@ const Home = () => {
           <BeatSeller />
         </LazyWrapper>
         <LazyWrapper>
-          <TopBrands sortedProducts={sortedProducts} />
+          <TopBrands sortedProducts={sortedProducts} loading={loading} />
         </LazyWrapper>
-        <PromoBanner />
+        <LazyWrapper>
+          <PromoBanner />
+        </LazyWrapper>
         <Footer />
       </ErrorBoundary>
     </div>

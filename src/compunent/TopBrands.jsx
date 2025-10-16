@@ -1,25 +1,81 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useLayoutEffect,
+  memo,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchProducts } from "../features/products/productSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-const TopBrands = ({ sortedProducts }) => {
+const TopBrands = ({ sortedProducts, loading }) => {
   const dispatch = useDispatch();
-  const {
-    products = [],
-    loading,
-    error,
-  } = useSelector((state) => state.products || {});
+  const { products = [], error } = useSelector((state) => state.products || {});
   const [visibleCount, setVisibleCount] = useState(8);
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const [shouldScroll, setShouldScroll] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const loadMoreRef = useRef(null);
 
   useEffect(() => {
-    if (!products.length && !sortedProducts.length) {
+    if (!products.length && !sortedProducts.length && !hasLoaded) {
       dispatch(fetchProducts());
+      setHasLoaded(true);
     }
-  }, [dispatch, products, sortedProducts]);
+  }, [dispatch, products, sortedProducts, hasLoaded]);
+
+  // Restore scroll position on mount
+  useLayoutEffect(() => {
+    // Disable browser's automatic scroll restoration
+    window.history.scrollRestoration = "manual";
+
+    // Scroll to clicked product if available, else restore saved scroll
+    const clickedProduct = localStorage.getItem("clickedProduct");
+    if (clickedProduct && !hasScrolled) {
+      // Ensure the clicked product is visible by updating visibleCount
+      const productIndex = sortedProducts.findIndex(
+        (product) => product._id === clickedProduct
+      );
+      if (productIndex !== -1) {
+        setVisibleCount((prev) => Math.max(prev, productIndex + 1));
+        setShouldScroll(true);
+        setHasScrolled(true);
+      }
+    } else {
+      const savedScroll = localStorage.getItem("topBrandsScroll");
+      if (savedScroll) {
+        window.scrollTo(0, parseInt(savedScroll, 10));
+      }
+    }
+  }, [sortedProducts.length, hasScrolled]); // Wait until products are loaded
+
+  // Handle scrolling after visibleCount update
+  useEffect(() => {
+    if (shouldScroll) {
+      const clickedProduct = localStorage.getItem("clickedProduct");
+      if (clickedProduct) {
+        const element = document.getElementById(`product-${clickedProduct}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        localStorage.removeItem("clickedProduct");
+        setShouldScroll(false);
+      }
+    }
+  }, [visibleCount, shouldScroll]);
+
+  // Save scroll position on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      localStorage.setItem("topBrandsScroll", window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (visibleCount >= sortedProducts.length || loading || error) return;
@@ -114,8 +170,14 @@ const TopBrands = ({ sortedProducts }) => {
                   )}
 
                   {/* Product Image */}
-                  <Link to={`/product/${product._id}`}>
+                  <Link
+                    to={`/product/${product._id}`}
+                    onClick={() =>
+                      localStorage.setItem("clickedProduct", product._id)
+                    }
+                  >
                     <div
+                      id={`product-${product._id}`}
                       className="md:h-48 flex items-center justify-center"
                       style={{ backgroundColor: product.bg_color || "#f3f4f6" }}
                     >
@@ -192,4 +254,4 @@ const TopBrands = ({ sortedProducts }) => {
   );
 };
 
-export default TopBrands;
+export default memo(TopBrands);

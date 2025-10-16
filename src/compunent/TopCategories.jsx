@@ -1,39 +1,69 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-const TopCategories = () => {
+const TopCategories = ({
+  categories: propCategories,
+  loading: propLoading,
+}) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await axios.get(
-          "https://bzbackend.online/api/categories/categories"
-        );
-        // Filter top-level categories where parent_category is null
-        const topLevelCategories = response.data.filter(
-          (category) => category.parent_category === null
-        );
-        setCategories(topLevelCategories);
-      } catch (err) {
-        console.error(
-          "Fetch categories error:",
-          err.response?.data || err.message
-        );
-        setError("Failed to load categories. Please try again.");
-      } finally {
-        setLoading(false);
+    if (propCategories && propCategories.length > 0) {
+      // Use props if provided
+      setCategories(
+        propCategories.filter((category) => category.parent_category === null)
+      );
+      setLoading(propLoading || false);
+    } else {
+      // Fetch if not provided
+      const fetchCategories = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          const response = await axios.get(
+            "https://bzbackend.online/api/categories/categories"
+          );
+          // Filter top-level categories where parent_category is null
+          const topLevelCategories = response.data.filter(
+            (category) => category.parent_category === null
+          );
+          setCategories(topLevelCategories);
+        } catch (err) {
+          console.error(
+            "Fetch categories error:",
+            err.response?.data || err.message
+          );
+          setError("Failed to load categories. Please try again.");
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchCategories();
+    }
+  }, [propCategories, propLoading]);
+
+  // Restore scroll position on mount
+  useEffect(() => {
+    if (scrollRef.current) {
+      const savedScroll = localStorage.getItem("topCategoriesScroll");
+      if (savedScroll) {
+        scrollRef.current.scrollLeft = parseInt(savedScroll, 10);
       }
-    };
-    fetchCategories();
-  }, []);
+    }
+  }, [categories.length]); // Wait until categories are loaded
+
+  // Save scroll position on scroll
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      localStorage.setItem("topCategoriesScroll", scrollRef.current.scrollLeft);
+    }
+  };
 
   return (
     <div className="md:w-[95%] mx-auto px-2 md:px-0">
@@ -70,7 +100,11 @@ const TopCategories = () => {
       ) : categories.length === 0 ? (
         <p className="text-center w-full">No categories found</p>
       ) : (
-        <div className="flex overflow-x-auto gap-6 sm:gap-10 snap-x snap-mandatory scrollbar-hide">
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto gap-6 sm:gap-10 snap-x snap-mandatory scrollbar-hide"
+        >
           {categories.map((category, index) => (
             <Link
               key={`${category._id}-${index}`}

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchProducts } from "../features/products/productSlice";
@@ -8,17 +8,37 @@ import "react-loading-skeleton/dist/skeleton.css";
 const NewArrival = () => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.products);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
-    dispatch(fetchProducts())
-      .unwrap()
-      .catch(() => {});
-  }, [dispatch]);
+    if (!products.length) {
+      dispatch(fetchProducts())
+        .unwrap()
+        .catch(() => {});
+    }
+  }, [dispatch, products.length]);
 
   // Filter products where isNewArrival is true
   const filteredProducts = useMemo(() => {
     return products.filter((item) => item.isNewArrival === true);
   }, [products]);
+
+  // Restore scroll position on mount
+  useEffect(() => {
+    if (scrollRef.current) {
+      const savedScroll = localStorage.getItem("newArrivalScroll");
+      if (savedScroll) {
+        scrollRef.current.scrollLeft = parseInt(savedScroll, 10);
+      }
+    }
+  }, [filteredProducts.length]); // Wait until products are loaded
+
+  // Save scroll position on scroll
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      localStorage.setItem("newArrivalScroll", scrollRef.current.scrollLeft);
+    }
+  };
 
   return (
     <div className="md:w-[95%] mx-auto px-2 md:px-0 pt-6">
@@ -63,7 +83,11 @@ const NewArrival = () => {
       ) : filteredProducts.length === 0 ? (
         <p className="text-center w-full">No new arrival products found</p>
       ) : (
-        <div className="flex overflow-x-auto  gap-6 sm:gap-10 snap-x snap-mandatory scrollbar-hide">
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto gap-6 sm:gap-10 snap-x snap-mandatory scrollbar-hide"
+        >
           {filteredProducts.map((product, index) => (
             <Link
               to={`/product/${product._id}`}
