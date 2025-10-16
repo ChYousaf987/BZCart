@@ -65,7 +65,7 @@ const BottomNav = () => {
     <div className="fixed bottom-0 left-0 w-full flex justify-center z-50 md:hidden">
       <div
         className="relative w-full max-w-md h-20 flex items-center justify-around 
-        bg-white/10 backdrop-blur-xl border-t border-white/10 
+        bg-[#ffffff00] backdrop-blur-xl border-t border-white/10 
         shadow-[0_-5px_25px_rgba(0,0,0,0.4)] rounded-t-3xl "
       >
         {/* Floating Active Circle */}
