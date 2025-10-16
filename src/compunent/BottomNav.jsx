@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { AiFillHome } from "react-icons/ai";
 import { BiCategoryAlt } from "react-icons/bi";
 import { PiShoppingCartSimpleFill } from "react-icons/pi";
 import { LuPackageSearch } from "react-icons/lu";
 import { IoPersonCircleSharp } from "react-icons/io5";
+import { Home, Compass, User } from "lucide-react"; // ✅ Lucide icons
 import { Link, useLocation } from "react-router-dom";
 
 const BottomNav = () => {
@@ -12,19 +12,19 @@ const BottomNav = () => {
 
   const navItems = [
     { path: "/categories", label: "Categories", icon: <BiCategoryAlt /> },
-    { path: "/payment", label: "Cart", icon: <PiShoppingCartSimpleFill /> },
-    { path: "/", label: "Home", icon: <AiFillHome /> },
+    { path: "/explore", label: "Explore", icon: <Compass /> }, // 🧭 new Lucide icon
+    { path: "/", label: "Home", icon: <Home /> }, // 🏠 Lucide Home icon
     { path: "/orders", label: "Tracking", icon: <LuPackageSearch /> },
-    { path: "/auth", label: "Account", icon: <IoPersonCircleSharp /> },
+    { path: "/profile", label: "Profile", icon: <User /> }, // 👤 Lucide User icon
   ];
 
   const getActiveKey = (pathname) => {
     if (pathname === "/") return "/";
     if (pathname.startsWith("/categories")) return "/categories";
     if (pathname.startsWith("/orders")) return "/orders";
-    if (pathname.startsWith("/payment") || pathname.startsWith("/cart"))
-      return "/payment";
-    if (pathname.startsWith("/auth")) return "/auth";
+    if (pathname.startsWith("/explore")) return "/explore";
+    if (pathname.startsWith("/profile") || pathname.startsWith("/auth"))
+      return "/profile";
     if (
       pathname.startsWith("/product") ||
       pathname.startsWith("/deal") ||
