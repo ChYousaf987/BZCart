@@ -59,15 +59,12 @@ const Home = () => {
         {/* Product Skeletons on Initial Load */}
         {loading && !products.length && !searchTerm && (
           <div className="w-full px-2 md:px-0 py-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-500 mb-8">
-              Featured Products
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-2 sm:gap-6">
               {Array(8)
                 .fill(0)
                 .map((_, i) => (
                   <div key={i} className="bg-white rounded-2xl border p-3">
-                    <Skeleton height={150} className="rounded-lg mb-3" />
+                    <Skeleton height={"50vh"} className="rounded-lg mb-3" />
                     <Skeleton width="80%" height={16} className="mb-2" />
                     <Skeleton width="60%" height={14} />
                   </div>
@@ -275,6 +272,11 @@ const Home = () => {
         <Suspense fallback={<Skeleton height={300} />}>
           <LazyWrapper>
             <BeatSeller />
+          </LazyWrapper>
+        </Suspense>
+        <Suspense fallback={<Skeleton height={300} />}>
+          <LazyWrapper>
+            <NewArrival />
           </LazyWrapper>
         </Suspense>
         <Suspense fallback={<Skeleton height={300} />}>

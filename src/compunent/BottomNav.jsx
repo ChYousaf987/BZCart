@@ -1,28 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { BiCategoryAlt } from "react-icons/bi";
-import { PiShoppingCartSimpleFill } from "react-icons/pi";
 import { LuPackageSearch } from "react-icons/lu";
-import { IoPersonCircleSharp } from "react-icons/io5";
-import { Home, Compass, User } from "lucide-react"; // ✅ Lucide icons
+import { Compass } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { FaRegUser } from "react-icons/fa";
+import { HiOutlineShoppingCart, HiOutlineViewGrid } from "react-icons/hi"; // 🆕 New icons
+
+// 🏠 Custom Home SVG Icon (same as your uploaded one)
+const CustomHomeIcon = ({ className = "w-6 h-6", color = "#444" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M12 3L3 9V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V9L12 3Z" />
+    <path d="M9.5 14C9.8 14.8 10.8 15.5 12 15.5C13.2 15.5 14.2 14.8 14.5 14" />
+  </svg>
+);
 
 const BottomNav = () => {
   const location = useLocation();
   const [active, setActive] = useState("/");
 
   const navItems = [
-    { path: "/categories", label: "Categories", icon: <BiCategoryAlt /> },
-    { path: "/explore", label: "Explore", icon: <Compass /> }, // 🧭 new Lucide icon
-    { path: "/", label: "Home", icon: <Home /> }, // 🏠 Lucide Home icon
+    { path: "/categories", label: "Categories", icon: <HiOutlineViewGrid /> }, // 🗂️ New
+    { path: "/payment", label: "Cart", icon: <HiOutlineShoppingCart /> }, // 🛒 New
+    { path: "/", label: "Home", icon: <CustomHomeIcon /> }, // 🏠 Custom SVG Icon
     { path: "/orders", label: "Tracking", icon: <LuPackageSearch /> },
-    { path: "/profile", label: "Profile", icon: <User /> }, // 👤 Lucide User icon
+    { path: "/profile", label: "Profile", icon: <FaRegUser /> },
   ];
 
   const getActiveKey = (pathname) => {
     if (pathname === "/") return "/";
     if (pathname.startsWith("/categories")) return "/categories";
     if (pathname.startsWith("/orders")) return "/orders";
-    if (pathname.startsWith("/explore")) return "/explore";
+    if (pathname.startsWith("/payment")) return "/payment";
     if (pathname.startsWith("/profile") || pathname.startsWith("/auth"))
       return "/profile";
     if (
@@ -66,7 +82,7 @@ const BottomNav = () => {
           {React.cloneElement(
             navItems.find((item) => item.path === active)?.icon ||
               navItems[2].icon,
-            { className: "w-8 h-8" }
+            { className: "w-8 h-8", color: "white" }
           )}
         </div>
 
