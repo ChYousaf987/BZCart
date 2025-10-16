@@ -188,7 +188,6 @@ const TopBrands = ({ sortedProducts, loading }) => {
                         }
                         alt={product.product_name || "Product"}
                         className="object-contain max-h-full transition-transform duration-300 group-hover:scale-105"
-                        loading="lazy"
                       />
                     </div>
 

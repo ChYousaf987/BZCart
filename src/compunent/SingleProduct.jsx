@@ -645,6 +645,19 @@ const SingleProduct = () => {
                 </div>
               </div>
             </div>
+            <div className="mt-8">
+               {product.highlights && product.highlights.length > 0 && (
+              <div className="mb-3">
+                <h3 className="text-md font-semibold text-gray-700 mb-1">Product Highlights:</h3>
+                <ul className="list-disc list-inside text-gray-700">
+                  {product.highlights.map((h, idx) => (
+                    <li key={idx}>{h}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            </div>
+             
           </div>
         </div>
 
