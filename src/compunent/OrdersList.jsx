@@ -153,6 +153,24 @@ const OrdersList = ({ guestId: propGuestId }) => {
                     <p className="text-sm text-gray-500">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </p>
+                    <div className="mt-2 text-sm">
+                      {order.items &&
+                        order.items.map((item, idx) => (
+                          <p key={idx} className="text-gray-600">
+                            {item.product_id?.product_name}
+                            {item.selected_size && (
+                              <span className="text-gray-500">
+                                {" "}
+                                (Size: {item.selected_size})
+                              </span>
+                            )}
+                            <span className="text-gray-500">
+                              {" "}
+                              × {item.quantity}
+                            </span>
+                          </p>
+                        ))}
+                    </div>
                   </div>
 
                   {/* Timeline */}

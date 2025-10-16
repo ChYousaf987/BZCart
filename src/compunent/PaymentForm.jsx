@@ -201,7 +201,7 @@ const PaymentForm = ({
         product_id: item.product_id?._id || item.product_id || item._id,
         quantity: item.quantity || 1,
         selected_image: item.selected_image,
-        selected_size: item.selected_size,
+        selected_size: item.selected_size || null,
       })),
       total_amount: subtotal,
       shipping_address: formData.shippingAddress,

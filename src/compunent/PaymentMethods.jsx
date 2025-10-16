@@ -158,7 +158,7 @@ const PaymentMethods = () => {
         product_id: item.product_id?._id || item.product_id,
         quantity: item.quantity,
         selected_image: item.selected_image,
-        selected_size: item.selected_size,
+        selected_size: item.selected_size || null,
       })),
       total_amount: calculateTotal(),
       shipping_address: shippingAddress,
@@ -369,7 +369,9 @@ const PaymentMethods = () => {
             item.product_id?.sizes?.length > 0 && !item.selected_size;
           return (
             <div
-              key={`${item.product_id?._id || item._id}-${item.selected_image}-${item.selected_size}`}
+              key={`${item.product_id?._id || item._id}-${
+                item.selected_image
+              }-${item.selected_size}`}
               className="flex justify-between text-sm text-dark py-1 border-b border-gray-200 last:border-b-0"
             >
               <span className="truncate">
@@ -381,7 +383,8 @@ const PaymentMethods = () => {
               </span>
               <span className="font-medium">
                 Rs.{" "}
-                {(item.product_id?.product_discounted_price || 0) * item.quantity}
+                {(item.product_id?.product_discounted_price || 0) *
+                  item.quantity}
               </span>
             </div>
           );

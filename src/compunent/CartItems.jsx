@@ -41,12 +41,18 @@ const CartItems = () => {
 
   useEffect(() => {
     if (!userLoading) {
-      console.log("CartItems - Fetching cart with:", { userId: user?._id, guestId: user && token ? undefined : guestId, token });
+      console.log("CartItems - Fetching cart with:", {
+        userId: user?._id,
+        guestId: user && token ? undefined : guestId,
+        token,
+      });
       dispatch(fetchCart({ guestId: user && token ? undefined : guestId }))
         .unwrap()
         .catch((err) => {
           console.error("CartItems - Error fetching cart:", err);
-          toast.error(err?.message || "Failed to load cart", { position: "top-right" });
+          toast.error(err?.message || "Failed to load cart", {
+            position: "top-right",
+          });
         });
     } else {
       console.log("CartItems - Waiting for auth to resolve");
@@ -112,7 +118,11 @@ const CartItems = () => {
       selected_size: item.selected_size || null,
       guestId: user && token ? undefined : guestId,
     };
-    console.log("CartItems - Adding item:", { cartData, userId: user?._id, token });
+    console.log("CartItems - Adding item:", {
+      cartData,
+      userId: user?._id,
+      token,
+    });
     dispatch(addToCart({ cartData, userId: user?._id, token }))
       .unwrap()
       .then(() => toast.success("Quantity updated!", { position: "top-right" }))
@@ -130,17 +140,25 @@ const CartItems = () => {
     }
     const cartData = {
       product_id: item.product_id._id,
-      selected_image: item.selected_image || item.product_id?.product_images?.[0] || null,
+      selected_image:
+        item.selected_image || item.product_id?.product_images?.[0] || null,
       selected_size: item.selected_size || null,
       guestId: user && token ? undefined : guestId,
     };
-    console.log("CartItems - Removing item:", { cartData, userId: user?._id, token });
+    console.log("CartItems - Removing item:", {
+      cartData,
+      userId: user?._id,
+      token,
+    });
     dispatch(removeFromCart({ ...cartData, removeAll: item.quantity <= 1 }))
       .unwrap()
       .then(() =>
-        toast.success(item.quantity <= 1 ? "Item removed!" : "Quantity decreased!", {
-          position: "top-right",
-        })
+        toast.success(
+          item.quantity <= 1 ? "Item removed!" : "Quantity decreased!",
+          {
+            position: "top-right",
+          }
+        )
       )
       .catch((err) =>
         toast.error(err?.message || "Failed to update cart", {
@@ -225,7 +243,9 @@ const CartItems = () => {
             item.product_id?.sizes?.length > 0 && !item.selected_size;
           return (
             <div
-              key={`${item.product_id?._id || index}-${item.selected_image}-${item.selected_size}`}
+              key={`${item.product_id?._id || index}-${item.selected_image}-${
+                item.selected_size
+              }`}
               className="flex items-center justify-between border-b last:border-0 pb-4 mb-4"
             >
               <div className="flex items-center gap-4">
@@ -244,20 +264,26 @@ const CartItems = () => {
                       </span>
                     )}
                     {item.selected_size && (
-                      <span className="text-sm text-dark/60 ml-2">
-                        (Size: {item.selected_size})
-                      </span>
+                      <div className="text-sm font-medium text-gray-700 mt-1">
+                        Size: {item.selected_size}
+                      </div>
                     )}
                   </h4>
                   <p className="text-primary font-bold mt-1">
                     Rs. {item.product_id?.product_discounted_price || 0}
                   </p>
                   <p
-                    className={`text-sm mt-1 ${stock <= 5 || isSizeMissing ? "text-red-500" : "text-dark/70"}`}
+                    className={`text-sm mt-1 ${
+                      stock <= 5 || isSizeMissing
+                        ? "text-red-500"
+                        : "text-dark/70"
+                    }`}
                   >
                     {isSizeMissing
                       ? "Please select a size"
-                      : `Stock: ${stock} ${item.selected_size ? "in size" : "units"}`}
+                      : `Stock: ${stock} ${
+                          item.selected_size ? "in size" : "units"
+                        }`}
                   </p>
                 </div>
               </div>
@@ -290,7 +316,11 @@ const CartItems = () => {
           Total: <span className="text-primary">Rs. {totalPrice()}</span>
         </h3>
         <button
-          onClick={() => navigate("/Checkout", { state: { guestId: user && token ? undefined : guestId } })}
+          onClick={() =>
+            navigate("/Checkout", {
+              state: { guestId: user && token ? undefined : guestId },
+            })
+          }
           className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition"
         >
           Proceed to Payment <FaArrowRight />
