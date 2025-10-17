@@ -89,9 +89,12 @@ const App = () => {
 
   return (
     <>
-      {!["/auth", "/checkout", "/Cashout", "/paymentMethods"].some((path) =>
-        location.pathname.startsWith(path)
-      ) && <BottomNav />}
+      {![
+        "/auth",
+        "/checkout",
+        "/Cashout",
+        "/paymentMethods",
+      ].some((path) => location.pathname.startsWith(path)) && <BottomNav />}
 
       <Routes>
         <Route path="/" element={<Home />} />
