@@ -72,9 +72,12 @@ const BeatSeller = () => {
                 key={index}
                 className="flex flex-col items-center text-center bg-transparent"
               >
-                <Skeleton height={144} width={144} className="rounded-3xl" />
+                <div className="w-36 h-36 lg:w-40 lg:h-40 rounded-3xl border border-gray-200 overflow-hidden">
+                  <Skeleton height="100%" width="100%" className="rounded-3xl" />
+                </div>
                 <Skeleton width={100} height={20} className="mt-3" />
                 <Skeleton width={60} height={18} />
+                <Skeleton width={80} height={16} />
               </div>
             ))}
         </div>
