@@ -66,12 +66,11 @@ const TopBrands = ({ sortedProducts, loading }) => {
       if (clickedProduct) {
         const element = document.getElementById(`product-${clickedProduct}`);
         if (element) {
-          // Scroll into view first
-          element.scrollIntoView({ behavior: "smooth", block: "center" });
-          // Mobile adjustment: center the product in viewport
+          // Scroll instantly to product (no animation)
+          element.scrollIntoView({ behavior: "auto", block: "center" });
+          // Mobile adjustment: center the product in viewport instantly
           const isMobile = window.innerWidth < 768;
           if (isMobile) {
-            // Wait for scrollIntoView to finish
             setTimeout(() => {
               const rect = element.getBoundingClientRect();
               const scrollY =
@@ -79,8 +78,8 @@ const TopBrands = ({ sortedProducts, loading }) => {
                 rect.top -
                 window.innerHeight / 2 +
                 rect.height / 2;
-              window.scrollTo({ top: scrollY, behavior: "smooth" });
-            }, 300);
+              window.scrollTo({ top: scrollY, behavior: "auto" });
+            }, 0);
           }
         }
         localStorage.removeItem("clickedProduct");
