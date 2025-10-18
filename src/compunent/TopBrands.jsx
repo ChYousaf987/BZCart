@@ -203,7 +203,10 @@ const TopBrands = ({ sortedProducts, loading }) => {
                       <div
                         id={`product-${product._id}`}
                         className="md:h-48 flex items-center justify-center"
-                        style={{ backgroundColor: product.bg_color || "#f3f4f6", position: 'relative' }}
+                        style={{
+                          backgroundColor: product.bg_color || "#f3f4f6",
+                          position: "relative",
+                        }}
                       >
                         {/* Always render the image, but hide until loaded */}
                         <img
@@ -214,12 +217,25 @@ const TopBrands = ({ sortedProducts, loading }) => {
                           alt={product.product_name || "Product"}
                           className="object-contain max-h-full transition-transform duration-300 group-hover:scale-105"
                           onLoad={() => handleImageLoad(product._id)}
-                          style={{ opacity: isLoaded ? 1 : 0, transition: 'opacity 0.3s' }}
+                          style={{
+                            opacity: isLoaded ? 1 : 0,
+                            transition: "opacity 0.3s",
+                          }}
                         />
                         {/* Show skeleton overlay until image is loaded */}
                         {!isLoaded && (
-                          <div style={{ position: 'absolute', inset: 0, zIndex: 2, background: 'white' }}>
-                            <Skeleton height={150} className="rounded-lg h-full w-full" />
+                          <div
+                            style={{
+                              position: "absolute",
+                              inset: 0,
+                              zIndex: 2,
+                              background: "white",
+                            }}
+                          >
+                            <Skeleton
+                              height={150}
+                              className="rounded-lg h-full w-full"
+                            />
                           </div>
                         )}
                       </div>
