@@ -1,3 +1,13 @@
-service_k948b8l
-template_xr8d22o
-H5Z2iu_gtM4J3Txho
+/* Hide scrollbars for Top Brands on mobile */
+.topbrands-scroll-container {
+  scrollbar-width: none; /* Firefox */
+}
+
+@media (max-width: 767px) {
+  .topbrands-scroll-container {
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  .topbrands-scroll-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+}
