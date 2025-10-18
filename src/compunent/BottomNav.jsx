@@ -78,7 +78,7 @@ const BottomNav = () => {
   };
 
   return (
-    <div className="fixed bottom-2 left-0 w-full flex justify-center z-50 font-daraz">
+    <div className="fixed bottom-2 left-0 w-full flex justify-center z-50 font-daraz md:hidden">
       <div
         className="relative w-[96%]  max-w-md rounded-full h-20 
         bg-white/10 backdrop-blur-xl border border-white/10 
