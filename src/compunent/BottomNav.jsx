@@ -1,24 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { LuPackageSearch } from "react-icons/lu";
-import { Compass } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
-import { HiOutlineShoppingCart, HiOutlineViewGrid } from "react-icons/hi"; // 🆕 New icons
+import { HiOutlineViewGrid } from "react-icons/hi";
+import { TbTruckDelivery } from "react-icons/tb"; // 🚚 Tracking icon
 
-// 🏠 Custom Home SVG Icon (same as your uploaded one)
-const CustomHomeIcon = ({ className = "w-6 h-6", color = "#444" }) => (
+// 🏠 Ultra-Rounded Home SVG Icon (larger, softer)
+const CustomHomeIcon = ({ className = "w-8 h-8", color = "currentColor" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="none"
     stroke={color}
-    strokeWidth="1.5"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={`${className} transition-transform duration-300`}
+  >
+    <path d="M12 4.5C11.6 4.3 11.2 4.3 10.8 4.5L5 9.2C4.4 9.7 4 10.5 4 11.3V18.5C4 20 5.2 21.2 6.7 21.2H17.3C18.8 21.2 20 20 20 18.5V11.3C20 10.5 19.6 9.7 19 9.2L13.2 4.5C12.8 4.3 12.4 4.3 12 4.5Z" />
+    <path d="M8.7 15.3C9.3 16.6 10.5 17.5 12 17.5C13.5 17.5 14.7 16.6 15.3 15.3" />
+  </svg>
+);
+
+const Compass = ({ className = "w-6 h-6", color = "currentColor" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
     className={className}
   >
-    <path d="M12 3L3 9V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V9L12 3Z" />
-    <path d="M9.5 14C9.8 14.8 10.8 15.5 12 15.5C13.2 15.5 14.2 14.8 14.5 14" />
+    <circle cx="12" cy="12" r="10" />
+    <path d="m16.24 7.76-2.5 5.5-5.5 2.5 2.5-5.5 5.5-2.5z" />
   </svg>
 );
 
@@ -27,18 +43,18 @@ const BottomNav = () => {
   const [active, setActive] = useState("/");
 
   const navItems = [
-    { path: "/categories", label: "Categories", icon: <HiOutlineViewGrid /> }, // 🗂️ New
-    { path: "/payment", label: "Cart", icon: <HiOutlineShoppingCart /> }, // 🛒 New
-    { path: "/", label: "Home", icon: <CustomHomeIcon /> }, // 🏠 Custom SVG Icon
-    { path: "/orders", label: "Tracking", icon: <LuPackageSearch /> },
-    { path: "/profile", label: "Profile", icon: <FaRegUser /> },
+    { path: "/orders", label: "Tracking", icon: <TbTruckDelivery /> },
+    { path: "/cart", label: "Explore", icon: <Compass /> },
+    { path: "/", label: "Home", icon: <CustomHomeIcon /> },
+    { path: "/categories", label: "Categories", icon: <HiOutlineViewGrid /> },
+    { path: "/auth", label: "Profile", icon: <FaRegUser /> },
   ];
 
   const getActiveKey = (pathname) => {
     if (pathname === "/") return "/";
     if (pathname.startsWith("/categories")) return "/categories";
     if (pathname.startsWith("/orders")) return "/orders";
-    if (pathname.startsWith("/payment")) return "/payment";
+    if (pathname.startsWith("/cart")) return "/cart";
     if (pathname.startsWith("/profile") || pathname.startsWith("/auth"))
       return "/profile";
     if (
@@ -56,69 +72,84 @@ const BottomNav = () => {
 
   const getIndicatorPosition = (path) => {
     const index = navItems.findIndex((item) => item.path === path);
-    const defaultIndex = 2; // Home in center
+    const defaultIndex = 2;
     const positionIndex = index !== -1 ? index : defaultIndex;
     return `${(positionIndex * 100) / navItems.length + 50 / navItems.length}%`;
   };
 
   return (
-    <div className="fixed bottom-0 left-0 w-full flex justify-center z-50 md:hidden">
+    <div className="fixed bottom-2 left-0 w-full flex justify-center z-50 font-daraz">
       <div
-        className="relative w-full max-w-md h-20 flex items-center justify-around 
-        bg-[#ffffff00] backdrop-blur-xl border-t border-white/10 
-        shadow-[0_-5px_25px_rgba(0,0,0,0.4)] rounded-t-3xl "
+        className="relative w-[96%]  max-w-md rounded-full h-20 
+        bg-white/10 backdrop-blur-xl border border-white/10 
+        shadow-[0_8px_25px_rgba(0,0,0,0.25)]
+        flex items-center justify-around transition-all duration-300"
       >
-        {/* Floating Active Circle */}
+        {/* 🔥 Floating Circle Indicator */}
         <div
-          className={`absolute z-50 w-16 h-16 bg-gradient-to-br from-primary to-orange-400 
-          rounded-full flex items-center justify-center text-white text-3xl
-          transition-all duration-500 ease-in-out animate-orange-glow`}
+          className="absolute top-0 z-50 w-16 h-16 bg-primary rounded-full 
+          shadow-[0_6px_25px_rgba(242,108,43,0.5)] flex items-center justify-center 
+          transition-all duration-500 ease-in-out"
           style={{
-            bottom: "40px",
             left: getIndicatorPosition(active),
-            transform: "translateX(-50%)",
+            transform: "translateX(-50%) translateY(-50%)",
           }}
         >
-          {React.cloneElement(
-            navItems.find((item) => item.path === active)?.icon ||
-              navItems[2].icon,
-            { className: "w-8 h-8", color: "white" }
-          )}
+          <div className="text-white">
+            {React.cloneElement(
+              navItems.find((item) => item.path === active)?.icon ||
+                navItems[0].icon,
+              {
+                className:
+                  active === "/"
+                    ? "w-8 h-8" // 🏠 Home icon larger
+                    : "w-6 h-6",
+              }
+            )}
+          </div>
         </div>
 
-        {/* Curved Bar Under Floating Circle */}
+        {/* 💫 Bar curve under floating circle */}
         <div
-          className="absolute bottom-0 w-20 h-10 bg-gradient-to-t from-primary/30 to-transparent 
-          rounded-t-full blur-sm transition-all duration-500"
+          className="absolute top-0 w-20 h-10 bg-white/15 backdrop-blur-lg 
+          rounded-b-full shadow-[0_4px_12px_rgba(242,108,43,0.25)] 
+          border border-white/10 transition-all duration-500"
           style={{
             left: getIndicatorPosition(active),
-            transform: "translateX(-50%) translateY(3px)",
+            transform: "translateX(-50%) translateY(-1px)",
           }}
         ></div>
 
-        {/* Nav Items */}
+        {/* 🧭 Navigation Items */}
         {navItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
             onClick={() => setActive(item.path)}
-            className="relative flex flex-col items-center justify-center w-full text-center 
-              transition-all duration-300 group pt-2"
+            className={`flex flex-col items-center justify-center w-full 
+              text-center transition-all duration-300 group relative`}
           >
             <div
-              className={`text-xl transition-all duration-300 transform ${
+              className={`transition-all duration-300 transform group-hover:scale-110 
+              ${
                 active === item.path
                   ? "opacity-0 scale-0"
-                  : "opacity-100 scale-100 text-gray-700 group-hover:text-primary group-hover:scale-110"
+                  : "opacity-100 scale-100 text-gray-800"
               }`}
             >
-              {React.cloneElement(item.icon, { className: "w-6 h-6" })}
+              {React.cloneElement(item.icon, {
+                className:
+                  item.path === "/"
+                    ? "w-7 h-7" // Slightly bigger for Home
+                    : "w-6 h-6",
+              })}
             </div>
             <span
-              className={`text-[12px] mt-1 font-semibold tracking-tight transition-all duration-300 ${
+              className={`text-[13px] mt-1 font-semibold tracking-tight 
+              ${
                 active === item.path
                   ? "text-primary"
-                  : "text-gray-400 group-hover:text-primary"
+                  : "text-gray-800/70 group-hover:text-primary"
               }`}
             >
               {item.label}
@@ -126,27 +157,6 @@ const BottomNav = () => {
           </Link>
         ))}
       </div>
-
-      {/* Glow Animation */}
-      <style jsx>{`
-        @keyframes orange-glow {
-          0% {
-            box-shadow: 0 0 10px rgba(242, 108, 43, 0.6),
-              0 0 20px rgba(242, 108, 43, 0.4);
-          }
-          50% {
-            box-shadow: 0 0 25px rgba(242, 108, 43, 0.9),
-              0 0 45px rgba(242, 108, 43, 0.6);
-          }
-          100% {
-            box-shadow: 0 0 10px rgba(242, 108, 43, 0.6),
-              0 0 20px rgba(242, 108, 43, 0.4);
-          }
-        }
-        .animate-orange-glow {
-          animation: orange-glow 2.8s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 };
