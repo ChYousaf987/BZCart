@@ -27,6 +27,14 @@ module.exports = {
         slideInLeft: "slideInLeft 0.5s ease-out",
         slideInRight: "slideInRight 0.5s ease-out",
       },
+      animation: {
+        glow: "glow 1.5s ease-in-out infinite",
+        "bounce-slow": "bounce-slow 1.2s ease-in-out infinite",
+        "slide-in-up": "slide-in-up 0.4s ease-out forwards",
+      },
+      perspective: {
+        1000: "1000px",
+      },
     },
   },
   plugins: [],
