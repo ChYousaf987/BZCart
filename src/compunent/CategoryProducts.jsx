@@ -98,22 +98,15 @@ const CategoryProducts = () => {
     );
 
   return (
-    <div className="bg-gradient-to-b from-gray-50 via-white to-gray-100 min-h-screen">
+    <div className="bg-gradient-to-b from-gray-50 to-gray-200 min-h min-h-screen">
       <Navbar />
       <Toaster position="top-right" />
 
-      <div className="px-3 sm:px-8 lg:px-12 py-10 font-sans">
-        {category && (
-          <div className="mb-10 text-center">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 tracking-tight bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent animate-fade-in">
-              {category.name}
-            </h1>
-          </div>
-        )}
-
-        <div className="flex gap-4 mx-auto">
+      <div className="px-3 sm:px-8 lg:px-12 py-6 font-daraz">
+        <div className="flex gap-2 mx-auto relative">
+          {/* 🧭 Subcategories Sidebar */}
           {subCategories.length > 0 && (
-            <div className="w-20 sm:w-28 flex-shrink-0">
+            <div className="w-20 sm:w-28 flex-shrink-0 relative">
               <div className="sticky top-24 space-y-5 overflow-y-hidden hover:overflow-y-auto scrollbar-hide transition-all duration-700 ease-in-out">
                 {subCategories.map((sub) => {
                   const isActive = activeSub === sub._id;
@@ -121,21 +114,18 @@ const CategoryProducts = () => {
                     <button
                       key={sub._id}
                       onClick={() => handleSubcategoryClick(sub._id)}
-                      className={`relative flex flex-col items-center group transition-all duration-500 ${
+                      className={`relative mt-3 flex flex-col items-center group transition-all duration-500 ${
                         isActive ? "scale-110" : "hover:scale-105"
                       }`}
                     >
-                      {/* ✨ Outer Glow Container */}
                       <div
-                        className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-3xl overflow-hidden transition-all duration-700 ${
+                        className={`relative w-16  h-16 sm:w-20 sm:h-20 rounded-3xl overflow-hidden transition-all duration-700 ${
                           isActive
-                            ? "bg-gradient-to-tr from-orange-400 via-pink-500 to-red-400 p-[3px] shadow-[0_0_25px_6px_rgba(255,120,60,0.4)] animate-"
+                            ? "bg-gradient-to-tr from-orange-400 via-pink-500 to-red-400 p-[3px] shadow-[0_0_25px_6px_rgba(255,120,60,0.4)]"
                             : "bg-gradient-to-tr from-gray-200 to-gray-100 p-[2px]"
                         }`}
                       >
-                        {/* 🌈 Inner Container */}
                         <div className="relative w-full h-full rounded-2xl bg-white flex items-center justify-center overflow-hidden">
-                          {/* 🖼️ Image */}
                           <img
                             src={sub.image || "https://via.placeholder.com/100"}
                             alt={sub.name}
@@ -146,13 +136,9 @@ const CategoryProducts = () => {
                             }`}
                             loading="lazy"
                           />
-
-                          {/* 💫 Gradient Glow Overlay when Active */}
                           {isActive && (
                             <>
                               <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-orange-400/30 via-pink-500/20 to-yellow-400/20 blur-lg animate-pulse"></div>
-
-                              {/* ✅ Floating Check Badge */}
                               <div className="absolute top-1 left-1 bg-white/90 backdrop-blur-md rounded-full p-1 shadow-lg flex items-center justify-center">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -165,17 +151,13 @@ const CategoryProducts = () => {
                                   <path d="M5 13l4 4L19 7" />
                                 </svg>
                               </div>
-
-                              {/* 🏷️ “Selected” Tag */}
-                              <div className="absolute bottom-1 right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-[10px] px-2 py-[2px] rounded-full shadow-lg font-semibold ">
+                              <div className="absolute bottom-1 right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-[10px] px-2 py-[2px] rounded-full shadow-lg font-semibold">
                                 Selected
                               </div>
                             </>
                           )}
                         </div>
                       </div>
-
-                      {/* 🏷️ Subcategory Name */}
                       <p
                         className={`mt-2 text-xs sm:text-sm font-bold text-center tracking-wide transition-all duration-500 ${
                           isActive
@@ -185,18 +167,18 @@ const CategoryProducts = () => {
                       >
                         {sub.name}
                       </p>
-
-                      {/* 🔮 Glowing Dot Indicator */}
-                      
                     </button>
                   );
                 })}
               </div>
+
+              {/* 🧍‍♂️ Vertical Divider */}
+              <div className="absolute top-0 -right-[2%] h-full w-[1px] bg-primary rounded-full shadow-sm"></div>
             </div>
           )}
 
-          {/* Product Grid */}
-          <div className="flex-1">
+          {/* 🛍️ Product Grid */}
+          <div className="flex-1 ">
             {categoryProducts.length === 0 ? (
               <p className="text-gray-500 text-center text-lg font-medium animate-fade-in">
                 No products found in this category.
