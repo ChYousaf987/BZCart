@@ -393,7 +393,7 @@
     return (
       <>
         <Navbar />
-        <div className="md:w-[95%] mx-auto md:px-0 p-2">
+        <div className="md:w-[95%] mx-auto md:px-0 p-2 font-daraz">
           
 
           <div className="md:grid md:grid-cols-2 md:gap-8">
