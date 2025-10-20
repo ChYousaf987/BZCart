@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import api from "../api/axios";
 import { fetchMyOrders } from "../features/order/orderSlice";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -46,22 +47,29 @@ const TrackOrders = ({
 
     if (lastOrderId && !viewAllOrders) {
       try {
-        const response = await axios.get(
-          `http://localhost:3003/api/orders/order/${lastOrderId}`
-        );
+        // Use shared axios instance which sets baseURL and Authorization header
+        const response = await api.get(`/orders/order/${lastOrderId}`);
         order = response.data;
       } catch (err) {
-        console.error("Failed to fetch order by ID:", err);
+        console.error(
+          "TrackOrders - Failed to fetch order by ID:",
+          err.response?.data || err.message
+        );
         toast.error("Failed to fetch recent order", { position: "top-right" });
       }
     } else {
-      // Fetch all orders
-      const action = await dispatch(fetchMyOrders({ guestId }));
-      if (action.payload && action.payload.length > 0) {
-        setViewAllOrders(true);
-        // For all orders view, don't set single orderData, show list
-      } else {
-        toast.info("No orders found", { position: "top-right" });
+      // Fetch all orders (use unwrap to get payload or throw)
+      try {
+        const payload = await dispatch(fetchMyOrders({ guestId })).unwrap();
+        if (Array.isArray(payload) && payload.length > 0) {
+          setViewAllOrders(true);
+          // For all orders view, the reduxOrders will be used
+        } else {
+          toast.info("No orders found", { position: "top-right" });
+        }
+      } catch (err) {
+        console.error("TrackOrders - fetchMyOrders failed:", err);
+        toast.error(err || "Failed to fetch orders", { position: "top-right" });
       }
     }
 

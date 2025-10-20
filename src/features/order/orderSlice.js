@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import api from "../../api/axios";
 
 const API_URL = "https://bzbackend.online/api";
 
@@ -8,10 +9,15 @@ export const fetchMyOrders = createAsyncThunk(
   async ({ guestId }, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
-      const userId = auth.user?._id;
-      const query = userId ? `userId=${userId}` : `guestId=${guestId}`;
-      console.log("fetchMyOrders - Querying with:", { query, guestId, userId });
-      const response = await axios.get(`${API_URL}/orders/my-orders?${query}`);
+      let url = "/orders/my-orders";
+      let params = {};
+      // For guest users, add guestId to query params
+      if (!auth.user && guestId) {
+        params.guestId = guestId;
+      }
+      // For logged in users, the token will be sent automatically by axios interceptor
+      console.log("fetchMyOrders - Requesting:", { url, params });
+      const response = await api.get(url, { params });
       console.log("fetchMyOrders - Response data:", response.data);
       return response.data;
     } catch (err) {

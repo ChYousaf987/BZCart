@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://bzbackend.online/api"; // Match your backend URL
+const API_URL = "http://localhost:3003/api"; // Match your backend URL
 
 const instance = axios.create({
   baseURL: API_URL,

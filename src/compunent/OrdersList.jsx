@@ -21,15 +21,19 @@ const OrdersList = ({ guestId: propGuestId }) => {
   const { orders, loading, error } = useSelector((state) => state.order);
   const { user } = useSelector((state) => state.auth);
 
+  // Only use guestId if we don't have a logged in user
   const guestId =
-    propGuestId || localStorage.getItem("guestId") || `guest_${Date.now()}`;
+    !user &&
+    (propGuestId || localStorage.getItem("guestId") || `guest_${Date.now()}`);
 
   useEffect(() => {
-    if (!localStorage.getItem("guestId")) {
+    // Only set guestId in localStorage if we're not logged in
+    if (!user && !localStorage.getItem("guestId")) {
       localStorage.setItem("guestId", guestId);
     }
 
-    dispatch(fetchMyOrders({ guestId }))
+    // If logged in, don't pass guestId at all
+    dispatch(fetchMyOrders(guestId ? { guestId } : {}))
       .unwrap()
       .catch((err) => {
         console.error("OrdersList error:", err);
