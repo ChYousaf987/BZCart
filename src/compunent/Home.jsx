@@ -275,6 +275,11 @@ const Home = () => {
           </LazyWrapper>
         </Suspense>
         <Suspense fallback={<Skeleton height={300} />}>
+          <LazyWrapper>
+            <NewArrival />
+          </LazyWrapper>
+        </Suspense>
+        <Suspense fallback={<Skeleton height={300} />}>
           {/* <LazyWrapper> */}
             <TopBrands sortedProducts={sortedProducts} loading={loading} />
           {/* </LazyWrapper> */}
