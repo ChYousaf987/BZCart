@@ -153,7 +153,7 @@ const TopBrands = ({ sortedProducts, loading }) => {
             .fill(0)
             .map((_, i) => (
               <div key={i} className="bg-white rounded-2xl border p-3">
-                <Skeleton height={150} className="rounded-lg mb-3" />
+                <Skeleton height={290} className="rounded-lg mb-3" />
                 <Skeleton width="80%" height={16} className="mb-2" />
                 <Skeleton width="60%" height={14} />
               </div>
@@ -201,7 +201,7 @@ const TopBrands = ({ sortedProducts, loading }) => {
                     >
                       <div
                         id={`product-${product._id}`}
-                        className="md:h-48 flex items-center justify-center"
+                        className="h-60 md:h-48 flex items-center justify-center"
                         style={{
                           backgroundColor: product.bg_color || "#f3f4f6",
                           position: "relative",
@@ -232,7 +232,7 @@ const TopBrands = ({ sortedProducts, loading }) => {
                             }}
                           >
                             <Skeleton
-                              height={150}
+                              height={240}
                               className="rounded-lg h-full w-full"
                             />
                           </div>

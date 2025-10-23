@@ -125,7 +125,7 @@ const PaymentForm = ({
 
       try {
         const response = await axios.post(
-          "http://localhost:3003/api/users/validate-discount",
+          "https://bzbackend.online/api/users/validate-discount",
           { email: formData.email || authUser?.email, code }
         );
         if (response.data.isValid) {

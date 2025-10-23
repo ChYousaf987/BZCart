@@ -50,20 +50,16 @@ const BottomNav = () => {
     { path: "/auth", label: "Profile", icon: <FaRegUser /> },
   ];
 
+  // ✅ Fixed highlight logic
   const getActiveKey = (pathname) => {
-    if (pathname === "/") return "/";
+    if (pathname === "/") return "/"; // only home page
     if (pathname.startsWith("/categories")) return "/categories";
     if (pathname.startsWith("/orders")) return "/orders";
     if (pathname.startsWith("/cart")) return "/cart";
     if (pathname.startsWith("/profile") || pathname.startsWith("/auth"))
-      return "/profile";
-    if (
-      pathname.startsWith("/product") ||
-      pathname.startsWith("/deal") ||
-      pathname.startsWith("/search")
-    )
-      return "/";
-    return "/";
+      return "/auth";
+    // ❌ don't treat /product, /deal, /search as home
+    return ""; // means no active
   };
 
   useEffect(() => {
@@ -85,40 +81,44 @@ const BottomNav = () => {
         shadow-[0_8px_25px_rgba(0,0,0,0.25)]
         flex items-center justify-around transition-all duration-300"
       >
-        {/* 🔥 Floating Circle Indicator */}
-        <div
-          className="absolute top-0 z-50 w-16 h-16 bg-primary rounded-full 
-          shadow-[0_6px_25px_rgba(242,108,43,0.5)] flex items-center justify-center 
-          transition-all duration-500 ease-in-out"
-          style={{
-            left: getIndicatorPosition(active),
-            transform: "translateX(-50%) translateY(-50%)",
-          }}
-        >
-          <div className="text-white">
-            {React.cloneElement(
-              navItems.find((item) => item.path === active)?.icon ||
-                navItems[0].icon,
-              {
-                className:
-                  active === "/"
-                    ? "w-8 h-8" // 🏠 Home icon larger
-                    : "w-6 h-6",
-              }
-            )}
+        {/* 🔥 Floating Circle Indicator (only shows on main pages) */}
+        {active && (
+          <div
+            className="absolute top-0 z-50 w-16 h-16 bg-primary rounded-full 
+            shadow-[0_6px_25px_rgba(242,108,43,0.5)] flex items-center justify-center 
+            transition-all duration-500 ease-in-out"
+            style={{
+              left: getIndicatorPosition(active),
+              transform: "translateX(-50%) translateY(-50%)",
+            }}
+          >
+            <div className="text-white">
+              {React.cloneElement(
+                navItems.find((item) => item.path === active)?.icon ||
+                  navItems[0].icon,
+                {
+                  className:
+                    active === "/"
+                      ? "w-8 h-8" // 🏠 Home icon larger
+                      : "w-6 h-6",
+                }
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 💫 Bar curve under floating circle */}
-        <div
-          className="absolute top-0 w-20 h-10 bg-white/15 backdrop-blur-lg 
-          rounded-b-full shadow-[0_4px_12px_rgba(242,108,43,0.25)] 
-          border border-white/10 transition-all duration-500"
-          style={{
-            left: getIndicatorPosition(active),
-            transform: "translateX(-50%) translateY(-1px)",
-          }}
-        ></div>
+        {active && (
+          <div
+            className="absolute top-0 w-20 h-10 bg-white/15 backdrop-blur-lg 
+            rounded-b-full shadow-[0_4px_12px_rgba(242,108,43,0.25)] 
+            border border-white/10 transition-all duration-500"
+            style={{
+              left: getIndicatorPosition(active),
+              transform: "translateX(-50%) translateY(-1px)",
+            }}
+          ></div>
+        )}
 
         {/* 🧭 Navigation Items */}
         {navItems.map((item) => (
