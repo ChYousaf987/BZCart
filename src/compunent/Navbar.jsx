@@ -201,7 +201,7 @@ const Navbar = () => {
               {getUserDisplayName()} <FaSignOutAlt size={20} />
             </button>
           ) : (
-            <Link to="/auth" className="hover:text-primary">
+            <Link to="/loginprofile" className="hover:text-primary">
               <FaRegUser size={20} />
             </Link>
           )}

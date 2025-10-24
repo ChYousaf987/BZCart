@@ -25,6 +25,8 @@ import Checkout from "./compunent/Checkout";
 import FAQS from "./compunent/FAQS";
 import BottomNav from "./compunent/BottomNav";
 import OrdersList from "./compunent/OrdersList";
+import SignUp from "./compunent/Signup";
+import LoginProfile from "./compunent/LoginProfile";
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -89,16 +91,15 @@ const App = () => {
 
   return (
     <>
-      {![
-        "/auth",
-        "/checkout",
-        "/Cashout",
-        "/paymentMethods",
-      ].some((path) => location.pathname.startsWith(path)) && <BottomNav />}
+      {!["/auth", "/checkout", "/Cashout", "/paymentMethods"].some((path) =>
+        location.pathname.startsWith(path)
+      ) && <BottomNav />}
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/loginprofile" element={<LoginProfile />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/Cashout" element={<Cashout />} />

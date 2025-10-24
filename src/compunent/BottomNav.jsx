@@ -47,7 +47,7 @@ const BottomNav = () => {
     { path: "/cart", label: "Explore", icon: <Compass /> },
     { path: "/", label: "Home", icon: <CustomHomeIcon /> },
     { path: "/categories", label: "Categories", icon: <HiOutlineViewGrid /> },
-    { path: "/auth", label: "Profile", icon: <FaRegUser /> },
+    { path: "/loginprofile", label: "Profile", icon: <FaRegUser /> },
   ];
 
   // ✅ Fixed highlight logic
@@ -56,8 +56,8 @@ const BottomNav = () => {
     if (pathname.startsWith("/categories")) return "/categories";
     if (pathname.startsWith("/orders")) return "/orders";
     if (pathname.startsWith("/cart")) return "/cart";
-    if (pathname.startsWith("/profile") || pathname.startsWith("/auth"))
-      return "/auth";
+    if (pathname.startsWith("/profile") || pathname.startsWith("/loginprofile"))
+      return "/loginprofile";
     // ❌ don't treat /product, /deal, /search as home
     return ""; // means no active
   };
