@@ -416,7 +416,7 @@ const SingleProduct = () => {
                   <img
                     src={img}
                     alt={`${product.product_name} image ${i}`}
-                    className="w-full max-h-[400px] object-contain rounded-md border bg-gray-50"
+                    className="w-full max-h-[300px] object-contain rounded-md border bg-gray-50"
                   />
                 </div>
               ))}
