@@ -32,6 +32,8 @@ const SingleProduct = () => {
   const { user, userLoading, userSuccess, userError, token } = useSelector(
     (state) => state.auth
   );
+  const mainSliderRef = useRef(null);
+  const [activeSlide, setActiveSlide] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
@@ -393,31 +395,49 @@ const SingleProduct = () => {
   return (
     <>
       <Navbar />
-      <div className="md:w-[95%] mx-auto md:px-0 p-2 font-daraz">
+      <div className="md:w-[95%] mx-auto md:px-0 p-2 font-darazs">
         <div className="md:grid md:grid-cols-2 md:gap-8">
-          <div className="md:hidden relative">
-            {product.product_images?.length > 1 ? (
-              <Slider {...sliderSettings}>
-                {product.product_images.map((img, i) => (
-                  <div key={i}>
-                    <img
-                      src={img}
-                      alt={`${product.product_name} image ${i}`}
-                      className="max-h-[450px] object-contain rounded-md border bg-gray-50 w-full"
-                    />
-                  </div>
-                ))}
-              </Slider>
-            ) : (
-              <img
-                src={
-                  product.product_images?.[0] ||
-                  "https://via.placeholder.com/500"
-                }
-                alt={product.product_name}
-                className="max-h-[450px] object-contain rounded-md border bg-gray-50 w-full"
-              />
-            )}
+          {/* 📱 Mobile View Images */}
+          <div className="md:hidden relative flex flex-col items-center">
+            {/* Main Slider */}
+            <Slider
+              ref={mainSliderRef}
+              dots={false}
+              infinite={false}
+              speed={400}
+              slidesToShow={1}
+              slidesToScroll={1}
+              arrows={false}
+              afterChange={(index) => setActiveSlide(index)}
+              className="w-full mb-3"
+            >
+              {product.product_images?.map((img, i) => (
+                <div key={i}>
+                  <img
+                    src={img}
+                    alt={`${product.product_name} image ${i}`}
+                    className="w-full max-h-[400px] object-contain rounded-md border bg-gray-50"
+                  />
+                </div>
+              ))}
+            </Slider>
+
+            {/* Thumbnail Row */}
+            <div className="flex h-20 gap-3 overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 px-2 w-full">
+              {product.product_images?.map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  alt={`${product.product_name} thumbnail ${i}`}
+                  onClick={() => mainSliderRef.current?.slickGoTo(i)}
+                  className={`h-16 w-16 mt-1 object-contain rounded-md border flex-shrink-0 cursor-pointer transition-transform duration-200 ${
+                    activeSlide === i
+                      ? "border-red-600 scale-105 shadow-md"
+                      : "border-gray-300 hover:scale-105"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
 
           <div className="hidden md:flex gap-4">
@@ -447,25 +467,25 @@ const SingleProduct = () => {
             </div>
           </div>
 
-          <div className="mt-4 md:mt-0">
-            <div className="space-y-4">
+          <div className="mt-2 md:mt-0  text-gray-800">
+            <div className="space-y-3">
               {/* 🏷️ Product Name & Brand */}
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 tracking-tight">
+                <h2 className="text-2xl md:text-4xl font- text-gray-900 leading-tight tracking-tight">
                   {product.product_name}
                 </h2>
-                <p className="text-gray-500 text-sm md:text-base">
+                <p className="text-sm md:text-base text-gray-500 mt-1">
                   Brand:{" "}
-                  <span className="font-medium text-gray-700">
+                  <span className="font-medium text-gray-800">
                     {product.brand_name}
                   </span>
                 </p>
               </div>
 
               {/* ⭐ Rating + Reviews */}
-              <div className="flex items-center mb-2">
+              <div className="flex items-center ">
                 {renderStars(product.rating || 0)}
-                <p className="text-gray-500 text-sm ml-2">
+                <p className="text-gray-500 text-sm ml-2 font-medium">
                   {reviews.length > 0
                     ? `${reviews.length} review${reviews.length > 1 ? "s" : ""}`
                     : "No reviews yet"}
@@ -473,21 +493,21 @@ const SingleProduct = () => {
               </div>
 
               {/* 💰 Pricing */}
-              <div className="mb-3">
-                <div className="flex items-end gap-2">
-                  <p className="text-3xl font-extrabold text-gradient bg-gradient-to-r from-red-600 to-pink-500 bg-clip-text text-transparent">
+              <div>
+                <div className="flex items-end gap-3">
+                  <p className="text-2xl font-bold text-gradient bg-gradient-to-r from-orange-600 to-pink-500 bg-clip-text text-transparent">
                     Rs. {product.product_discounted_price}
                   </p>
                   {product.product_base_price >
                     product.product_discounted_price && (
-                    <p className="text-gray-400 line-through text-sm">
+                    <p className="text-gray-400 line-through text-base font-medium">
                       Rs. {product.product_base_price}
                     </p>
                   )}
                 </div>
                 {product.product_base_price >
                   product.product_discounted_price && (
-                  <span className="inline-block mt-1 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold">
+                  <span className="inline-block mt-2 text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold">
                     Save Rs.{" "}
                     {product.product_base_price -
                       product.product_discounted_price}
@@ -497,11 +517,10 @@ const SingleProduct = () => {
 
               {/* 📏 Size Selection or Stock */}
               {product.sizes?.length > 0 ? (
-                <div className="mb-5">
-                  <label className="block text-gray-800 font-semibold mb-3 text-sm sm:text-base">
+                <div>
+                  <label className="block text-gray-800 font-semibold mb-3 text-sm sm:text-base uppercase tracking-wide">
                     Select Size
                   </label>
-
                   <div className="flex flex-wrap gap-3">
                     {product.sizes.map((size) => {
                       const isSelected = selectedSize === size.size;
@@ -513,21 +532,18 @@ const SingleProduct = () => {
                             !isOutOfStock && setSelectedSize(size.size)
                           }
                           disabled={isOutOfStock}
-                          className={`relative px-5 py-4 rounded-xl text-sm font-medium transition-all duration-300 border group 
-                ${
-                  isOutOfStock
-                    ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                    : isSelected
-                    ? "bg-primary text-white  shadow-lg shadow-orange-300 scale-105"
-                    : "bg-gray-100 border-gray-300 text-gray-700 hover:border-pink-400 hover:shadow-md hover:scale-105"
-                }`}
+                          className={`relative px-5 py-3 rounded-lg text-sm font-semibold transition-all duration-300 border group 
+                  ${
+                    isOutOfStock
+                      ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                      : isSelected
+                      ? "bg-gradient-to-r from-orange-500 to-orange-700 text-white shadow-md scale-105"
+                      : "bg-gray-50 border-gray-300 text-gray-700 hover:border-orange-400 hover:shadow-sm hover:scale-105"
+                  }`}
                         >
                           {size.size}
-
-                          {/* ✅ Stylish status badges */}
-
                           {isOutOfStock && (
-                            <span className="absolute -top-2 -right-2 bg-gray-400 text-white text-[11px] font-bold rounded-full w-5 h-5 flex items-center justify-center border border-white shadow-sm">
+                            <span className="absolute -top-2 -right-2 bg-gray-400 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center border border-white shadow-sm">
                               ✖
                             </span>
                           )}
@@ -537,7 +553,7 @@ const SingleProduct = () => {
                   </div>
                 </div>
               ) : (
-                <div className="mb-3">
+                <div>
                   {product.product_stock > 0 ? (
                     <div
                       className={`flex items-center gap-2 text-sm font-semibold ${
@@ -563,12 +579,12 @@ const SingleProduct = () => {
               )}
 
               {/* 🚚 Shipping, Warranty, Payment */}
-              <div className="space-y-2 text-sm sm:text-base">
+              <div className="space-y-1 text-[15px]">
                 <p className="flex items-center gap-2">
                   <span className="text-gray-600 font-medium">
                     🚚 Shipping:
                   </span>
-                  <span className="font-semibold text-gray-800">
+                  <span className="font-semibold text-gray-700">
                     {product.shipping === 0
                       ? "Free"
                       : `Rs. ${product.shipping}`}
@@ -580,7 +596,7 @@ const SingleProduct = () => {
                     <span className="text-gray-600 font-medium">
                       🛡️ Warranty:
                     </span>
-                    <span className="font-semibold text-gray-800">
+                    <span className="font-semibold text-gray-700">
                       {product.warranty}
                     </span>
                   </p>
@@ -590,26 +606,27 @@ const SingleProduct = () => {
                   <span className="text-gray-600 font-medium">
                     💳 Payment Methods:
                   </span>
-                  <span className="font-semibold text-gray-800">
+                  <span className="font-semibold text-gray-900">
                     {product.payment?.join(", ")}
                   </span>
                 </p>
               </div>
             </div>
+
+            {/* 🛒 Add to Cart / Buy Now Buttons */}
             <div className="mt-6 space-y-4">
-              {/* 🛒 Add to Cart */}
               <button
                 onClick={handleAddToCart}
-                className={`w-full py-3 rounded-xl font-semibold text-white shadow-md transition-all duration-300 ${
+                className={`w-full py-3 rounded-lg font-semibold text-white shadow-md transition-all duration-300 ${
                   product.sizes?.length > 0
                     ? !selectedSize ||
                       product.sizes.find((s) => s.size === selectedSize)
                         ?.stock <= 0
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-orange-500 to-orange-800 hover:shadow-lg hover:scale-[1.02]"
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-gradient-to-r from-orange-500 to-orange-700 hover:shadow-lg hover:scale-[1.02]"
                     : product.product_stock > 0
-                    ? "bg-gradient-to-r from-orange-500 to-orange-800 hover:shadow-lg hover:scale-[1.02]"
-                    : "bg-gray-400 cursor-not-allowed"
+                    ? "bg-gradient-to-r from-orange-500 to-orange-700 hover:shadow-lg hover:scale-[1.02]"
+                    : "bg-gray-300 cursor-not-allowed"
                 }`}
                 disabled={
                   product.sizes?.length > 0
@@ -619,32 +636,23 @@ const SingleProduct = () => {
                     : product.product_stock <= 0
                 }
               >
-                {product.sizes?.length > 0
-                  ? selectedSize &&
-                    product.sizes.find((s) => s.size === selectedSize)?.stock >
-                      0
-                    ? "🛒 Add to Cart"
-                    : "Out of Stock"
-                  : product.product_stock > 0
-                  ? "🛒 Add to Cart"
-                  : "Out of Stock"}
+                🛒 Add to Cart
               </button>
 
-              {/* 💳 Buy Now + WhatsApp Buttons (Side by Side) */}
               <div className="flex gap-3">
-                {/* 💳 Buy Now */}
+                {/* ⚡ Buy Now */}
                 <button
                   onClick={handleBuyNow}
-                  className={`w-1/2 py-3 rounded-xl font-semibold text-white shadow-md transition-all duration-300 ${
+                  className={`w-1/2 py-3 rounded-lg font-semibold text-white shadow-md transition-all duration-300 ${
                     product.sizes?.length > 0
                       ? !selectedSize ||
                         product.sizes.find((s) => s.size === selectedSize)
                           ?.stock <= 0
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-gradient-to-r from-orange-500 to-orange-800 hover:shadow-lg hover:scale-[1.02]"
+                        ? "bg-gray-300 cursor-not-allowed"
+                        : "bg-gradient-to-r from-orange-500 to-orange-700 hover:shadow-lg hover:scale-[1.02]"
                       : product.product_stock > 0
-                      ? "bg-gradient-to-r from-orange-500 to-orange-800 hover:shadow-lg hover:scale-[1.02]"
-                      : "bg-gray-400 cursor-not-allowed"
+                      ? "bg-gradient-to-r from-orange-500 to-orange-700 hover:shadow-lg hover:scale-[1.02]"
+                      : "bg-gray-300 cursor-not-allowed"
                   }`}
                   disabled={
                     product.sizes?.length > 0
@@ -657,19 +665,19 @@ const SingleProduct = () => {
                   ⚡ Buy Now
                 </button>
 
-                {/* 💬 Order on WhatsApp */}
+                {/* 💬 WhatsApp */}
                 <button
                   onClick={handleOrderOnWhatsapp}
-                  className={`w-1/2 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white shadow-md transition-all duration-300 ${
+                  className={`w-1/2 flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-white shadow-md transition-all duration-300 ${
                     product.sizes?.length > 0
                       ? !selectedSize ||
                         product.sizes.find((s) => s.size === selectedSize)
                           ?.stock <= 0
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-gradient-to-r from-orange-500 to-orange-800 hover:shadow-lg hover:scale-[1.02]"
+                        ? "bg-gray-300 cursor-not-allowed"
+                        : "bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-[1.02]"
                       : product.product_stock > 0
-                      ? "bg-gradient-to-r from-orange-500 to-orange-800 hover:shadow-lg hover:scale-[1.02]"
-                      : "bg-gray-400 cursor-not-allowed"
+                      ? "bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-[1.02]"
+                      : "bg-gray-300 cursor-not-allowed"
                   }`}
                   disabled={
                     product.sizes?.length > 0
@@ -692,50 +700,51 @@ const SingleProduct = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
-              <div className="flex items-center gap-3 p-3 border rounded shadow-sm">
-                <FaTruck className="text-red-600 text-xl" />
+            {/* 🚚 Icons Section */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
+              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                <FaTruck className="text-orange-600 text-xl" />
                 <div>
                   <h4 className="font-semibold text-sm">Fast Shipping</h4>
-                  <p className="text-xs text-gray-600">Shipped In 1-3 Days</p>
+                  <p className="text-xs text-gray-500">Shipped In 1–3 Days</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 border rounded shadow-sm">
-                <FaUndo className="text-red-600 text-xl" />
+              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                <FaUndo className="text-orange-600 text-xl" />
                 <div>
                   <h4 className="font-semibold text-sm">Free Returns</h4>
-                  <p className="text-xs text-gray-600">Free 7 Days Return</p>
+                  <p className="text-xs text-gray-500">7 Days Return</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 border rounded shadow-sm">
-                <FaMoneyBillAlt className="text-red-600 text-xl" />
+              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                <FaMoneyBillAlt className="text-orange-600 text-xl" />
                 <div>
                   <h4 className="font-semibold text-sm">Cash on Delivery</h4>
-                  <p className="text-xs text-gray-600">COD Available</p>
+                  <p className="text-xs text-gray-500">COD Available</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 border rounded shadow-sm">
-                <FaHeadset className="text-red-600 text-xl" />
+              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                <FaHeadset className="text-orange-600 text-xl" />
                 <div>
-                  <h4 className="font-semibold text-sm">Support</h4>
-                  <p className="text-xs text-gray-600">Phone & Email</p>
+                  <h4 className="font-semibold text-sm">Customer Support</h4>
+                  <p className="text-xs text-gray-500">Phone & Email</p>
                 </div>
               </div>
             </div>
-            <div className="mt-8">
-              {product.highlights && product.highlights.length > 0 && (
-                <div className="mb-3">
-                  <h3 className="text-md font-semibold text-gray-700 mb-1">
-                    Product Highlights:
-                  </h3>
-                  <ul className="list-disc list-inside text-gray-700">
-                    {product.highlights.map((h, idx) => (
-                      <li key={idx}>{h}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+
+            {/* 📋 Highlights */}
+            {product.highlights && product.highlights.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-md font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                  Product Highlights
+                </h3>
+                <ul className="list-disc list-inside text-gray-500 text-sm leading-relaxed space-y-1">
+                  {product.highlights.map((h, idx) => (
+                    <li key={idx}>{h}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
 
@@ -744,7 +753,7 @@ const SingleProduct = () => {
             <button
               className={`py-2 px-4 font-semibold transition-colors duration-300 ${
                 activeTab === "description"
-                  ? "border-b-2 border-red-600 text-red-600"
+                  ? "border-b-2 border-red-600 text-gray-700"
                   : "text-gray-600 hover:text-red-500"
               }`}
               onClick={() => setActiveTab("description")}
@@ -754,7 +763,7 @@ const SingleProduct = () => {
             <button
               className={`py-2 px-4 font-semibold transition-colors duration-300 ${
                 activeTab === "reviews"
-                  ? "border-b-2 border-red-600 text-red-600"
+                  ? "border-b-2 border-red-600 text-gray-700"
                   : "text-gray-600 hover:text-red-500"
               }`}
               onClick={() => setActiveTab("reviews")}
@@ -767,7 +776,7 @@ const SingleProduct = () => {
           {activeTab === "description" && (
             <div className="relative mt-4 bg-gray-50 rounded-lg shadow-sm border border-gray-100 overflow-hidden">
               <div
-                className="p-4 text-gray-700 whitespace-pre-line scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 break-words"
+                className="p-4 text-gray-500 whitespace-pre-line scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 break-words"
                 style={{
                   scrollBehavior: "smooth",
                   wordBreak: "break-word", // ✅ ensures long words/links wrap properly
