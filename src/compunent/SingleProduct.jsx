@@ -774,9 +774,9 @@ const SingleProduct = () => {
 
           {/* 🌟 Description Section */}
           {activeTab === "description" && (
-            <div className="relative mt-4 bg-gray-50 rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+            <div className="relative  bg-gray-50 text-sm rounded-lg shadow-sm border border-gray-100 overflow-hidden">
               <div
-                className="p-4 text-gray-500 whitespace-pre-line scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 break-words"
+                className="p-2 text-gray-500 whitespace-pre-line scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 break-words"
                 style={{
                   scrollBehavior: "smooth",
                   wordBreak: "break-word", // ✅ ensures long words/links wrap properly
