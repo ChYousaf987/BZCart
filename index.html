@@ -52,7 +52,7 @@
     />
     <meta name="twitter:image" content="https://www.bzcart.store/logg.png" />
 
-    <!-- ✅ Meta Pixel Code -->
+    <!-- ✅ Meta Pixel Code 1 -->
     <script>
       !(function (f, b, e, v, n, t, s) {
         if (f.fbq) return;
@@ -61,7 +61,8 @@
             ? n.callMethod.apply(n, arguments)
             : n.queue.push(arguments);
         };
-        if (!f._fbq) n.push = n;
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
         n.loaded = !0;
         n.version = "2.0";
         n.queue = [];
@@ -79,9 +80,9 @@
       fbq("init", "2398393803875504");
       fbq("track", "PageView");
     </script>
-    <!-- ✅ End Meta Pixel Code -->
+    <!-- ✅ End Meta Pixel Code 1 -->
 
-    <!-- Meta Pixel Code -->
+    <!-- ✅ Meta Pixel Code 2 (script part only — noscript moved to body) -->
     <script>
       !(function (f, b, e, v, n, t, s) {
         if (f.fbq) return;
@@ -109,20 +110,13 @@
       fbq("init", "1449521836139029");
       fbq("track", "PageView");
     </script>
-    <noscript
-      ><img
-        height="1"
-        width="1"
-        style="display: none"
-        src="https://www.facebook.com/tr?id=1449521836139029&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
+    <!-- ✅ End Meta Pixel Code 2 -->
   </head>
 
   <body>
     <div id="root"></div>
 
-    <!-- ✅ Noscript must be inside body -->
+    <!-- ✅ Noscript for first pixel -->
     <noscript>
       <img
         height="1"
@@ -133,5 +127,15 @@
     </noscript>
 
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- ✅ Noscript for second pixel (moved out of head to fix Vite error) -->
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=1449521836139029&ev=PageView&noscript=1"
+      />
+    </noscript>
   </body>
 </html>

@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
 import { HiOutlineViewGrid } from "react-icons/hi";
 import { TbTruckDelivery } from "react-icons/tb"; // 🚚 Tracking icon
+import { useSelector } from "react-redux";
 
 // 🏠 Ultra-Rounded Home SVG Icon (larger, softer)
 const CustomHomeIcon = ({ className = "w-8 h-8", color = "currentColor" }) => (
@@ -41,26 +42,29 @@ const Compass = ({ className = "w-6 h-6", color = "currentColor" }) => (
 const BottomNav = () => {
   const location = useLocation();
   const [active, setActive] = useState("/");
+  const { user } = useSelector((state) => state.auth); // <-- add this
+
+  const profilePath = user ? "/profile" : "/loginprofile"; // ✅ dynamic route
 
   const navItems = [
     { path: "/orders", label: "Tracking", icon: <TbTruckDelivery /> },
     { path: "/cart", label: "Explore", icon: <Compass /> },
     { path: "/", label: "Home", icon: <CustomHomeIcon /> },
     { path: "/categories", label: "Categories", icon: <HiOutlineViewGrid /> },
-    { path: "/loginprofile", label: "Profile", icon: <FaRegUser /> },
+    { path: profilePath, label: "Profile", icon: <FaRegUser /> }, // ✅ dynamic
   ];
 
   // ✅ Fixed highlight logic
-  const getActiveKey = (pathname) => {
-    if (pathname === "/") return "/"; // only home page
-    if (pathname.startsWith("/categories")) return "/categories";
-    if (pathname.startsWith("/orders")) return "/orders";
-    if (pathname.startsWith("/cart")) return "/cart";
-    if (pathname.startsWith("/profile") || pathname.startsWith("/loginprofile"))
-      return "/loginprofile";
-    // ❌ don't treat /product, /deal, /search as home
-    return ""; // means no active
-  };
+const getActiveKey = (pathname) => {
+  if (pathname === "/") return "/";
+  if (pathname.startsWith("/categories")) return "/categories";
+  if (pathname.startsWith("/orders")) return "/orders";
+  if (pathname.startsWith("/cart")) return "/cart";
+  if (pathname.startsWith("/profile")) return "/profile";
+  if (pathname.startsWith("/loginprofile")) return "/loginprofile";
+  return "";
+};
+
 
   useEffect(() => {
     setActive(getActiveKey(location.pathname));
@@ -74,7 +78,7 @@ const BottomNav = () => {
   };
 
   return (
-    <div className="fixed bottom-2 left-0 w-full flex justify-center z-50 font-daraz md:hidden">
+    <div className="fixed bottom-2 left-0 w-full flex justify-center z-50 font-daraz md:hidden ">
       <div
         className="relative w-[96%]  max-w-md rounded-full h-[8vh] 
         bg-white/10 backdrop-blur-xl border border-white/10 
@@ -84,7 +88,7 @@ const BottomNav = () => {
         {/* 🔥 Floating Circle Indicator (only shows on main pages) */}
         {active && (
           <div
-            className="absolute top-0 z-50 w-16 h-16 bg-primary rounded-full 
+            className="absolute -top-1 z-50 w-16 h-16 bg-primary rounded-full 
             shadow-[0_6px_25px_rgba(242,108,43,0.5)] flex items-center justify-center 
             transition-all duration-500 ease-in-out"
             style={{
@@ -110,7 +114,7 @@ const BottomNav = () => {
         {/* 💫 Bar curve under floating circle */}
         {active && (
           <div
-            className="absolute top-0 w-20 h-10 bg-white/15 backdrop-blur-lg 
+            className="absolute -top-1 w-20 h-10 bg-white/15 backdrop-blur-lg 
             rounded-b-full shadow-[0_4px_12px_rgba(242,108,43,0.25)] 
             border border-white/10 transition-all duration-500"
             style={{

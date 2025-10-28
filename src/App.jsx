@@ -27,6 +27,7 @@ import BottomNav from "./compunent/BottomNav";
 import OrdersList from "./compunent/OrdersList";
 import SignUp from "./compunent/Signup";
 import LoginProfile from "./compunent/LoginProfile";
+import Profile from "./compunent/Profile";
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -94,33 +95,35 @@ const App = () => {
       {!["/auth", "/checkout", "/Cashout", "/paymentMethods"].some((path) =>
         location.pathname.startsWith(path)
       ) && <BottomNav />}
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/loginprofile" element={<LoginProfile />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/payment" element={<Payment />} />
-        <Route path="/Cashout" element={<Cashout />} />
-        <Route path="/Checkout" element={<Checkout />} />
-        <Route path="/paymentMethods" element={<PaymentMethods />} />
-        <Route path="/track-order/:id" element={<TrackOrder />} />
-        <Route path="/orders" element={<OrdersList />} />
-        <Route path="/deal/:id" element={<SingleDeal />} />
-        <Route path="/product/:id" element={<SingleProduct />} />
-        <Route path="/category/:categoryId" element={<CategoryProducts />} />
-        <Route path="/categories" element={<CategoriesPage />} />
-        <Route path="/deals" element={<AllDeals />} />
-        <Route path="/Contact" element={<ContactPage />} />
-        <Route path="/products" element={<AllProducts />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-        <Route path="/returnandrefund" element={<ReturnRefund />} />
-        <Route path="/termsandconditions" element={<TermsAndCondition />} />
-        <Route path="/faqs" element={<FAQS />} />
-      </Routes>
+      <div className="pb-[9vh] md:pb-0 ">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/loginprofile" element={<LoginProfile />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/Cashout" element={<Cashout />} />
+          <Route path="/Checkout" element={<Checkout />} />
+          <Route path="/paymentMethods" element={<PaymentMethods />} />
+          <Route path="/track-order/:id" element={<TrackOrder />} />
+          <Route path="/orders" element={<OrdersList />} />
+          <Route path="/deal/:id" element={<SingleDeal />} />
+          <Route path="/product/:id" element={<SingleProduct />} />
+          <Route path="/category/:categoryId" element={<CategoryProducts />} />
+          <Route path="/categories" element={<CategoriesPage />} />
+          <Route path="/deals" element={<AllDeals />} />
+          <Route path="/Contact" element={<ContactPage />} />
+          <Route path="/products" element={<AllProducts />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+          <Route path="/returnandrefund" element={<ReturnRefund />} />
+          <Route path="/termsandconditions" element={<TermsAndCondition />} />
+          <Route path="/faqs" element={<FAQS />} />
+        </Routes>
+      </div>
     </>
   );
 };

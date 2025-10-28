@@ -294,7 +294,7 @@ const Home = () => {
             <PromoBanner />
           </LazyWrapper>
         </Suspense>
-        <Suspense fallback={<Skeleton height={100} />}>
+        <Suspense fallback={<Skeleton  />}>
           <Footer />
         </Suspense>
       </ErrorBoundary>
