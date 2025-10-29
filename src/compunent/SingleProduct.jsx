@@ -395,7 +395,7 @@ const SingleProduct = () => {
   return (
     <>
       <Navbar />
-      <div className="md:w-[95%] mx-auto md:px-0 p-2 font-darazs">
+      <div className="md:w-[95%] mx-auto md:px-0 px-4 py-2 font-darazs">
         <div className="md:grid md:grid-cols-2 md:gap-8">
           {/* 📱 Mobile View Images */}
           <div className="md:hidden relative flex flex-col items-center">
@@ -468,7 +468,7 @@ const SingleProduct = () => {
           </div>
 
           <div className="mt-2 md:mt-0  text-gray-800">
-            <div className="space-y-3">
+            <div className="space-y-1">
               {/* 🏷️ Product Name & Brand */}
               <div>
                 <h2 className="text-2xl md:text-4xl font- text-gray-900 leading-tight tracking-tight">
@@ -476,7 +476,7 @@ const SingleProduct = () => {
                 </h2>
                 <p className="text-sm md:text-base text-gray-500 mt-1">
                   Brand:{" "}
-                  <span className="font-medium text-gray-800">
+                  <span className="font-semibold text-gray-900">
                     {product.brand_name}
                   </span>
                 </p>
@@ -500,7 +500,7 @@ const SingleProduct = () => {
                   </p>
                   {product.product_base_price >
                     product.product_discounted_price && (
-                    <p className="text-gray-400 line-through text-base font-medium">
+                    <p className="text-gray-400 mb-0.5 line-through text-sm font-medium">
                       Rs. {product.product_base_price}
                     </p>
                   )}
@@ -580,7 +580,7 @@ const SingleProduct = () => {
 
               {/* 🚚 Shipping, Warranty, Payment */}
               <div className="space-y-1 text-[15px]">
-                <p className="flex items-center gap-2">
+                <p className="flex items-center gap-2 mt-2">
                   <span className="text-gray-600 font-medium">
                     🚚 Shipping:
                   </span>
@@ -617,15 +617,15 @@ const SingleProduct = () => {
             <div className="mt-6 space-y-4">
               <button
                 onClick={handleAddToCart}
-                className={`w-full py-3 rounded-lg font-semibold text-white shadow-md transition-all duration-300 ${
+                className={`w-full py-3 rounded-lg font-semibold text-white shadow-lg shadow-orange-600 transition-all duration-300 ${
                   product.sizes?.length > 0
                     ? !selectedSize ||
                       product.sizes.find((s) => s.size === selectedSize)
                         ?.stock <= 0
                       ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-gradient-to-r from-orange-500 to-orange-700 hover:shadow-lg hover:scale-[1.02]"
+                      : "bg-orange-500 hover:shadow-lg hover:scale-[1.02]"
                     : product.product_stock > 0
-                    ? "bg-gradient-to-r from-orange-500 to-orange-700 hover:shadow-lg hover:scale-[1.02]"
+                    ? "bg-orange-500  hover:shadow-lg hover:scale-[1.02]"
                     : "bg-gray-300 cursor-not-allowed"
                 }`}
                 disabled={
@@ -643,17 +643,20 @@ const SingleProduct = () => {
                 {/* ⚡ Buy Now */}
                 <button
                   onClick={handleBuyNow}
-                  className={`w-1/2 py-3 rounded-lg font-semibold text-white shadow-md transition-all duration-300 ${
-                    product.sizes?.length > 0
-                      ? !selectedSize ||
-                        product.sizes.find((s) => s.size === selectedSize)
-                          ?.stock <= 0
-                        ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-gradient-to-r from-orange-500 to-orange-700 hover:shadow-lg hover:scale-[1.02]"
-                      : product.product_stock > 0
-                      ? "bg-gradient-to-r from-orange-500 to-orange-700 hover:shadow-lg hover:scale-[1.02]"
-                      : "bg-gray-300 cursor-not-allowed"
-                  }`}
+                  className={`w-1/2 py-3 rounded-lg font-semibold text-orange-600
+      bg-white
+      shadow-orange-600 shadow-lg
+      hover:shadow-[inset_0_3px_6px_rgba(0,0,0,0.08),_0_3px_6px_rgba(0,0,0,0.12)]
+      hover:scale-[1.02] transition-all duration-300 ${
+        product.sizes?.length > 0
+          ? !selectedSize ||
+            product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
+            : ""
+          : product.product_stock > 0
+          ? "bg-gradient-to-r from-orange-500 to-orange-700 hover:shadow-lg hover:scale-[1.02]"
+          : "bg-gray-300 cursor-not-allowed"
+      }`}
                   disabled={
                     product.sizes?.length > 0
                       ? !selectedSize ||
@@ -662,21 +665,21 @@ const SingleProduct = () => {
                       : product.product_stock <= 0
                   }
                 >
-                  ⚡ Buy Now
+                  Buy Now
                 </button>
 
                 {/* 💬 WhatsApp */}
                 <button
                   onClick={handleOrderOnWhatsapp}
-                  className={`w-1/2 flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-white shadow-md transition-all duration-300 ${
+                  className={`w-1/2 flex items-center justify-center gap-2 py-3 rounded-lg font-semibold shadow-green-400 text-white shadow-lg transition-all duration-300 ${
                     product.sizes?.length > 0
                       ? !selectedSize ||
                         product.sizes.find((s) => s.size === selectedSize)
                           ?.stock <= 0
                         ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-[1.02]"
+                        : "bg-green-500 hover:shadow-lg hover:scale-[1.02]"
                       : product.product_stock > 0
-                      ? "bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-[1.02]"
+                      ? "bg-green-500 hover:shadow-lg hover:scale-[1.02]"
                       : "bg-gray-300 cursor-not-allowed"
                   }`}
                   disabled={
