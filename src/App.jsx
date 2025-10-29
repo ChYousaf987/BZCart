@@ -25,7 +25,6 @@ import Checkout from "./compunent/Checkout";
 import FAQS from "./compunent/FAQS";
 import BottomNav from "./compunent/BottomNav";
 import OrdersList from "./compunent/OrdersList";
-import SignUp from "./compunent/Signup";
 import LoginProfile from "./compunent/LoginProfile";
 import Profile from "./compunent/Profile";
 
@@ -101,7 +100,6 @@ const App = () => {
           <Route path="/auth" element={<Auth />} />
           <Route path="/loginprofile" element={<LoginProfile />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/signup" element={<SignUp />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/Cashout" element={<Cashout />} />

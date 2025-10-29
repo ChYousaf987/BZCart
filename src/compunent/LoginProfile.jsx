@@ -33,13 +33,16 @@ export default function LoginProfile() {
 
       {/* Bottom Section */}
       <div className="w-full mb-10 animate-slideInUp">
-        <Link to="/auth">
+        <Link to="/auth?mode=signup">
           <button className="w-full bg-gradient-to-r from-primary to-orange-500 text-white font-semibold py-3.5 rounded-xl text-lg shadow-lg shadow-orange-200 hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-300">
             Sign up
           </button>
         </Link>
 
-        <Link to="auth" className="flex justify-center items-center gap-1 mt-5 text-sm text-gray-600 hover:text-primary transition">
+        <Link
+          to="/auth"
+          className="flex justify-center items-center gap-1 mt-5 text-sm text-gray-600 hover:text-primary transition"
+        >
           <span>I already have an account</span>
           <ArrowRight size={16} className="text-primary" />
         </Link>

@@ -1,9 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Login from "./Login";
 import Signup from "./Signup";
 
 export default function Auth() {
-  const [isSignIn, setIsSignIn] = useState(true);
+  const location = useLocation();
+
+  // Check URL query (?mode=signup)
+  const queryParams = new URLSearchParams(location.search);
+  const mode = queryParams.get("mode");
+
+  // Default to login unless mode=signup
+  const [isSignIn, setIsSignIn] = useState(mode !== "signup");
+
+  // Update when URL changes
+  useEffect(() => {
+    setIsSignIn(mode !== "signup");
+  }, [mode]);
 
   return (
     <div className="md:min-h-screen flex items-center justify-center bg-light font-cabin md:p-8 overflow-hidden">

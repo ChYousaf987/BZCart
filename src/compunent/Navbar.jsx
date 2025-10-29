@@ -198,7 +198,9 @@ const Navbar = () => {
               onClick={handleLogout}
               className="flex items-center gap-2 hover:text-primary"
             >
-              {getUserDisplayName()} <FaSignOutAlt size={20} />
+              {/* 👇 Hide on mobile, show on sm and up */}
+              <span className="hidden sm:inline">{getUserDisplayName()}</span>
+              <FaSignOutAlt size={20} />
             </button>
           ) : (
             <Link to="/loginprofile" className="hover:text-primary">
