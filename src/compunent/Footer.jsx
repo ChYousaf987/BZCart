@@ -19,78 +19,46 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-black text-white pt-10 pb-6 px-6 md:px-12 lg:px-20">
-      <div className="grid md:grid-cols-4 gap-4 md:gap-10  border-b border-white/20 md:pb-10">
-        {/* Contact Details */}
+    <footer className="pt">
+      <div className="bg-orange-400 w-[95%] mx-auto my-2 text-black  grid md:grid-cols-4 gap-6 border-b border-white/20 pb-8 rounded-3xl p-3 md:p-6 text-sm md:text-sm font-darazs">
+        {/* 🏢 Contact Details */}
         <div>
-          <button className="w-full flex justify-between items-center md:block text-left font-semibold mb-4">
-            Contact Details
-          </button>
+          <div className="flex gap-3 items-center justify-start md:justify-start mb-4">
+            <img
+              src="/logg.png"
+              className="w-10 h-10 bg-black/40 rounded-full object-cover"
+              alt="BZ Cart Logo"
+            />
+            <h2 className="text-xl font-bold">BZ Cart</h2>
+          </div>
 
-          <div className="text-xs md:text-sm space-y-3 ">
+          <div className="space-y-2">
             <div className="flex items-start gap-2">
-              <FaLocationDot className="text-primary mt-1" />
-              <p>Dinga, Tehsil Kharian District Gujrat, Punjab –Pakistan</p>
+              <FaLocationDot className="text-black mt-1" />
+              <p>Dinga, Tehsil Kharian District Gujrat, Punjab – Pakistan</p>
             </div>
+
             <div className="flex items-start gap-2">
-              <FaPhoneAlt className="text-primary mt-1" />
+              <FaPhoneAlt className="text-black mt-1" />
               <a href="tel:03297609190" className="hover:underline">
-                03297609190
+                0329 7609190
               </a>
             </div>
 
             <div className="flex items-start gap-2">
-              <FaEnvelope className="text-primary mt-1" />
+              <FaEnvelope className="text-black mt-1" />
               <a href="mailto:info@bzcart.store" className="hover:underline">
                 info@bzcart.store
-              </a>
-            </div>
-
-            <p>Customer Support: 7 Days a Week, 9:00am - 10:00pm</p>
-
-            {/* Social Icons */}
-            <div className="hidden md:flex gap-4 text-xl ">
-              <a
-                target="_blank"
-                href="https://www.facebook.com/share/1D4cs4MYZy/"
-                rel="noopener noreferrer"
-                className="p-3 rounded-full bg-[#1877F2]/30 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
-              >
-                <FaFacebookF />
-              </a>
-              <a
-                target="_blank"
-                href="https://www.instagram.com/bzcart"
-                rel="noopener noreferrer"
-                className="p-3 rounded-full bg-[#E4405F]/30 text-[#E4405F] hover:bg-[#E4405F] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
-              >
-                <FaInstagram />
-              </a>
-              <a
-                href="https://www.tiktok.com/@bzcart.store"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 rounded-full bg-gray-700/30  hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
-              >
-                <FaTiktok />
-              </a>
-              <a
-                href="https://www.youtube.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 rounded-full bg-[#FF0000]/30 text-[#FF0000] hover:bg-[#FF0000] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
-              >
-                <FaYoutube />
               </a>
             </div>
           </div>
         </div>
 
-        {/* Customer Services */}
+        {/* 💬 Customer Services */}
         <div>
           <button
             onClick={() => toggleSection("services")}
-            className="w-full flex justify-between items-center md:block text-left text-sm font-semibold mb-4"
+            className="w-full flex justify-between items-center md:block text-left font-semibold md:mb-3"
           >
             Customer Services
             <IoIosArrowDown
@@ -100,22 +68,28 @@ const Footer = () => {
             />
           </button>
           <ul
-            className={`space-y-2 text-sm md:block ${
+            className={`space-y-1 md:block ${
               open === "services" ? "block" : "hidden"
             }`}
           >
-            <li>Contact Us and Location</li>
-            <li>Delivery Info</li>
-            <li>FAQs</li>
-            <li>BZCart-Loyalty</li>
+            <li className="hover:text-black transition-colors">
+              Contact Us & Location
+            </li>
+            <li className="hover:text-black transition-colors">
+              Delivery Info
+            </li>
+            <li className="hover:text-black transition-colors">FAQs</li>
+            <li className="hover:text-black transition-colors">
+              BZCart Loyalty
+            </li>
           </ul>
         </div>
 
-        {/* Information */}
+        {/* 📘 Information */}
         <div>
           <button
             onClick={() => toggleSection("info")}
-            className="w-full flex justify-between items-center md:block text-left text-sm font-semibold mb-4"
+            className="w-full flex justify-between items-center md:block text-left font-semibold md:mb-3"
           >
             Information
             <IoIosArrowDown
@@ -125,32 +99,49 @@ const Footer = () => {
             />
           </button>
           <ul
-            className={`space-y-2 text-sm md:block ${
+            className={`space-y-1 md:block ${
               open === "info" ? "block" : "hidden"
             }`}
           >
-             <li>
-            <Link to="/about" className="hover:text-primary">About Us</Link>
-          </li>
-          <li>
-            <Link to="/returnandrefund" className="hover:text-primary">Return & Refund</Link>
-          </li>
-          <li>
-            <Link to="/privacypolicy" className="hover:text-primary">Privacy Policy</Link>
-          </li>
-          <li>
-            <Link to="/termsandconditions" className="hover:text-primary">Terms & Conditions</Link>
-          </li>
+            <li>
+              <Link to="/about" className="hover:text-black transition-colors">
+                About Us
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/returnandrefund"
+                className="hover:text-black transition-colors"
+              >
+                Return & Refund
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/privacypolicy"
+                className="hover:text-black transition-colors"
+              >
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/termsandconditions"
+                className="hover:text-black transition-colors"
+              >
+                Terms & Conditions
+              </Link>
+            </li>
           </ul>
         </div>
 
-        {/* Newsletter */}
+        {/* ✉️ Newsletter */}
         <div>
           <button
             onClick={() => toggleSection("newsletter")}
-            className="w-full flex justify-between items-center md:block text-left text-sm font-semibold mb-4"
+            className="w-full flex justify-between items-center md:block text-left font-semibold mb-3"
           >
-            Subscribe our Newsletter
+            Subscribe to our Newsletter
             <IoIosArrowDown
               className={`md:hidden transition-transform ${
                 open === "newsletter" ? "rotate-180" : ""
@@ -160,26 +151,26 @@ const Footer = () => {
           <div
             className={`md:block ${open === "newsletter" ? "block" : "hidden"}`}
           >
-            <p className="text-sm mb-3">
-              Get the latest offers and promotions!
-            </p>
-            <div className="flex mb-4">
+            <p className="mb-3">Get the latest offers and promotions!</p>
+            <div className="flex mb-3">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="px-3 py-2 w-full rounded-l-lg text-black outline-none"
+                className="px-2 py-1.5 w-full rounded-l-lg text-black text-xs outline-none"
               />
-              <button className="bg-primary px-4 py-2 rounded-r-lg font-medium">
+              <button className="bg-black px-3 py-1.5 rounded-r-lg font-medium text-xs text-white hover:bg-gray-900 transition">
                 Subscribe
               </button>
             </div>
           </div>
-          <div className="flex my-6 md:hidden items-center justify-center gap-6 text-xl">
+
+          {/* 🌐 Social Icons */}
+          <div className="flex mt-5 items-center justify-center gap-4 text-lg">
             <a
               target="_blank"
               href="https://www.facebook.com/share/1D4cs4MYZy/"
               rel="noopener noreferrer"
-              className="p-3 rounded-full bg-[#1877F2]/30 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
+              className="p-2 rounded-full bg-[#1877F2]/30 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
             >
               <FaFacebookF />
             </a>
@@ -187,7 +178,7 @@ const Footer = () => {
               target="_blank"
               href="https://www.instagram.com/bzcart"
               rel="noopener noreferrer"
-              className="p-3 rounded-full bg-[#E4405F]/30 text-[#E4405F] hover:bg-[#E4405F] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
+              className="p-2 rounded-full bg-[#E4405F]/30 text-[#E4405F] hover:bg-[#E4405F] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
             >
               <FaInstagram />
             </a>
@@ -195,7 +186,7 @@ const Footer = () => {
               href="https://www.tiktok.com/@bzcart.store"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 rounded-full bg-gray-700/30  hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
+              className="p-2 rounded-full bg-gray-700/30 hover:bg-gray-700 hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
             >
               <FaTiktok />
             </a>
@@ -203,7 +194,7 @@ const Footer = () => {
               href="https://www.youtube.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 rounded-full bg-[#FF0000]/30 text-[#FF0000] hover:bg-[#FF0000] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
+              className="p-2 rounded-full bg-[#FF0000]/30 text-[#FF0000] hover:bg-[#FF0000] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
             >
               <FaYoutube />
             </a>
@@ -211,9 +202,18 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="text-center pt-6 text-sm">
-        <p>Copyright © 2025 BZCart. All rights reserved.</p>
+      {/* ⚙️ Bottom Bar */}
+      <div className="bg-black text-center py-5 text-white font-daraz text border-t border-white/10">
+        <p className="text-white/80 tracking-wide">
+          Copyright © {new Date().getFullYear()}{" "}
+          <span className="text-primary font-semibold hover:text-white transition-all duration-300">
+            Codes Spark
+          </span>
+          . All rights reserved.
+        </p>
+        <p className="mt-1 text-[10px] text-white/50">
+          Crafted with ❤️ by <span className="text-primary">BZCart</span>
+        </p>
       </div>
     </footer>
   );

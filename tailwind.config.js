@@ -11,6 +11,7 @@ module.exports = {
       fontFamily: {
         daraz: ["'Poppins'", "sans-serif"], // ✅ custom font
         darazs: ["'Assistant'", "sans-serif"], // ✅ custom font
+        darazss: ["'Poppins'", "sans-serif"],
       },
       keyframes: {
         slideInLeft: {

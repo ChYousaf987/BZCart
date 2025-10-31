@@ -34,6 +34,7 @@ const SingleProduct = () => {
   );
   const mainSliderRef = useRef(null);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
@@ -654,7 +655,7 @@ const SingleProduct = () => {
             ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
             : ""
           : product.product_stock > 0
-          ? "bg-gradient-to-r from-orange-500 to-orange-700 hover:shadow-lg hover:scale-[1.02]"
+          ? "bg-white hover:shadow-lg hover:scale-[1.02]"
           : "bg-gray-300 cursor-not-allowed"
       }`}
                   disabled={
@@ -829,23 +830,46 @@ const SingleProduct = () => {
           {activeTab === "reviews" && (
             <div className="mt-4">
               {user && (
-                <div className="mb-6 p-4 bg-gray-50 rounded-md">
+                <div className="mb-6 p-4 bg-gray-50 rounded-md shadow-sm border border-gray-100">
                   <h3 className="font-semibold text-lg mb-2">Write a Review</h3>
                   <form onSubmit={handleReviewSubmit}>
+                    {/* ⭐ Star Rating */}
                     <div className="mb-3">
                       <label className="block text-gray-700 mb-1">Rating</label>
-                      <select
-                        value={rating}
-                        onChange={(e) => setRating(Number(e.target.value))}
-                        className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-600"
-                      >
+                      <div className="flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((star) => (
-                          <option key={star} value={star}>
-                            {star} Star{star > 1 ? "s" : ""}
-                          </option>
+                          <svg
+                            key={star}
+                            onClick={() => setRating(star)}
+                            onMouseEnter={() => setHoverRating(star)}
+                            onMouseLeave={() => setHoverRating(0)}
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill={
+                              star <= (hoverRating || rating)
+                                ? "#facc15"
+                                : "none"
+                            } // yellow fill
+                            stroke="#f59e0b"
+                            strokeWidth="2"
+                            className="w-7 h-7 cursor-pointer transition-transform transform hover:scale-110"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.976-2.89a1 1 0 00-1.176 0l-3.976 2.89c-.785.57-1.84-.197-1.54-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.078 10.1c-.783-.57-.38-1.81.588-1.81h4.915a1 1 0 00.95-.69l1.518-4.674z"
+                            />
+                          </svg>
                         ))}
-                      </select>
+                      </div>
+                      {rating > 0 && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          Selected: {rating} star{rating > 1 ? "s" : ""}
+                        </p>
+                      )}
                     </div>
+
+                    {/* 📝 Review Textarea */}
                     <div className="mb-3">
                       <label className="block text-gray-700 mb-1">
                         Your Review
@@ -858,6 +882,8 @@ const SingleProduct = () => {
                         placeholder="Write your review here..."
                       ></textarea>
                     </div>
+
+                    {/* 🚀 Submit Button */}
                     <button
                       type="submit"
                       className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition duration-300"
@@ -868,6 +894,7 @@ const SingleProduct = () => {
                 </div>
               )}
 
+              {/* 🧭 Reviews List */}
               {reviewsLoading ? (
                 <Loader />
               ) : reviewsError ? (
