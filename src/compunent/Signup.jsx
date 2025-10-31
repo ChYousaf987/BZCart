@@ -326,7 +326,7 @@ export default function Signup({ setIsSignIn }) {
           style={{ backgroundImage: "url('/logg.png')" }}
         ></div>
 
-        <div className="w-full max-w-sm bg-white/70 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/40 relative z-10">
+        <div className="w-full h-[70vh] max-w-sm bg-white/70 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/40 relative z-10">
           {/* Header */}
           <div className="relative bg-gradient-to-br from-orange-600 to-orange-400 py-10 px-6 text-center text-white rounded-b-3xl shadow-lg">
             <button
@@ -346,7 +346,12 @@ export default function Signup({ setIsSignIn }) {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="px-6 py-8 space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            className={`px-6  ${
+              showOtpInput ? "py-0 space-y-3 -mt-3" : "py-8 space-y-6"
+            } `}
+          >
             {!showOtpInput ? (
               <>
                 {/* Name */}
@@ -419,12 +424,14 @@ export default function Signup({ setIsSignIn }) {
                 </div>
               </>
             ) : (
-              <div className="flex flex-col items-center space-y-6">
-                <OtpSVG />
-                <p className="text-gray-700 text-sm text-center">
+              <div className="flex flex-col items-center space-y-">
+                <div className="w-40">
+                  <OtpSVG />
+                </div>
+                <p className="text-gray-700 text-sm text-center ">
                   We’ve sent a 6-digit verification code to your email.
                 </p>
-                <div className="flex space-x-3">
+                <div className="flex space-x-3 my-4">
                   {otp.map((data, index) => (
                     <input
                       key={index}

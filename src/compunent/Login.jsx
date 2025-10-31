@@ -44,9 +44,9 @@ export default function Login({ setIsSignIn }) {
           style={{ backgroundImage: "url('/logg.png')" }}
         ></div>
 
-        <div className="w-full max-w-sm bg-white/70 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/40 relative z-10">
+        <div className="w-full h-[70vh] max-w-sm bg-white/70 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/40 relative z-10">
           {/* Header */}
-          <div className="relative bg-gradient-to-br from-orange-600 to-orange-400 py-10 px-6 text-center text-white rounded-b-3xl shadow-lg">
+          <div className="relative mb-3 bg-gradient-to-br from-orange-600 to-orange-400 py-10 px-6 text-center text-white rounded-b-3xl shadow-lg">
             <button
               onClick={() => setIsSignIn(false)}
               className="absolute top-6 left-6 text-white/90 hover:text-white transition"
@@ -60,7 +60,7 @@ export default function Login({ setIsSignIn }) {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="px-6 py-8 space-y-6">
+          <form onSubmit={handleSubmit} className="px-6 py-8 space-y-8">
             {/* Email */}
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-2">
@@ -94,7 +94,7 @@ export default function Login({ setIsSignIn }) {
             </div>
 
             {/* Remember me */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between my-3">
               <label className="flex items-center space-x-2 text-sm text-gray-600">
                 <input type="checkbox" className="w-4 h-4 accent-orange-500" />
                 <span>Remember me</span>

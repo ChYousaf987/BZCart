@@ -20,7 +20,7 @@ const Footer = () => {
 
   return (
     <footer className="pt">
-      <div className="bg-orange-400 w-[95%] mx-auto my-2 text-black  grid md:grid-cols-4 gap-6 border-b border-white/20 pb-8 rounded-3xl p-3 md:p-6 text-sm md:text-sm font-darazs">
+      <div className="bg-primary w-[95%] mx-auto my-2 text-black  grid md:grid-cols-4 gap-6 border-b border-white/20 pb-8 rounded-3xl p-3 md:p-6 text-sm md:text-sm font-darazs">
         {/* 🏢 Contact Details */}
         <div>
           <div className="flex gap-3 items-center justify-start md:justify-start mb-4">
@@ -178,7 +178,7 @@ const Footer = () => {
               target="_blank"
               href="https://www.instagram.com/bzcart"
               rel="noopener noreferrer"
-              className="p-2 rounded-full bg-[#E4405F]/30 text-[#E4405F] hover:bg-[#E4405F] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
+              className="p-2 rounded-full bg-[#ff365b]/30 text-[#ad0322] hover:bg-[#E4405F] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
             >
               <FaInstagram />
             </a>
@@ -194,7 +194,7 @@ const Footer = () => {
               href="https://www.youtube.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-full bg-[#FF0000]/30 text-[#FF0000] hover:bg-[#FF0000] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
+              className="p-2 rounded-full bg-[#FF0000]/30 text-[#b70000] hover:bg-[#FF0000] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
             >
               <FaYoutube />
             </a>
