@@ -6,6 +6,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { toSlug } from "../utils/slugify";
 
 const AllProducts = () => {
   const dispatch = useDispatch();
@@ -113,7 +114,9 @@ const AllProducts = () => {
                   )}
 
                   {/* Product Image */}
-                  <Link to={`/product/${product._id}`}>
+                  <Link
+                    to={`/product/${encodeURIComponent(product.product_name)}`}
+                  >
                     <div
                       className="md:h-48 flex items-center justify-center"
                       style={{
