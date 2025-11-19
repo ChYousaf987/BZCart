@@ -20,7 +20,7 @@ import { addToCart, fetchCart } from "../features/cart/cartSlice";
 import { v4 as uuidv4 } from "uuid";
 import Loader from "./Loader";
 import Slider from "react-slick";
-import { fromSlug } from "../utils/slugify";
+import { fromSlug, toSlug } from "../utils/slugify";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -351,7 +351,7 @@ const SingleProduct = () => {
   };
 
   const handleOrderOnWhatsapp = () => {
-    const productUrl = `${window.location.origin}/product/${encodeURIComponent(
+    const productUrl = `${window.location.origin}/product/${toSlug(
       product.product_name
     )}`;
     const message =

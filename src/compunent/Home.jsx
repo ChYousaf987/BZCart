@@ -181,7 +181,7 @@ const Home = () => {
                           )}
 
                           {/* Product Image */}
-                          <Link to={`/product/${product._id}`}>
+                          <Link to={`/product/${toSlug(product.product_name)}`}>
                             <div
                               className="md:h-48 flex items-center justify-center"
                               style={{

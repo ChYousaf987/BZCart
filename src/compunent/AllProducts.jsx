@@ -114,9 +114,7 @@ const AllProducts = () => {
                   )}
 
                   {/* Product Image */}
-                  <Link
-                    to={`/product/${encodeURIComponent(product.product_name)}`}
-                  >
+                  <Link to={`/product/${toSlug(product.product_name)}`}>
                     <div
                       className="md:h-48 flex items-center justify-center"
                       style={{
