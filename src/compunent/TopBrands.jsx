@@ -205,7 +205,7 @@ const TopBrands = ({ sortedProducts, loading }) => {
                     >
                       <div
                         id={`product-${toSlug(product.product_name)}`}
-                        className="h-60 md:h-48 flex items-center justify-center"
+                        className=" md:h-48 flex items-center justify-center"
                         style={{
                           backgroundColor: product.bg_color || "#f3f4f6",
                           position: "relative",
