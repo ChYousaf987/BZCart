@@ -25,8 +25,7 @@ export const fetchProductById = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await retryRequest(() =>
-        axios.get(`${API_URL}/products/product/${id}`, { timeout: 10000 })
-      );
+        axios.get(`${API_URL}/products/product/${id}`, { timeout: 10000 })      );
       return response.data;
     } catch (err) {
       console.error("fetchProductById error:", err.message, err.code);

@@ -8,9 +8,10 @@ import Footer from "./Footer";
 import Loader from "./Loader";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { toSlug, fromSlug } from "../utils/slugify";
 
 const CategoryProducts = () => {
-  const { categoryId } = useParams();
+  const { categoryName } = useParams();
   const dispatch = useDispatch();
   const { relatedProducts, relatedLoading, relatedError } = useSelector(
     (state) => state.products
@@ -97,16 +98,75 @@ const CategoryProducts = () => {
     const fetchCategoryData = async () => {
       setLoadingSubs(true);
       try {
-        const { data: cat } = await axios.get(
-          `https://bzbackend.online/api/categories/category/${categoryId}`
-        );
-        setCategory(cat);
-
+        // Fetch all categories and resolve the category ID by name
         const { data: allCats } = await axios.get(
           `https://bzbackend.online/api/categories/categories`
         );
+
+        // Helper to normalize names for matching (must match toSlug logic)
+        const normalize = (str) =>
+          String(str)
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "-") // spaces to hyphens
+            .replace(/[^\w\-]/g, "") // remove special chars (including &)
+            .replace(/\-+/g, "-"); // multiple hyphens to single
+
+        console.log("Looking for category slug:", categoryName);
+        const catList = allCats.map((c) => ({
+          name: c.name,
+          normalized: normalize(c.name),
+        }));
+        console.table(catList);
+
+        // Try to find category by multiple strategies:
+        let found = allCats.find((c) => c._id === categoryName);
+
+        if (!found) {
+          // Direct case-insensitive name match
+          found = allCats.find(
+            (c) =>
+              String(c.name).toLowerCase() ===
+              String(categoryName).toLowerCase()
+          );
+        }
+
+        if (!found) {
+          // Convert slug to name and match (normalized)
+          const normalized = normalize(categoryName);
+          console.log("Normalized lookup:", normalized);
+          found = allCats.find((c) => {
+            const catNorm = normalize(c.name);
+            console.log(`Comparing "${catNorm}" with "${normalized}"`);
+            return catNorm === normalized;
+          });
+        }
+
+        if (!found) {
+          // Try fromSlug match
+          const decoded = fromSlug(categoryName || "");
+          found = allCats.find(
+            (c) =>
+              String(c.name).toLowerCase().trim() ===
+              String(decoded).toLowerCase().trim()
+          );
+        }
+
+        if (!found) {
+          console.error("Category not found. Slug:", categoryName);
+          console.log(
+            "Available categories:",
+            allCats.map((c) => c.name)
+          );
+          toast.error("Category not found");
+          return;
+        }
+
+        console.log("Found category:", found.name);
+        setCategory(found);
+
         const subs = allCats.filter(
-          (cat) => cat.parent_category?._id === categoryId
+          (c) => c.parent_category?._id === found._id
         );
         setSubCategories(subs);
 
@@ -126,7 +186,7 @@ const CategoryProducts = () => {
         } else {
           // If no saved subcategory or invalid, load main category products
           const { data: catProducts } = await axios.get(
-            `https://bzbackend.online/api/products/category/${categoryId}`
+            `https://bzbackend.online/api/products/category/${found._id}`
           );
           let allProducts = [...catProducts];
           if (subs.length > 0) {
@@ -156,7 +216,7 @@ const CategoryProducts = () => {
       }
     };
     fetchCategoryData();
-  }, [categoryId]);
+  }, [categoryName]);
 
   const handleSubcategoryClick = async (subId) => {
     setActiveSub(subId);
@@ -175,7 +235,7 @@ const CategoryProducts = () => {
       } else {
         // Load all products for the main category and its subcategories
         const { data: catProducts } = await axios.get(
-          `https://bzbackend.online/api/products/category/${categoryId}`
+          `https://bzbackend.online/api/products/category/${category._id}`
         );
         let allProducts = [...catProducts];
         if (subCategories.length > 0) {
@@ -402,7 +462,9 @@ const CategoryProducts = () => {
                         </span>
                       )}
                       <Link
-                        to={`/product/${product._id}`}
+                        to={`/product/${encodeURIComponent(
+                          product.product_name
+                        )}`}
                         className="block"
                         onClick={() =>
                           localStorage.setItem("clickedProduct", product._id)

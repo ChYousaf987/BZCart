@@ -14,6 +14,7 @@ const BeatSeller = React.lazy(() => import("./BeatSeller"));
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import axios from "axios";
+import { toSlug } from "../utils/slugify";
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false };
@@ -109,7 +110,7 @@ const Home = () => {
                   {filteredCategories.map((category, index) => (
                     <Link
                       key={`${category._id}-${index}`}
-                      to={`/category/${category._id}`}
+                      to={`/category/${toSlug(category.name)}`}
                       state={{ scrollY: window.scrollY }}
                       className="flex flex-col items-center ml-4 sm:ml-0 text-center snap-start flex-shrink-0 w-24 sm:w-36"
                     >
@@ -176,7 +177,7 @@ const Home = () => {
                           )}
 
                           {/* Product Image */}
-                          <Link to={`/product/${product._id}`}>
+                          <Link to={`/product/${toSlug(product.product_name)}`}>
                             <div
                               className="md:h-48 flex items-center justify-center"
                               style={{
@@ -282,7 +283,7 @@ const Home = () => {
         </Suspense>
         <Suspense fallback={<Skeleton height={300} />}>
           {/* <LazyWrapper> */}
-            <TopBrands sortedProducts={sortedProducts} loading={loading} />
+          <TopBrands sortedProducts={sortedProducts} loading={loading} />
           {/* </LazyWrapper> */}
         </Suspense>
         <Suspense fallback={<Skeleton height={200} />}>
@@ -290,7 +291,7 @@ const Home = () => {
             <PromoBanner />
           </LazyWrapper>
         </Suspense>
-        <Suspense fallback={<Skeleton  />}>
+        <Suspense fallback={<Skeleton />}>
           <Footer />
         </Suspense>
       </ErrorBoundary>

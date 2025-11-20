@@ -19,12 +19,13 @@ import { addToCart, fetchCart } from "../features/cart/cartSlice";
 import { v4 as uuidv4 } from "uuid";
 import Loader from "./Loader";
 import Slider from "react-slick";
+import { fromSlug, toSlug } from "../utils/slugify";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const SingleProduct = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { productName } = useParams();
   const dispatch = useDispatch();
   const { product, loading, error, reviews, reviewsLoading, reviewsError } =
     useSelector((state) => state.products);
@@ -39,6 +40,7 @@ const SingleProduct = () => {
   const [rating, setRating] = useState(5);
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
+  const [resolvedProductId, setResolvedProductId] = useState(null);
   const WHATSAPP_NUMBER = "923297609190";
   const [guestId] = useState(() => {
     const storedGuestId = localStorage.getItem("guestId");
@@ -62,56 +64,106 @@ const SingleProduct = () => {
       token,
     });
 
-    // Check if product is already in Redux store
-    if (!product || product._id !== id) {
-      dispatch(fetchProductById(id))
-        .unwrap()
-        .then((productData) => {
-          if (productData?.product_images?.[0]) {
-            setSelectedImage(productData.product_images[0]);
-          }
-          if (productData?.sizes?.length > 0) {
-            const availableSize = productData.sizes.find(
-              (size) => size.stock > 0
-            );
-            setSelectedSize(availableSize ? availableSize.size : "");
-            console.log(
-              "SingleProduct - Initial selected size:",
-              availableSize ? availableSize.size : "None"
-            );
-          }
-        })
-        .catch((err) => {
-          console.error("SingleProduct - Error loading product:", err);
-          toast.error(err || "Failed to load product", {
-            position: "top-right",
-          });
-        });
+    // Resolve product name to ID
+    const resolveProduct = async () => {
+      try {
+        // Helper to normalize names for matching (must match toSlug logic)
+        const normalize = (str) =>
+          String(str)
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "-") // spaces to hyphens
+            .replace(/[^\w\-]/g, "") // remove special chars (including &)
+            .replace(/\-+/g, "-"); // multiple hyphens to single
 
-      dispatch(fetchReviews(id))
-        .unwrap()
-        .catch((err) => {
-          console.error("SingleProduct - Error loading reviews:", err);
-          toast.error(err || "Failed to load reviews", {
-            position: "top-right",
-          });
-        });
-    } else {
-      // Use existing product data
-      if (product.product_images?.[0] && !selectedImage) {
-        setSelectedImage(product.product_images[0]);
-      }
-      if (product.sizes?.length > 0 && !selectedSize) {
-        const availableSize = product.sizes.find((size) => size.stock > 0);
-        setSelectedSize(availableSize ? availableSize.size : "");
-        console.log(
-          "SingleProduct - Using existing selected size:",
-          availableSize ? availableSize.size : "None"
+        const decodedName = fromSlug(productName || "");
+
+        // Try to find product by name from all products endpoint
+        const response = await fetch(
+          "https://bzbackend.online/api/products/products"
         );
-      }
-    }
+        const allProducts = await response.json();
 
-    if (!hasFetchedCart.current && !userLoading) {
+        // Try multiple matching strategies
+        let found = allProducts.find(
+          (p) =>
+            String(p.product_name).toLowerCase() ===
+            String(productName).toLowerCase()
+        );
+
+        if (!found) {
+          // Normalized match (slugs match)
+          const normalized = normalize(productName);
+          found = allProducts.find(
+            (p) => normalize(p.product_name) === normalized
+          );
+        }
+
+        if (!found) {
+          // FromSlug match
+          found = allProducts.find(
+            (p) =>
+              String(p.product_name).toLowerCase() ===
+              String(decodedName).toLowerCase()
+          );
+        }
+
+        if (!found) {
+          console.error("Product not found. Slug:", productName);
+          toast.error("Product not found");
+          navigate("/products");
+          return;
+        }
+
+        console.log("Found product:", found.product_name);
+        setResolvedProductId(found._id);
+
+        // Now fetch the product by ID
+        dispatch(fetchProductById(found._id))
+          .unwrap()
+          .then((productData) => {
+            if (productData?.product_images?.[0]) {
+              setSelectedImage(productData.product_images[0]);
+            }
+            if (productData?.sizes?.length > 0) {
+              const availableSize = productData.sizes.find(
+                (size) => size.stock > 0
+              );
+              setSelectedSize(availableSize ? availableSize.size : "");
+              console.log(
+                "SingleProduct - Initial selected size:",
+                availableSize ? availableSize.size : "None"
+              );
+            }
+          })
+          .catch((err) => {
+            console.error("SingleProduct - Error loading product:", err);
+            toast.error(err || "Failed to load product", {
+              position: "top-right",
+            });
+          });
+
+        dispatch(fetchReviews(found._id))
+          .unwrap()
+          .catch((err) => {
+            console.error("SingleProduct - Error loading reviews:", err);
+            toast.error(err || "Failed to load reviews", {
+              position: "top-right",
+            });
+          });
+      } catch (err) {
+        console.error("Error resolving product:", err);
+        toast.error("Failed to load product");
+        navigate("/products");
+      }
+    };
+
+    resolveProduct();
+  }, [productName, dispatch, navigate]);
+
+  // Fetch cart after user/guest ID is established
+  useEffect(() => {
+    if (!hasFetchedCart.current && !userLoading && resolvedProductId) {
       if (!user && !guestId) {
         console.error("SingleProduct - Neither user nor guestId available");
         toast.error("Unable to load cart: No user or guest ID", {
@@ -133,7 +185,7 @@ const SingleProduct = () => {
     } else if (userLoading) {
       console.log("SingleProduct - Waiting for auth to resolve");
     }
-  }, [dispatch, id, guestId, user, userLoading, token, product]);
+  }, [dispatch, guestId, user, userLoading, token, resolvedProductId]);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -298,7 +350,9 @@ const SingleProduct = () => {
   };
 
   const handleOrderOnWhatsapp = () => {
-    const productUrl = `${window.location.origin}/product/${id}`;
+    const productUrl = `${window.location.origin}/product/${toSlug(
+      product.product_name
+    )}`;
     const message =
       `Hello! I want to order this product.\n\n` +
       `🛒 Product: ${product.product_name}\n` +
@@ -332,11 +386,11 @@ const SingleProduct = () => {
   };
 
   // Handle loading and error states
-  if (loading && (!product || product._id !== id)) {
+  if (loading && !product) {
     return <Loader />;
   }
 
-  if (error || !product || product._id !== id) {
+  if (error || !product) {
     return (
       <div className="text-center py-12">
         <p className="text-red-500">{error || "Product not found"}</p>

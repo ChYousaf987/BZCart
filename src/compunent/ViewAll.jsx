@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { toSlug } from "../utils/slugify";
 import { toast } from "react-toastify";
 import { fetchProducts } from "../features/products/productSlice";
 import Loader from "./Loader";
@@ -78,7 +79,10 @@ const ViewAll = () => {
                       className="group relative bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden"
                     >
                       {/* Image */}
-                      <Link to={`/product/${item._id}`} className="relative">
+                      <Link
+                        to={`/product/${encodeURIComponent(item.product_name)}`}
+                        className="relative"
+                      >
                         <div
                           className="md:h-48 flex items-center justify-center"
                           style={{

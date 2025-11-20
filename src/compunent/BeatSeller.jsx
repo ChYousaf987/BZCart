@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { fetchProducts } from "../features/products/productSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { toSlug } from "../utils/slugify";
 
 const BeatSeller = () => {
   const dispatch = useDispatch();
@@ -26,17 +27,17 @@ const BeatSeller = () => {
   // Restore scroll position on mount
   useEffect(() => {
     if (scrollRef.current) {
-      const savedScroll = localStorage.getItem('beatSellerScroll');
+      const savedScroll = localStorage.getItem("beatSellerScroll");
       if (savedScroll) {
         scrollRef.current.scrollLeft = parseInt(savedScroll, 10);
       }
     }
-  }, [filteredProducts.length]); // Wait until products are loaded
+  }, [filteredProducts.length]);
 
   // Save scroll position on scroll
   const handleScroll = () => {
     if (scrollRef.current) {
-      localStorage.setItem('beatSellerScroll', scrollRef.current.scrollLeft);
+      localStorage.setItem("beatSellerScroll", scrollRef.current.scrollLeft);
     }
   };
 
@@ -72,7 +73,13 @@ const BeatSeller = () => {
                 key={index}
                 className="flex flex-col items-center text-center bg-transparent"
               >
-                <Skeleton height={144} width={144} className="rounded-3xl" />
+                <div className="w-36 h-36 lg:w-40 lg:h-40 rounded-3xl border border-gray-200 overflow-hidden">
+                  <Skeleton
+                    height="100%"
+                    width="100%"
+                    className="rounded-3xl"
+                  />
+                </div>
                 <Skeleton width={100} height={20} className="mt-3" />
                 <Skeleton width={60} height={18} />
               </div>
@@ -90,7 +97,7 @@ const BeatSeller = () => {
         >
           {filteredProducts.map((product, index) => (
             <Link
-              to={`/product/${product._id}`}
+              to={`/product/${toSlug(product.product_name)}`}
               key={`${product._id}-${index}`}
               className="flex flex-col items-center text-center bg-transparent"
             >

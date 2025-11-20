@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { toSlug } from "../utils/slugify";
 import { fetchProducts } from "../features/products/productSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -44,7 +45,7 @@ const TopBrands = ({ sortedProducts, loading }) => {
     if (clickedProduct && !hasScrolled) {
       // Ensure the clicked product is visible by updating visibleCount
       const productIndex = sortedProducts.findIndex(
-        (product) => product._id === clickedProduct
+        (product) => toSlug(product.product_name) === clickedProduct
       );
       if (productIndex !== -1) {
         setVisibleCount((prev) => Math.max(prev, productIndex + 1));
@@ -194,14 +195,17 @@ const TopBrands = ({ sortedProducts, loading }) => {
 
                     {/* Product Image */}
                     <Link
-                      to={`/product/${product._id}`}
+                      to={`/product/${toSlug(product.product_name)}`}
                       onClick={() =>
-                        localStorage.setItem("clickedProduct", product._id)
+                        localStorage.setItem(
+                          "clickedProduct",
+                          toSlug(product.product_name)
+                        )
                       }
                     >
                       <div
-                        id={`product-${product._id}`}
-                        className="h-60 md:h-48 flex items-center justify-center"
+                        id={`product-${toSlug(product.product_name)}`}
+                        className=" md:h-48 flex items-center justify-center"
                         style={{
                           backgroundColor: product.bg_color || "#f3f4f6",
                           position: "relative",

@@ -108,8 +108,11 @@ const App = () => {
           <Route path="/track-order/:id" element={<TrackOrder />} />
           <Route path="/orders" element={<OrdersList />} />
           <Route path="/deal/:id" element={<SingleDeal />} />
-          <Route path="/product/:id" element={<SingleProduct />} />
-          <Route path="/category/:categoryId" element={<CategoryProducts />} />
+          <Route path="/product/:productName" element={<SingleProduct />} />
+          <Route
+            path="/category/:categoryName"
+            element={<CategoryProducts />}
+          />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/deals" element={<AllDeals />} />
           <Route path="/Contact" element={<ContactPage />} />

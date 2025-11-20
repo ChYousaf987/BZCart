@@ -9,6 +9,7 @@ import axios from "axios";
 import Footer from "./Footer";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { toSlug } from "../utils/slugify";
 
 const SearchPage = () => {
   const dispatch = useDispatch();
@@ -78,7 +79,7 @@ const SearchPage = () => {
               {filteredCategories.map((cat) => (
                 <Link
                   key={cat._id}
-                  to={`/category/${cat._id}`}
+                  to={`/category/${toSlug(cat.name)}`}
                   className="px-4 py-2 border rounded hover:bg-orange-50"
                 >
                   {cat.name}
@@ -104,7 +105,7 @@ const SearchPage = () => {
               {filteredProducts.map((p) => (
                 <Link
                   key={p._id}
-                  to={`/product/${p._id}`}
+                  to={`/product/${toSlug(p.product_name)}`}
                   className="border rounded p-2 hover:shadow-lg"
                 >
                   <img

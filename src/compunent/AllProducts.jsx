@@ -5,6 +5,7 @@ import { fetchProducts } from "../features/products/productSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Footer from "./Footer";
+import { toSlug } from "../utils/slugify";
 
 const AllProducts = () => {
   const dispatch = useDispatch();
@@ -111,7 +112,7 @@ const AllProducts = () => {
                   )}
 
                   {/* Product Image */}
-                  <Link to={`/product/${product._id}`}>
+                  <Link to={`/product/${toSlug(product.product_name)}`}>
                     <div
                       className="md:h-48 flex items-center justify-center"
                       style={{
