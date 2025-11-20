@@ -4,7 +4,6 @@ import { useLocation, Link } from "react-router-dom";
 import { fetchProducts } from "../features/products/productSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 const AllProducts = () => {
@@ -59,7 +58,6 @@ const AllProducts = () => {
 
   return (
     <>
-      <Navbar />
       <div className="md:w-[95%] mx-auto px-2 md:px-0 py-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-8">
           {filter === "new-arrivals"

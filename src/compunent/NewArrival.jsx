@@ -11,12 +11,12 @@ const NewArrival = () => {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    if (!products.length) {
+    if (!products.length && !loading && !error) {
       dispatch(fetchProducts())
         .unwrap()
         .catch(() => {});
     }
-  }, [dispatch, products.length]);
+  }, [dispatch, products.length, loading, error]);
 
   // Filter products where isNewArrival is true
   const filteredProducts = useMemo(() => {
@@ -33,12 +33,22 @@ const NewArrival = () => {
     }
   }, [filteredProducts.length]); // Wait until products are loaded
 
-  // Save scroll position on scroll
+  // Save scroll position on scroll (throttled)
+  const scrollSaveTimeoutRef = useRef(null);
   const handleScroll = () => {
     if (scrollRef.current) {
-      localStorage.setItem("newArrivalScroll", scrollRef.current.scrollLeft);
+      if (scrollSaveTimeoutRef.current) clearTimeout(scrollSaveTimeoutRef.current);
+      scrollSaveTimeoutRef.current = setTimeout(() => {
+        localStorage.setItem("newArrivalScroll", scrollRef.current.scrollLeft);
+      }, 150);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (scrollSaveTimeoutRef.current) clearTimeout(scrollSaveTimeoutRef.current);
+    };
+  }, []);
 
   return (
     <div className="md:w-[95%] mx-auto px-2 md:px-0 pt-6">
@@ -72,12 +82,9 @@ const NewArrival = () => {
                 key={index}
                 className="flex flex-col items-center text-center bg-transparent"
               >
-                <div className="w-36 h-36 lg:w-40 lg:h-40 rounded-3xl border border-gray-200 overflow-hidden">
-                  <Skeleton height="100%" width="100%" className="rounded-3xl" />
-                </div>
+                <Skeleton height={144} width={144} className="rounded-3xl" />
                 <Skeleton width={100} height={20} className="mt-3" />
                 <Skeleton width={60} height={18} />
-                <Skeleton width={80} height={16} />
               </div>
             ))}
         </div>
@@ -132,4 +139,4 @@ const NewArrival = () => {
   );
 };
 
-export default NewArrival;
+export default React.memo(NewArrival);

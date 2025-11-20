@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 /* Import Montserrat from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&family=Cabin:wght@400;500;600;700&display=swap');
+/* Moved font imports to index.html for performance and to avoid PostCSS @import order warnings */
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&family=Cabin:wght@400;500;600;700&display=swap'); */
 
 
 .container {
@@ -20,8 +21,9 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;     /* Firefox */
 }
-@import "slick-carousel/slick/slick.css";
-@import "slick-carousel/slick/slick-theme.css";
+/* Removed slick CSS imports from global index.css; these are now imported within components using react-slick */
+/* @import "slick-carousel/slick/slick.css"; */
+/* @import "slick-carousel/slick/slick-theme.css"; */
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(5px); }
@@ -75,9 +77,10 @@
 /* bottom nav */
 
 /* Smooth transitions for theme changes */
-* {
+/* Disabled global transitions to reduce layout thrashing and repaint costs */
+/* * {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-}
+} */
 /* Card hover effects */
 .card-hover {
   transition: all 0.2s ease;

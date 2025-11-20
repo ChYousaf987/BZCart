@@ -2,7 +2,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchProducts } from "../features/products/productSlice";
 import React, { Suspense, useEffect, useState, useMemo } from "react";
-const Navbar = React.lazy(() => import("./Navbar"));
 const Slider = React.lazy(() => import("./Slider"));
 const ProductDeals = React.lazy(() => import("./ProductDeals"));
 const TopCategories = React.lazy(() => import("./TopCategories"));
@@ -52,9 +51,6 @@ const Home = () => {
   return (
     <div className="relative font-daraz bg-white">
       <ErrorBoundary>
-        <Suspense fallback={<Skeleton height={60} />}>
-          <Navbar />
-        </Suspense>
 
         {/* Product Skeletons on Initial Load */}
         {loading && !products.length && !searchTerm && (

@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 import {
   FaCheckCircle,
@@ -11,8 +10,6 @@ import {
 const About = () => {
   return (
     <div className="bg-slate-50">
-      <Navbar />
-
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-primary to-dark text-white py-20 md:py-28 text-center overflow-hidden">
         <div className="relative z-10 max-w-3xl mx-auto px-4">

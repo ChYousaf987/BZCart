@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Navbar from "./Navbar";
 import Loader from "./Loader";
 
 const CategoriesPage = () => {
@@ -48,7 +47,6 @@ const CategoriesPage = () => {
 
   return (
     <>
-      <Navbar />
       <div className="w-[95%] mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6 text-center border-b-2 border-[#f06621] inline-block pb-1">
           Browse <span className="text-[#f06621]">Categories</span>

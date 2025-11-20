@@ -20,33 +20,33 @@ const Footer = () => {
 
   return (
     <footer className="pt">
-      <div className="bg-primary w-[95%] mx-auto my-2 text-black  grid md:grid-cols-4 gap-6 border-b border-white/20 pb-8 rounded-3xl p-3 md:p-6 text-sm md:text-sm font-darazs">
+      <div className="bg-[#f99d41] w-[95%] mx-auto my-2 text-white  grid md:grid-cols-4 gap-6 border-b border-white/20 pb-8 rounded-3xl p-3 md:p-6 text-sm md:text-sm font-darazs">
         {/* 🏢 Contact Details */}
         <div>
           <div className="flex gap-3 items-center justify-start md:justify-start mb-4">
             <img
               src="/logg.png"
-              className="w-10 h-10 bg-black/40 rounded-full object-cover"
+              className="w-10 h-10 bg-white/70 rounded-full object-cover"
               alt="BZ Cart Logo"
             />
-            <h2 className="text-xl font-bold">BZ Cart</h2>
+            <h2 className="text-xl font-bold">BZ Cart.store</h2>
           </div>
 
           <div className="space-y-2">
             <div className="flex items-start gap-2">
-              <FaLocationDot className="text-black mt-1" />
+              <FaLocationDot className="text-white mt-1" />
               <p>Dinga, Tehsil Kharian District Gujrat, Punjab – Pakistan</p>
             </div>
 
             <div className="flex items-start gap-2">
-              <FaPhoneAlt className="text-black mt-1" />
+              <FaPhoneAlt className="text-white mt-1" />
               <a href="tel:03297609190" className="hover:underline">
                 0329 7609190
               </a>
             </div>
 
             <div className="flex items-start gap-2">
-              <FaEnvelope className="text-black mt-1" />
+              <FaEnvelope className="text-white mt-1" />
               <a href="mailto:info@bzcart.store" className="hover:underline">
                 info@bzcart.store
               </a>
@@ -72,14 +72,14 @@ const Footer = () => {
               open === "services" ? "block" : "hidden"
             }`}
           >
-            <li className="hover:text-black transition-colors">
+            <li className="hover:text-white transition-colors">
               Contact Us & Location
             </li>
-            <li className="hover:text-black transition-colors">
+            <li className="hover:text-white transition-colors">
               Delivery Info
             </li>
-            <li className="hover:text-black transition-colors">FAQs</li>
-            <li className="hover:text-black transition-colors">
+            <li className="hover:text-white transition-colors">FAQs</li>
+            <li className="hover:text-white transition-colors">
               BZCart Loyalty
             </li>
           </ul>
@@ -104,14 +104,14 @@ const Footer = () => {
             }`}
           >
             <li>
-              <Link to="/about" className="hover:text-black transition-colors">
+              <Link to="/about" className="hover:text-white transition-colors">
                 About Us
               </Link>
             </li>
             <li>
               <Link
                 to="/returnandrefund"
-                className="hover:text-black transition-colors"
+                className="hover:text-white transition-colors"
               >
                 Return & Refund
               </Link>
@@ -119,7 +119,7 @@ const Footer = () => {
             <li>
               <Link
                 to="/privacypolicy"
-                className="hover:text-black transition-colors"
+                className="hover:text-white transition-colors"
               >
                 Privacy Policy
               </Link>
@@ -127,7 +127,7 @@ const Footer = () => {
             <li>
               <Link
                 to="/termsandconditions"
-                className="hover:text-black transition-colors"
+                className="hover:text-white transition-colors"
               >
                 Terms & Conditions
               </Link>
@@ -156,7 +156,7 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="px-2 py-1.5 w-full rounded-l-lg text-black text-xs outline-none"
+                className="px-2 py-1.5 w-full rounded-l-lg text-white text-xs outline-none"
               />
               <button className="bg-black px-3 py-1.5 rounded-r-lg font-medium text-xs text-white hover:bg-gray-900 transition">
                 Subscribe
@@ -170,7 +170,7 @@ const Footer = () => {
               target="_blank"
               href="https://www.facebook.com/share/1D4cs4MYZy/"
               rel="noopener noreferrer"
-              className="p-2 rounded-full bg-[#1877F2]/30 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
+              className="p-2 rounded-full bg-white/60 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
             >
               <FaFacebookF />
             </a>
@@ -178,7 +178,7 @@ const Footer = () => {
               target="_blank"
               href="https://www.instagram.com/bzcart"
               rel="noopener noreferrer"
-              className="p-2 rounded-full bg-[#ff365b]/30 text-[#ad0322] hover:bg-[#E4405F] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
+              className="p-2 rounded-full bg-white/60 text-[#ff002f] hover:bg-[#E4405F] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
             >
               <FaInstagram />
             </a>
@@ -186,7 +186,7 @@ const Footer = () => {
               href="https://www.tiktok.com/@bzcart.store"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-full bg-gray-700/30 hover:bg-gray-700 hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
+              className="p-2 rounded-full bg-white/60 text-black hover:bg-gray-700 hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
             >
               <FaTiktok />
             </a>
@@ -194,7 +194,7 @@ const Footer = () => {
               href="https://www.youtube.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-full bg-[#FF0000]/30 text-[#b70000] hover:bg-[#FF0000] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
+              className="p-2 rounded-full bg-white/60 text-[rgb(255,5,5)] hover:bg-[#FF0000] hover:text-white transition-all duration-300 transform hover:scale-110 shadow-md"
             >
               <FaYoutube />
             </a>

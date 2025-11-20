@@ -189,7 +189,7 @@ const ShippingForm = ({
                 errors.fullName
                   ? "border-red-500 focus:border-red-500"
                   : "border-gray-300 focus:border-black"
-              } disabled:text-gray-500 disabled:border-gray-200`}
+              } disabled:text-gray-900 disabled:border-gray-200`}
             />
           </div>
           {errors.fullName && (
@@ -218,7 +218,7 @@ const ShippingForm = ({
                 errors.email
                   ? "border-red-500 focus:border-red-500"
                   : "border-gray-300 focus:border-black"
-              } disabled:text-gray-500 disabled:border-gray-200`}
+              } disabled:text-gray-900 disabled:border-gray-200`}
             />
           </div>
           {errors.email && (

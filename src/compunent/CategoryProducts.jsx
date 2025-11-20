@@ -4,7 +4,6 @@ import { useParams, Link } from "react-router-dom";
 import { fetchProductsByCategory } from "../features/products/productSlice";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Loader from "./Loader";
 import Skeleton from "react-loading-skeleton";
@@ -219,7 +218,6 @@ const CategoryProducts = () => {
 
   return (
     <div className="bg-gradient-to-b from-gray-50 to-gray-200 min-h min-h-screen">
-      <Navbar />
       <Toaster position="top-right" />
 
       <div className="px-3 sm:px-8 lg:px-12 py-6 font-daraz">

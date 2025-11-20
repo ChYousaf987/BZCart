@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 import {
   FaHeadset,
@@ -395,7 +394,6 @@ const SingleProduct = () => {
 
   return (
     <>
-      <Navbar />
       <div className="md:w-[95%] mx-auto md:px-0 px-4 py-2 font-darazs">
         <div className="md:grid md:grid-cols-2 md:gap-8">
           {/* 📱 Mobile View Images */}

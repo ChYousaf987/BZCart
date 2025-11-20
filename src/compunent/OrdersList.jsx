@@ -11,7 +11,7 @@ import {
   Truck,
   PackageCheck,
 } from "lucide-react";
-import Navbar from "./Navbar";
+
 import Footer from "./Footer";
 import { fetchMyOrders } from "../features/order/orderSlice";
 
@@ -114,7 +114,6 @@ const OrdersList = ({ guestId: propGuestId }) => {
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 py-12 px-4">
         <div className="max-w-4xl mx-auto backdrop-blur-md bg-white/70 shadow-xl rounded-2xl p-8 border border-white/40">
           {/* Header */}
