@@ -20,7 +20,7 @@ const Footer = () => {
 
   return (
     <footer className="pt">
-      <div className="bg-[#f99d41] w-[95%] mx-auto my-2 text-white  grid md:grid-cols-4 gap-6 border-b border-white/20 pb-8 rounded-3xl p-3 md:p-6 text-sm md:text-sm font-darazs">
+      <div className="bg-[#F26C2B] w-[95%] mx-auto my-2 text-white  grid md:grid-cols-4 gap-6 border-b border-white/20 pb-8 rounded-3xl p-3 md:p-6 text-sm md:text-sm font-darazs">
         {/* 🏢 Contact Details */}
         <div>
           <div className="flex gap-3 items-center justify-start md:justify-start mb-4">

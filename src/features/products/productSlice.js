@@ -20,12 +20,17 @@ const retryRequest = async (requestFn, retries = 3, delay = 1000) => {
   }
 };
 
+// ───────────────────────────────────────
+// Async Thunks
+// ───────────────────────────────────────
+
 export const fetchProductById = createAsyncThunk(
   "products/fetchProductById",
   async (id, { rejectWithValue }) => {
     try {
       const response = await retryRequest(() =>
-        axios.get(`${API_URL}/products/product/${id}`, { timeout: 10000 })      );
+        axios.get(`${API_URL}/products/product/${id}`, { timeout: 10000 })
+      );
       return response.data;
     } catch (err) {
       console.error("fetchProductById error:", err.message, err.code);
@@ -127,11 +132,15 @@ export const submitReview = createAsyncThunk(
         );
       }
       return rejectWithValue(
-        err.response?.data?.message || "Failed to submit review"
+        err.response?.data?.message || err.message || "Failed to submit review"
       );
     }
   }
 );
+
+// ───────────────────────────────────────
+// Slice
+// ───────────────────────────────────────
 
 const productSlice = createSlice({
   name: "products",
@@ -153,9 +162,19 @@ const productSlice = createSlice({
     setSearchTerm: (state, action) => {
       state.searchTerm = action.payload;
     },
+    // THIS IS THE CRITICAL FIX
+    clearCurrentProduct: (state) => {
+      state.product = null;
+      state.reviews = [];
+      state.loading = false;
+      state.error = null;
+      state.reviewsLoading = false;
+      state.reviewsError = null;
+    },
   },
   extraReducers: (builder) => {
     builder
+      // fetchProductById
       .addCase(fetchProductById.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -166,8 +185,10 @@ const productSlice = createSlice({
       })
       .addCase(fetchProductById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || "Failed to load product";
       })
+
+      // fetchProducts
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -175,27 +196,28 @@ const productSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.products = action.payload;
-        // Compute sortedProducts
+
+        // Sort: Newest first, then shuffle old ones
         const now = new Date();
         const oneDay = 24 * 60 * 60 * 1000;
-        const newProducts = action.payload.filter((p) => {
-          const createdAt = new Date(p.createdAt);
-          return now - createdAt < oneDay;
-        });
-        const oldProducts = action.payload.filter((p) => {
-          const createdAt = new Date(p.createdAt);
-          return now - createdAt >= oneDay;
-        });
+
+        const isNew = (p) => now - new Date(p.createdAt) < oneDay;
+        const newProducts = action.payload.filter(isNew);
+        const oldProducts = action.payload.filter((p) => !isNew(p));
+
         const sortedNew = [...newProducts].sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
         const shuffledOld = [...oldProducts].sort(() => Math.random() - 0.5);
+
         state.sortedProducts = [...sortedNew, ...shuffledOld];
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+
+      // fetchProductsByCategory
       .addCase(fetchProductsByCategory.pending, (state) => {
         state.relatedLoading = true;
         state.relatedError = null;
@@ -208,18 +230,22 @@ const productSlice = createSlice({
         state.relatedLoading = false;
         state.relatedError = action.payload;
       })
+
+      // fetchReviews
       .addCase(fetchReviews.pending, (state) => {
         state.reviewsLoading = true;
         state.reviewsError = null;
       })
       .addCase(fetchReviews.fulfilled, (state, action) => {
         state.reviewsLoading = false;
-        state.reviews = action.payload;
+        state.reviews = action.payload || [];
       })
       .addCase(fetchReviews.rejected, (state, action) => {
         state.reviewsLoading = false;
         state.reviewsError = action.payload;
       })
+
+      // submitReview
       .addCase(submitReview.pending, (state) => {
         state.reviewsLoading = true;
         state.reviewsError = null;
@@ -235,5 +261,9 @@ const productSlice = createSlice({
   },
 });
 
-export const { setSearchTerm } = productSlice.actions;
+// ───────────────────────────────────────
+// Export Actions & Reducer
+// ───────────────────────────────────────
+
+export const { setSearchTerm, clearCurrentProduct } = productSlice.actions;
 export default productSlice.reducer;

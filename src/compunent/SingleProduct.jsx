@@ -14,6 +14,7 @@ import {
   fetchProductById,
   fetchReviews,
   submitReview,
+  clearCurrentProduct, // ← Now we use this
 } from "../features/products/productSlice";
 import { addToCart, fetchCart } from "../features/cart/cartSlice";
 import { v4 as uuidv4 } from "uuid";
@@ -27,391 +28,270 @@ const SingleProduct = () => {
   const navigate = useNavigate();
   const { productName } = useParams();
   const dispatch = useDispatch();
-  const { product, loading, error, reviews, reviewsLoading, reviewsError } =
-    useSelector((state) => state.products);
-  const { user, userLoading, userSuccess, userError, token } = useSelector(
-    (state) => state.auth
+
+  const { product, loading, error, reviews, reviewsLoading } = useSelector(
+    (state) => state.products
   );
-  const mainSliderRef = useRef(null);
+  const { user, userLoading, token } = useSelector((state) => state.auth);
+
+  // Local state
+  const [selectedImage, setSelectedImage] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
   const [activeSlide, setActiveSlide] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
-  const [selectedImage, setSelectedImage] = useState("");
-  const [selectedSize, setSelectedSize] = useState("");
-  const [resolvedProductId, setResolvedProductId] = useState(null);
+
+  // Critical: Track if we're currently resolving the product
+  const [resolvingProduct, setResolvingProduct] = useState(true);
+  const [productNotFound, setProductNotFound] = useState(false);
+
+  const mainSliderRef = useRef(null);
   const WHATSAPP_NUMBER = "923297609190";
+
   const [guestId] = useState(() => {
-    const storedGuestId = localStorage.getItem("guestId");
-    if (!storedGuestId) {
-      const newGuestId = `guest_${uuidv4()}`;
-      localStorage.setItem("guestId", newGuestId);
-      console.log("SingleProduct - Generated new guestId:", newGuestId);
-      return newGuestId;
-    }
-    return storedGuestId;
+    const stored = localStorage.getItem("guestId");
+    if (stored) return stored;
+    const newId = `guest_${uuidv4()}`;
+    localStorage.setItem("guestId", newId);
+    return newId;
   });
+
   const hasFetchedCart = useRef(false);
 
+  // ─────────────────────────────────────
+  // 1. Reset everything when productName changes
+  // ─────────────────────────────────────
   useEffect(() => {
-    console.log("SingleProduct - Initializing with:", {
-      userId: user?._id,
-      guestId,
-      userLoading,
-      userSuccess,
-      userError,
-      token,
-    });
+    dispatch(clearCurrentProduct()); // ← This clears old product instantly
+    setResolvingProduct(true);
+    setProductNotFound(false);
+    setSelectedImage("");
+    setSelectedSize("");
+    setActiveSlide(0);
+    hasFetchedCart.current = false;
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [productName, dispatch]);
 
-    // Resolve product name to ID
-    const resolveProduct = async () => {
+  // ─────────────────────────────────────
+  // 2. Resolve slug → ID → fetch product
+  // ─────────────────────────────────────
+  useEffect(() => {
+    let mounted = true;
+
+    const resolveAndFetchProduct = async () => {
+      if (!mounted) return;
+
+      setResolvingProduct(true);
+      setProductNotFound(false);
+
       try {
-        // Helper to normalize names for matching (must match toSlug logic)
+        const res = await fetch(
+          "https://bzbackend.online/api/products/products"
+        );
+        const allProducts = await res.json();
+
         const normalize = (str) =>
           String(str)
             .toLowerCase()
             .trim()
-            .replace(/\s+/g, "-") // spaces to hyphens
-            .replace(/[^\w\-]/g, "") // remove special chars (including &)
-            .replace(/\-+/g, "-"); // multiple hyphens to single
+            .replace(/\s+/g, "-")
+            .replace(/[^\w\-]/g, "")
+            .replace(/\-+/g, "-");
 
-        const decodedName = fromSlug(productName || "");
+        const target = normalize(productName);
+        const decoded = fromSlug(productName);
 
-        // Try to find product by name from all products endpoint
-        const response = await fetch(
-          "https://bzbackend.online/api/products/products"
-        );
-        const allProducts = await response.json();
-
-        // Try multiple matching strategies
-        let found = allProducts.find(
-          (p) =>
-            String(p.product_name).toLowerCase() ===
-            String(productName).toLowerCase()
-        );
-
-        if (!found) {
-          // Normalized match (slugs match)
-          const normalized = normalize(productName);
-          found = allProducts.find(
-            (p) => normalize(p.product_name) === normalized
+        const foundProduct = allProducts.find((p) => {
+          const nameNorm = normalize(p.product_name);
+          const nameLower = p.product_name.toLowerCase();
+          return (
+            nameNorm === target ||
+            nameLower === decoded.toLowerCase() ||
+            nameLower === productName.toLowerCase()
           );
-        }
+        });
 
-        if (!found) {
-          // FromSlug match
-          found = allProducts.find(
-            (p) =>
-              String(p.product_name).toLowerCase() ===
-              String(decodedName).toLowerCase()
-          );
-        }
-
-        if (!found) {
-          console.error("Product not found. Slug:", productName);
-          toast.error("Product not found");
-          navigate("/products");
+        if (!foundProduct) {
+          if (mounted) {
+            setProductNotFound(true);
+            toast.error("Product not found");
+          }
           return;
         }
 
-        console.log("Found product:", found.product_name);
-        setResolvedProductId(found._id);
+        // Fetch the full product
+        await dispatch(fetchProductById(foundProduct._id)).unwrap();
+        await dispatch(fetchReviews(foundProduct._id)).unwrap();
 
-        // Now fetch the product by ID
-        dispatch(fetchProductById(found._id))
-          .unwrap()
-          .then((productData) => {
-            if (productData?.product_images?.[0]) {
-              setSelectedImage(productData.product_images[0]);
-            }
-            if (productData?.sizes?.length > 0) {
-              const availableSize = productData.sizes.find(
-                (size) => size.stock > 0
-              );
-              setSelectedSize(availableSize ? availableSize.size : "");
-              console.log(
-                "SingleProduct - Initial selected size:",
-                availableSize ? availableSize.size : "None"
-              );
-            }
-          })
-          .catch((err) => {
-            console.error("SingleProduct - Error loading product:", err);
-            toast.error(err || "Failed to load product", {
-              position: "top-right",
-            });
-          });
-
-        dispatch(fetchReviews(found._id))
-          .unwrap()
-          .catch((err) => {
-            console.error("SingleProduct - Error loading reviews:", err);
-            toast.error(err || "Failed to load reviews", {
-              position: "top-right",
-            });
-          });
+        if (mounted) setResolvingProduct(false);
       } catch (err) {
         console.error("Error resolving product:", err);
-        toast.error("Failed to load product");
-        navigate("/products");
+        if (mounted) {
+          setProductNotFound(true);
+          toast.error("Failed to load product");
+        }
+      } finally {
+        if (mounted) setResolvingProduct(false);
       }
     };
 
-    resolveProduct();
-  }, [productName, dispatch, navigate]);
+    resolveAndFetchProduct();
 
-  // Fetch cart after user/guest ID is established
+    return () => {
+      mounted = false;
+    };
+  }, [productName, dispatch]);
+
+  // ─────────────────────────────────────
+  // 3. Set default image & size after load
+  // ─────────────────────────────────────
   useEffect(() => {
-    if (!hasFetchedCart.current && !userLoading && resolvedProductId) {
-      if (!user && !guestId) {
-        console.error("SingleProduct - Neither user nor guestId available");
-        toast.error("Unable to load cart: No user or guest ID", {
-          position: "top-right",
-        });
-        return;
-      }
-
-      hasFetchedCart.current = true;
-      console.log("SingleProduct - Fetching cart with:", {
-        guestId: user ? undefined : guestId,
-      });
-      dispatch(fetchCart({ guestId: user ? undefined : guestId }))
-        .unwrap()
-        .catch((err) => {
-          console.error("SingleProduct - Error fetching cart:", err);
-          toast.error(err || "Failed to load cart", { position: "top-right" });
-        });
-    } else if (userLoading) {
-      console.log("SingleProduct - Waiting for auth to resolve");
+    if (product && product.product_images?.[0]) {
+      setSelectedImage((prev) => prev || product.product_images[0]);
     }
-  }, [dispatch, guestId, user, userLoading, token, resolvedProductId]);
+    if (product?.sizes?.length > 0 && !selectedSize) {
+      const available = product.sizes.find((s) => s.stock > 0);
+      if (available) setSelectedSize(available.size);
+    }
+  }, [product, selectedSize]);
 
-  // Scroll to top when component mounts
+  // ─────────────────────────────────────
+  // 4. Fetch cart once resolved
+  // ─────────────────────────────────────
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, []);
+    if (
+      !hasFetchedCart.current &&
+      !userLoading &&
+      product &&
+      (user || guestId)
+    ) {
+      hasFetchedCart.current = true;
+      dispatch(fetchCart({ guestId: user ? undefined : guestId }));
+    }
+  }, [user, userLoading, guestId, product, dispatch]);
 
+  // ─────────────────────────────────────
+  // Handlers
+  // ─────────────────────────────────────
   const handleReviewSubmit = (e) => {
     e.preventDefault();
-    if (!user) {
-      toast.error("Please log in to submit a review", {
-        position: "top-right",
-      });
-      return;
-    }
-    if (!reviewText.trim()) {
-      toast.error("Please write a review", { position: "top-right" });
-      return;
-    }
-    if (reviewText.length < 3 || reviewText.length > 500) {
-      toast.error("Review must be between 3 and 500 characters", {
-        position: "top-right",
-      });
-      return;
-    }
-    if (rating < 1 || rating > 5) {
-      toast.error("Please select a valid rating (1–5)", {
-        position: "top-right",
-      });
-      return;
-    }
+    if (!user) return toast.error("Please log in to submit a review");
+    if (!reviewText.trim()) return toast.error("Please write a review");
+
     dispatch(
       submitReview({
-        productId: id,
-        reviewData: { user_id: user._id, comment: reviewText, rating },
+        productId: product._id,
+        reviewData: { comment: reviewText, rating },
       })
     )
       .unwrap()
       .then(() => {
-        toast.success("Review submitted successfully!", {
-          position: "top-right",
-        });
+        toast.success("Review submitted!");
         setReviewText("");
         setRating(5);
-        dispatch(fetchReviews(id));
       })
-      .catch((err) => {
-        console.error("SingleProduct - Error submitting review:", err);
-        toast.error(err || "Failed to submit review", {
-          position: "top-right",
-        });
-      });
+      .catch((err) => toast.error(err || "Failed to submit review"));
   };
 
   const handleAddToCart = () => {
-    if (!product?._id) {
-      toast.error("Product ID is missing", { position: "top-right" });
-      return;
-    }
-    if (!selectedImage) {
-      toast.error("Please select an image", { position: "top-right" });
-      return;
-    }
-    if (product.sizes?.length > 0 && !selectedSize) {
-      console.error("SingleProduct - Missing selected_size for Add to Cart");
-      toast.error("Please select a size", { position: "top-right" });
-      return;
-    }
     if (
-      product.sizes?.length > 0 &&
-      product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
-    ) {
-      toast.error(`Size ${selectedSize} is out of stock`, {
-        position: "top-right",
-      });
-      return;
-    }
-    if (userLoading) {
-      console.error("SingleProduct - Auth not resolved for addToCart");
-      toast.error("Please wait, authentication is still loading", {
-        position: "top-right",
-      });
-      return;
-    }
+      !product ||
+      !selectedImage ||
+      (product.sizes?.length > 0 && !selectedSize)
+    )
+      return toast.error("Please complete selection");
 
-    const cartData = {
-      product_id: product._id,
-      selected_image: selectedImage,
-      guestId: user && token ? undefined : guestId,
-      selected_size: selectedSize || null,
-    };
+    const sizeStock =
+      product.sizes?.find((s) => s.size === selectedSize)?.stock || 0;
+    if (product.sizes?.length > 0 && sizeStock <= 0)
+      return toast.error("Selected size is out of stock");
 
-    console.log("SingleProduct - Adding to cart:", {
-      cartData,
-      userId: user?._id,
-      token,
-    });
-
-    dispatch(addToCart({ cartData, userId: user?._id, token }))
+    dispatch(
+      addToCart({
+        cartData: {
+          product_id: product._id,
+          selected_image: selectedImage,
+          selected_size: selectedSize || null,
+          guestId: user ? undefined : guestId,
+        },
+        userId: user?._id,
+        token,
+      })
+    )
       .unwrap()
       .then(() => {
-        dispatch(fetchCart({ guestId: user && token ? undefined : guestId }));
-        toast.success("Added to cart!", { position: "top-right" });
+        toast.success("Added to cart!");
+        dispatch(fetchCart({ guestId: user ? undefined : guestId }));
       })
-      .catch((err) => {
-        console.error("SingleProduct - addToCart error:", err);
-        toast.error(err || "Failed to add to cart", { position: "top-right" });
-      });
+      .catch((err) => toast.error(err || "Failed to add to cart"));
   };
 
   const handleBuyNow = () => {
-    if (!product?._id) {
-      toast.error("Product ID is missing", { position: "top-right" });
-      return;
-    }
-    if (!selectedImage) {
-      toast.error("Please select an image", { position: "top-right" });
-      return;
-    }
-    if (product.sizes?.length > 0 && !selectedSize) {
-      console.error("SingleProduct - Missing selected_size for Buy Now");
-      toast.error("Please select a size", { position: "top-right" });
-      return;
-    }
     if (
-      product.sizes?.length > 0 &&
-      product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
-    ) {
-      toast.error(`Size ${selectedSize} is out of stock`, {
-        position: "top-right",
-      });
-      return;
-    }
-    if (userLoading) {
-      console.error("SingleProduct - Auth not resolved for Buy Now");
-      toast.error("Please wait, authentication is still loading", {
-        position: "top-right",
-      });
-      return;
-    }
+      !product ||
+      !selectedImage ||
+      (product.sizes?.length > 0 && !selectedSize)
+    )
+      return toast.error("Please complete selection");
 
     const buyNowProduct = {
       _id: product._id,
-      product_id: product,
       product_name: product.product_name,
       product_discounted_price: product.product_discounted_price,
-      quantity: 1,
-      selected_image: selectedImage || product.product_images[0],
-      sizes: product.sizes,
+      selected_image: selectedImage,
       selected_size: selectedSize || null,
-      product_stock: product.product_stock,
       shipping: product.shipping || 0,
     };
 
-    console.log(
-      "SingleProduct - Buy Now product:",
-      JSON.stringify(buyNowProduct, null, 2)
-    );
-
     navigate("/Cashout", {
-      state: { buyNowProduct, guestId: user && token ? undefined : guestId },
+      state: { buyNowProduct, guestId: user ? undefined : guestId },
     });
   };
 
   const handleOrderOnWhatsapp = () => {
-    const productUrl = `${window.location.origin}/product/${toSlug(
+    const url = `${window.location.origin}/product/${toSlug(
       product.product_name
     )}`;
-    const message =
-      `Hello! I want to order this product.\n\n` +
-      `🛒 Product: ${product.product_name}\n` +
-      `💰 Price: Rs. ${product.product_discounted_price}\n` +
-      (selectedSize ? `📏 Size: ${selectedSize}\n` : "") +
-      `🔗 Product Link: ${productUrl}`;
-
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-      message
-    )}`;
-    window.open(whatsappUrl, "_blank");
-  };
-
-  const handleBack = () => {
-    navigate("/");
-  };
-
-  const renderStars = (rating) => {
-    return (
-      <div className="flex">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <FaStar
-            key={star}
-            className={`${
-              star <= rating ? "text-yellow-400" : "text-gray-300"
-            } text-lg`}
-          />
-        ))}
-      </div>
+    const msg = encodeURIComponent(
+      `Hello! I want to order:\n\nProduct: ${
+        product.product_name
+      }\nPrice: Rs. ${product.product_discounted_price}\n${
+        selectedSize ? `Size: ${selectedSize}\n` : ""
+      }Link: ${url}`
     );
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
   };
 
-  // Handle loading and error states
-  if (loading && !product) {
+  const renderStars = (r) => (
+    <div className="flex">
+      {[1, 2, 3, 4, 5].map((s) => (
+        <FaStar
+          key={s}
+          className={`text-lg ${s <= r ? "text-yellow-400" : "text-gray-300"}`}
+        />
+      ))}
+    </div>
+  );
+
+  // ─────────────────────────────────────
+  // Render Logic
+  // ─────────────────────────────────────
+  if (resolvingProduct || loading) {
     return <Loader />;
   }
 
-  if (error || !product) {
+  if (productNotFound || error || !product) {
     return (
-      <div className="text-center py-12">
-        <p className="text-red-500">{error || "Product not found"}</p>
+      <div className="text-center py-20">
+        <p className="text-red-500 text-xl mb-4">
+          {error || "Product not found"}
+        </p>
         <button
-          onClick={handleBack}
-          className="mt-4 text-[#f06621] font-medium hover:underline flex items-center justify-center gap-2 mx-auto"
+          onClick={() => navigate("/")}
+          className="text-[#f06621] font-medium hover:underline flex items-center gap-2 mx-auto"
         >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
           Back to Home
         </button>
       </div>
@@ -499,21 +379,16 @@ const SingleProduct = () => {
                 <img
                   key={i}
                   src={img}
-                  alt={`${product.product_name} thumbnail ${i}`}
-                  className={`w-20 h-20 border rounded-md cursor-pointer hover:border-red-600 ${
+                  onClick={() => setSelectedImage(img)}
+                  className={`w-20 h-20 border rounded-md cursor-pointer ${
                     selectedImage === img ? "border-red-600" : ""
                   }`}
-                  onClick={() => setSelectedImage(img)}
                 />
               ))}
             </div>
-            <div className="flex-1 bg-gray-50 p-2 rounded-md border">
+            <div className="flex-1">
               <img
-                src={
-                  selectedImage ||
-                  product.product_images?.[0] ||
-                  "https://via.placeholder.com/500"
-                }
+                src={product.product_images?.[0]}
                 alt={product.product_name}
                 className="w-full h-[450px] object-contain"
               />
