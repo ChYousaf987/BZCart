@@ -79,7 +79,7 @@ const SearchPage = () => {
               {filteredCategories.map((cat) => (
                 <Link
                   key={cat._id}
-                  to={`/category/${toSlug(cat.name)}`}
+                  to={`/${toSlug(cat.name)}`}
                   className="px-4 py-2 border rounded hover:bg-orange-50"
                 >
                   {cat.name}

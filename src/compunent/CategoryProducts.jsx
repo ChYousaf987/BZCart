@@ -9,6 +9,7 @@ import Loader from "./Loader";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { toSlug, fromSlug } from "../utils/slugify";
+import { useNavigate } from "react-router-dom";
 
 const CategoryProducts = () => {
   const { categoryName } = useParams();
@@ -163,6 +164,39 @@ const CategoryProducts = () => {
         }
 
         console.log("Found category:", found.name);
+
+        // If the found item is a subcategory, load its parent as the main category
+        if (found.parent_category) {
+          const parent = found.parent_category;
+          setCategory(parent);
+          const subs = allCats.filter(
+            (c) => c.parent_category?._id === parent._id
+          );
+          setSubCategories(subs);
+          // set active sub to the found subcategory and load its products
+          setActiveSub(found._id);
+          try {
+            const { data: subProducts } = await axios.get(
+              `https://bzbackend.online/api/products/category/${found._id}`
+            );
+            setCategoryProducts(subProducts);
+          } catch (err) {
+            console.error(
+              "Failed loading products for subcategory (direct slug):",
+              err.response?.status,
+              err.response?.data || err.message
+            );
+            toast.error(
+              `Failed to load subcategory products: ${
+                err.response?.status || "?"
+              }`
+            );
+            setCategoryProducts([]);
+          }
+          setLoadingSubs(false);
+          return;
+        }
+
         setCategory(found);
 
         const subs = allCats.filter(
@@ -179,22 +213,59 @@ const CategoryProducts = () => {
           subs.some((sub) => sub._id === savedSubcategory)
         ) {
           setActiveSub(savedSubcategory);
-          const { data: subProducts } = await axios.get(
-            `https://bzbackend.online/api/products/category/${savedSubcategory}`
-          );
-          setCategoryProducts(subProducts);
+          try {
+            const { data: subProducts } = await axios.get(
+              `https://bzbackend.online/api/products/category/${savedSubcategory}`
+            );
+            setCategoryProducts(subProducts);
+          } catch (err) {
+            console.error(
+              "Failed loading subcategory products:",
+              err.response?.status,
+              err.response?.data || err.message
+            );
+            toast.error(
+              `Failed to load subcategory products: ${
+                err.response?.status || "?"
+              }`
+            );
+            setCategoryProducts([]);
+          }
         } else {
           // If no saved subcategory or invalid, load main category products
-          const { data: catProducts } = await axios.get(
-            `https://bzbackend.online/api/products/category/${found._id}`
-          );
+          let catProducts = [];
+          try {
+            const { data } = await axios.get(
+              `https://bzbackend.online/api/products/category/${found._id}`
+            );
+            catProducts = data;
+          } catch (err) {
+            console.error(
+              "Failed loading main category products:",
+              err.response?.status,
+              err.response?.data || err.message
+            );
+            toast.error(
+              `Failed to load category products: ${err.response?.status || "?"}`
+            );
+            catProducts = [];
+          }
           let allProducts = [...catProducts];
           if (subs.length > 0) {
             const subProductsResponses = await Promise.all(
               subs.map((sub) =>
-                axios.get(
-                  `https://bzbackend.online/api/products/category/${sub._id}`
-                )
+                axios
+                  .get(
+                    `https://bzbackend.online/api/products/category/${sub._id}`
+                  )
+                  .catch((err) => {
+                    console.error(
+                      `Failed loading products for sub ${sub._id}:`,
+                      err.response?.status,
+                      err.response?.data || err.message
+                    );
+                    return { data: [] };
+                  })
               )
             );
             const subProducts = subProductsResponses.flatMap((r) => r.data);
@@ -218,7 +289,9 @@ const CategoryProducts = () => {
     fetchCategoryData();
   }, [categoryName]);
 
-  const handleSubcategoryClick = async (subId) => {
+  const navigate = useNavigate();
+
+  const handleSubcategoryClick = async (subId, subName) => {
     setActiveSub(subId);
     if (subId) {
       localStorage.setItem("activeSubcategory", subId); // Save active subcategory
@@ -228,22 +301,59 @@ const CategoryProducts = () => {
     setLoadingSubs(true);
     try {
       if (subId) {
-        const { data } = await axios.get(
-          `https://bzbackend.online/api/products/category/${subId}`
-        );
-        setCategoryProducts(data);
+        try {
+          const { data } = await axios.get(
+            `https://bzbackend.online/api/products/category/${subId}`
+          );
+          setCategoryProducts(data);
+        } catch (err) {
+          console.error(
+            "Failed loading subcategory products:",
+            err.response?.status,
+            err.response?.data || err.message
+          );
+          toast.error(
+            `Failed to load subcategory products: ${
+              err.response?.status || "?"
+            }`
+          );
+          setCategoryProducts([]);
+        }
       } else {
         // Load all products for the main category and its subcategories
-        const { data: catProducts } = await axios.get(
-          `https://bzbackend.online/api/products/category/${category._id}`
-        );
+        let catProducts = [];
+        try {
+          const { data } = await axios.get(
+            `https://bzbackend.online/api/products/category/${category._id}`
+          );
+          catProducts = data;
+        } catch (err) {
+          console.error(
+            "Failed loading main category products:",
+            err.response?.status,
+            err.response?.data || err.message
+          );
+          toast.error(
+            `Failed to load category products: ${err.response?.status || "?"}`
+          );
+          catProducts = [];
+        }
         let allProducts = [...catProducts];
         if (subCategories.length > 0) {
           const subProductsResponses = await Promise.all(
             subCategories.map((sub) =>
-              axios.get(
-                `https://bzbackend.online/api/products/category/${sub._id}`
-              )
+              axios
+                .get(
+                  `https://bzbackend.online/api/products/category/${sub._id}`
+                )
+                .catch((err) => {
+                  console.error(
+                    `Failed loading products for sub ${sub._id}:`,
+                    err.response?.status,
+                    err.response?.data || err.message
+                  );
+                  return { data: [] };
+                })
             )
           );
           const subProducts = subProductsResponses.flatMap((r) => r.data);
@@ -260,6 +370,13 @@ const CategoryProducts = () => {
       toast.error("Failed to fetch subcategory products");
     } finally {
       setLoadingSubs(false);
+    }
+    // update URL to reflect active subcategory (use slug of subName if provided)
+    if (subName) {
+      navigate(`/${toSlug(subName)}`);
+    } else {
+      // navigate to parent category slug
+      if (category) navigate(`/${toSlug(category.name)}`);
     }
   };
 
@@ -366,7 +483,7 @@ const CategoryProducts = () => {
                   return (
                     <button
                       key={sub._id}
-                      onClick={() => handleSubcategoryClick(sub._id)}
+                      onClick={() => handleSubcategoryClick(sub._id, sub.name)}
                       className={`relative mt-3 flex flex-col items-center group transition-all duration-500 ${
                         isActive ? "scale-110" : "hover:scale-105"
                       }`}
@@ -462,9 +579,7 @@ const CategoryProducts = () => {
                         </span>
                       )}
                       <Link
-                        to={`/product/${encodeURIComponent(
-                          product.product_name
-                        )}`}
+                        to={`/product/${toSlug(product.product_name)}`}
                         className="block"
                         onClick={() =>
                           localStorage.setItem("clickedProduct", product._id)
