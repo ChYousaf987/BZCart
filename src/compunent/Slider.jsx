@@ -4,7 +4,7 @@ const HeroSection = () => {
   return (
     <div className="w-full  flex justify-center py-10 px-4 font-sans">
       {/* MAIN WRAPPER */}
-      <div className="w-full max-w-6xl">
+      <div className="w-full max-w-7xl">
         {/* BIG BANNER */}
         <div className="bg-[#F0E6D8] rounded-3xl px-8 md:px-14 py-3 flex flex-col md:flex-row items-center justify-between gap-10 shadow-sm">
           {/* LEFT CONTENT */}
