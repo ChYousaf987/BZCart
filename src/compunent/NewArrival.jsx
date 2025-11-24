@@ -12,19 +12,19 @@ const NewArrival = () => {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    if (!products.length) {
+    if (!products.length && !loading && !error) {
       dispatch(fetchProducts())
         .unwrap()
         .catch(() => {});
     }
-  }, [dispatch, products.length]);
+  }, [dispatch, products.length, loading, error]);
 
-  // Filter products where isNewArrival is true
+  // Filter only new arrival products
   const filteredProducts = useMemo(() => {
     return products.filter((item) => item.isNewArrival === true);
   }, [products]);
 
-  // Restore scroll position on mount
+  // Restore scroll position
   useEffect(() => {
     if (scrollRef.current) {
       const savedScroll = localStorage.getItem("newArrivalScroll");
@@ -32,14 +32,27 @@ const NewArrival = () => {
         scrollRef.current.scrollLeft = parseInt(savedScroll, 10);
       }
     }
-  }, [filteredProducts.length]); // Wait until products are loaded
+  }, [filteredProducts.length]);
 
-  // Save scroll position on scroll
+  // Save scroll position
+  const scrollSaveTimeoutRef = useRef(null);
   const handleScroll = () => {
     if (scrollRef.current) {
-      localStorage.setItem("newArrivalScroll", scrollRef.current.scrollLeft);
+      if (scrollSaveTimeoutRef.current)
+        clearTimeout(scrollSaveTimeoutRef.current);
+
+      scrollSaveTimeoutRef.current = setTimeout(() => {
+        localStorage.setItem("newArrivalScroll", scrollRef.current.scrollLeft);
+      }, 150);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (scrollSaveTimeoutRef.current)
+        clearTimeout(scrollSaveTimeoutRef.current);
+    };
+  }, []);
 
   return (
     <div className="md:w-[95%] mx-auto px-2 md:px-0 pt-6">
@@ -51,6 +64,7 @@ const NewArrival = () => {
             {loading ? <Skeleton width={100} /> : "New Arrivals"}
           </span>
         </h2>
+
         {loading ? (
           <Skeleton width={70} height={20} />
         ) : (
@@ -63,7 +77,7 @@ const NewArrival = () => {
         )}
       </div>
 
-      {/* Product Grid / Scrollable Row */}
+      {/* Product Grid */}
       {loading ? (
         <div className="flex overflow-x-auto gap-6 sm:gap-10 snap-x snap-mandatory">
           {Array(6)
@@ -80,9 +94,9 @@ const NewArrival = () => {
                     className="rounded-3xl"
                   />
                 </div>
+
                 <Skeleton width={100} height={20} className="mt-3" />
                 <Skeleton width={60} height={18} />
-                <Skeleton width={80} height={16} />
               </div>
             ))}
         </div>
@@ -116,9 +130,11 @@ const NewArrival = () => {
                   loading="lazy"
                 />
               </div>
+
               <p className="mt-3 text-xs sm:text-sm font-medium hover:text-[#f06621] transition">
                 {product.product_name || "Unknown Product"}
               </p>
+
               <p className="text-xs sm:text-sm md:text-base font-bold hover:text-[#f06621] transition">
                 {product.product_discounted_price && product.product_base_price
                   ? `Up to ${Math.round(
@@ -137,4 +153,4 @@ const NewArrival = () => {
   );
 };
 
-export default NewArrival;
+export default React.memo(NewArrival);

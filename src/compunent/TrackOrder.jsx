@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ArrowLeft, CheckCircle2, Truck, Package, Clock } from "lucide-react";
 import { toast } from "react-toastify";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 const TrackOrder = () => {
@@ -81,7 +80,6 @@ const TrackOrder = () => {
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 py-12 px-4">
         <div className="max-w-2xl mx-auto backdrop-blur-md bg-white/60 shadow-xl rounded-2xl p-8 border border-white/40">
           {/* Header */}

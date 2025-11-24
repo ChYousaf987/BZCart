@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 import {
   FaLock,
@@ -14,7 +13,6 @@ import {
 const PrivacyPolicy = () => {
   return (
     <div className="bg-slate-50">
-      <Navbar />
 
       {/* Hero Section */}
       <div className="relative font-daraz bg-gradient-to-r from-primary to-dark text-white py-20 md:py-28 text-center overflow-hidden">

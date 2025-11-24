@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 import {
   FaTruck,
@@ -141,7 +140,6 @@ const SingleDeal = () => {
   if (loading) {
     return (
       <>
-        <Navbar />
         <div className="md:w-[95%] mx-auto p-6">
           <div className="animate-pulse">
             <div className="h-96 bg-gray-200 rounded-lg mb-4"></div>
@@ -158,7 +156,6 @@ const SingleDeal = () => {
   if (error || !currentDeal) {
     return (
       <>
-        <Navbar />
         <div className="text-center py-12">
           <p className="text-red-500">{error || "Deal not found"}</p>
           <button
@@ -226,7 +223,6 @@ const SingleDeal = () => {
 
   return (
     <>
-      <Navbar />
       <div className="md:w-[95%] mx-auto md:px-0 px-4 py-2 font-daraz">
         <div className="md:grid md:grid-cols-2 md:gap-8">
           {/* Mobile Slider */}

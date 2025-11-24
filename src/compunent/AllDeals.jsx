@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { fetchDeals } from "../features/deals/dealSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 const AllDeals = () => {
@@ -52,7 +51,6 @@ const AllDeals = () => {
 
   return (
     <>
-    <Navbar/>
       <div className="max-w-7xl mx-auto p-3 md:p-6 font-daraz">
         <h1 className="text-2xl md:text-3xl font-bold text-dark mb-6">
           All Deals

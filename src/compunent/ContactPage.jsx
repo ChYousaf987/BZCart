@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import emailjs from "@emailjs/browser";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 const ContactPage = () => {
@@ -60,7 +59,6 @@ const ContactPage = () => {
 
   return (
     <>
-      <Navbar />
 
       <div className="min-h-screen bg-light font-daraz overflow-hidden">
         {/* Header Section */}

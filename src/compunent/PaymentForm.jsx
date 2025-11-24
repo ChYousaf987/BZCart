@@ -1,7 +1,6 @@
 // src/compunent/PaymentForm.jsx
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import { createOrder } from "../features/cart/cartSlice";
 import axios from "axios";
 import { ArrowLeft, Tag } from "lucide-react";
@@ -47,26 +46,12 @@ const PaymentForm = ({
   }, [cart]);
 
   const getStock = (item) => {
-    if (!item.product_id && !item._id) {
-      console.warn("PaymentForm - Missing product_id or _id for item:", item);
-      return 0;
-    }
+    if (!item.product_id && !item._id) return 0;
     const product = item.product_id || item;
     if (product.sizes?.length > 0) {
-      if (!item.selected_size) {
-        console.warn(
-          `PaymentForm - Missing selected_size for size-based product: ${product.product_name}`
-        );
-        return 0;
-      }
+      if (!item.selected_size) return 0;
       const size = product.sizes.find((s) => s.size === item.selected_size);
-      if (!size) {
-        console.warn(
-          `PaymentForm - Size ${item.selected_size} not found for product ${product.product_name}`
-        );
-        return 0;
-      }
-      return size.stock || 0;
+      return size?.stock || 0;
     }
     return product.product_stock || 0;
   };
@@ -81,9 +66,7 @@ const PaymentForm = ({
   };
 
   useEffect(() => {
-    if (formData.phoneNumber) {
-      validatePhone(formData.phoneNumber);
-    }
+    if (formData.phoneNumber) validatePhone(formData.phoneNumber);
   }, [formData.phoneNumber]);
 
   const calculateSubtotal = () => {
@@ -158,9 +141,7 @@ const PaymentForm = ({
 
   const handlePlaceOrder = async () => {
     if (!agree) {
-      toast.error("Please agree to Terms and Conditions first", {
-        position: "top-right",
-      });
+      alert("Please agree to Terms and Conditions first");
       return;
     }
     if (
@@ -170,9 +151,7 @@ const PaymentForm = ({
       !formData.phoneNumber ||
       phoneError
     ) {
-      toast.error("Please fill in all fields correctly", {
-        position: "top-right",
-      });
+      alert("Please fill in all fields correctly");
       return;
     }
     if (
@@ -182,15 +161,11 @@ const PaymentForm = ({
           !item.selected_size
       )
     ) {
-      toast.error("Please select a size for all size-based products", {
-        position: "top-right",
-      });
+      alert("Please select a size for all size-based products");
       return;
     }
     if (cart.some((item) => getStock(item) < (item.quantity || 1))) {
-      toast.error("One or more items are out of stock", {
-        position: "top-right",
-      });
+      alert("One or more items are out of stock");
       return;
     }
 
@@ -214,10 +189,14 @@ const PaymentForm = ({
 
     try {
       const result = await dispatch(createOrder(orderDataToSend)).unwrap();
-      toast.success("Order placed successfully!", {
-        position: "top-right",
-        autoClose: 3000,
+
+      // NO TOAST — INSTEAD PASS JUSTPLACED FLAG
+      setOrderData({
+        ...result,
+        justPlaced: true, // This triggers celebration screen
       });
+
+      // Clear form
       setFormData({
         ...formData,
         fullName: authUser?.username || "",
@@ -229,13 +208,10 @@ const PaymentForm = ({
       });
       setIsValidDiscount(false);
       setDiscountMessage("");
-      setOrderData(result);
-      onNext();
+
+      onNext(); // Go to TrackOrders
     } catch (err) {
-      toast.error(err?.message || err || "Failed to place order", {
-        position: "top-right",
-        autoClose: 5000,
-      });
+      alert(err?.message || err || "Failed to place order");
     } finally {
       setIsSubmitting(false);
     }
@@ -337,54 +313,6 @@ const PaymentForm = ({
         </div>
       )}
 
-      {paymentMethod === "credit" && (
-        <div className="">
-          <div className="mb-6">
-            <img
-              src="https://www.visa.co.in/dam/VCOM/regional/ap/india/global-elements/images/in-visa-gold-card-498x280.png"
-              alt="Credit card"
-              className="rounded-xl w-[60%] mx-auto"
-            />
-          </div>
-          <div className="mb-6">
-            <p className="text-sm text-gray-600 my-7 text-">
-              Or check out with
-            </p>
-            <div className="flex gap-5 items-center justify-center flex-wrap">
-              {[
-                {
-                  src: "https://www.logo.wine/a/logo/PayPal/PayPal-Logo.wine.svg",
-                  alt: "PayPal",
-                },
-                {
-                  src: "https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg",
-                  alt: "Visa",
-                },
-                {
-                  src: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg",
-                  alt: "Mastercard",
-                },
-                {
-                  src: "https://upload.wikimedia.org/wikipedia/commons/1/16/Alipay_logo.svg",
-                  alt: "Alipay",
-                },
-                {
-                  src: "https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg",
-                  alt: "Amex",
-                },
-              ].map((logo, i) => (
-                <img
-                  key={i}
-                  src={logo.src}
-                  alt={logo.alt}
-                  className="h-7 hover:scale-110 transition-transform cursor-pointer drop-shadow-md"
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
       {authUser && (
         <div className="mb-6">
           <label className="block text-gray-600 mb-2 font-semibold tracking-wide">
@@ -401,14 +329,7 @@ const PaymentForm = ({
               onChange={handleDiscountCodeChange}
               placeholder="Enter your 10% discount code"
               maxLength={8}
-              className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 
-                   bg-white/80 shadow
-                   placeholder-gray-400 tracking-widest uppercase
-                   focus:border-transparent focus:ring-2 focus:ring-primary/70 
-                   focus:shadow-lg focus:shadow-primary/20
-                   hover:shadow-md hover:border-gray-300
-                   outline-none transition-all duration-300
-                   text-dark font-semibold"
+              className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-white/80 shadow placeholder-gray-400 tracking-widest uppercase focus:border-transparent focus:ring-2 focus:ring-primary/70 focus:shadow-lg focus:shadow-primary/20 hover:shadow-md hover:border-gray-300 outline-none transition-all duration-300 text-dark font-semibold"
             />
           </div>
           {discountCode && (
@@ -513,12 +434,11 @@ const PaymentForm = ({
             return product.sizes?.length > 0 && !item.selected_size;
           })
         }
-        className={`w-full py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2
-    ${
-      paymentMethod !== "cash"
-        ? "bg-gray-400 cursor-not-allowed text-gray-100"
-        : "bg-primary hover:bg-primary/90 text-white"
-    }`}
+        className={`w-full py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${
+          paymentMethod !== "cash"
+            ? "bg-gray-400 cursor-not-allowed text-gray-100"
+            : "bg-primary hover:bg-primary/90 text-white"
+        }`}
       >
         {paymentMethod !== "cash" ? (
           <>

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 import {
   FaQuestionCircle,
@@ -84,7 +83,7 @@ const Faqs = () => {
 
   return (
     <div className="bg-slate-50 font-daraz">
-      <Navbar />
+
 
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-primary to-dark text-white text-center py-20 md:py-28 overflow-hidden">

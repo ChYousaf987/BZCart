@@ -32,7 +32,7 @@ const BeatSeller = () => {
         scrollRef.current.scrollLeft = parseInt(savedScroll, 10);
       }
     }
-  }, [filteredProducts.length]); // Wait until products are loaded
+  }, [filteredProducts.length]);
 
   // Save scroll position on scroll
   const handleScroll = () => {
@@ -82,7 +82,6 @@ const BeatSeller = () => {
                 </div>
                 <Skeleton width={100} height={20} className="mt-3" />
                 <Skeleton width={60} height={18} />
-                <Skeleton width={80} height={16} />
               </div>
             ))}
         </div>

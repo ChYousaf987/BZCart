@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux"; // Import useSelector
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 import ShippingForm from "./ShippingForm";
 import PaymentForm from "./PaymentForm";
@@ -59,7 +58,6 @@ const Cashout = () => {
 
   return (
     <>
-      <Navbar />
       <div className="md:w-[35%] font-daraz bg-white p-4 rounded-xl shadow mx-auto mb-8">
         {step === 1 && (
           <ShippingForm

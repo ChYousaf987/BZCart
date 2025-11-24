@@ -9,7 +9,6 @@ const Payment = () => {
 
   return (
     <>
-      <Navbar />
       <div className="md:w-[98%] hidden mx-auto pt-8 md:flex flex-col lg:flex-row justify-between gap-6 p-4 min-h-screen bg-light font-montserrat">
         <CartItems />
         {/* ✅ pass calculateTotal */}

@@ -117,7 +117,7 @@ const Navbar = () => {
   return (
     <div className="sticky top-0 z-20 font-sans shadow bg-white">
       {/* Sliding Promo Banner */}
-      <div className="relative bg-gradient-to-r from-[#7d3d01] via-[#fb3200] to-[#f99304] text-white text-center text-sm font-semibold overflow-hidden py-2 shadow-md">
+      <div className="relative bg-gradient-to-r from-[#7d3d01] via-[#fb3200] to-[#f99304] text-white text-center text-[12px] overflow-hidden py-1 shadow-md">
         <div className="whitespace-nowrap animate-slideBanner">
           ✨ Big Sale Alert! 🎉 Shop above{" "}
           <span className="font-extrabold underline underline-offset-2">

@@ -6,7 +6,6 @@ import {
 } from "../features/products/productSlice";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -57,7 +56,7 @@ const SearchPage = () => {
 
   return (
     <div className="font-daraz bg-white">
-      <Navbar />
+
 
       <div className="md:w-[95%] mx-auto px-2 md:px-0 py-8">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-500 mb-8">
