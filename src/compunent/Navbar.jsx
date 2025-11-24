@@ -252,7 +252,7 @@ const Navbar = () => {
                     className="relative group/item border-b last:border-none"
                   >
                     <Link
-                      to={`/category/${toSlug(cat.name)}`}
+                      to={`/${toSlug(cat.name)}`}
                       className="flex justify-between items-center px-4 py-3 hover:bg-gray-100 transition text-sm font-medium"
                     >
                       {cat.name}
@@ -268,7 +268,7 @@ const Navbar = () => {
                         {cat.sub.map((sub) => (
                           <Link
                             key={sub._id}
-                            to={`/category/${toSlug(sub.name)}`}
+                            to={`/${toSlug(sub.name)}`}
                             className="block px-4 py-2 text-sm hover:bg-gray-100 transition"
                           >
                             {sub.name}
@@ -377,7 +377,7 @@ const Navbar = () => {
                       {cat.sub.map((sub) => (
                         <Link
                           key={sub._id}
-                          to={`/category/${toSlug(sub.name)}`}
+                          to={`/${toSlug(sub.name)}`}
                           className="block py-1 hover:text-green-400 transition-colors"
                           onClick={() => setIsMenuOpen(false)}
                         >

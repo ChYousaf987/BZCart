@@ -114,7 +114,7 @@ const Home = () => {
                   {filteredCategories.map((category, index) => (
                     <Link
                       key={`${category._id}-${index}`}
-                      to={`/category/${toSlug(category.name)}`}
+                      to={`/${toSlug(category.name)}`}
                       state={{ scrollY: window.scrollY }}
                       className="flex flex-col items-center ml-4 sm:ml-0 text-center snap-start flex-shrink-0 w-24 sm:w-36"
                     >

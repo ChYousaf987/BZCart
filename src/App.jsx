@@ -8,6 +8,7 @@ import Loader from "./compunent/Loader";
 import Payment from "./compunent/Payment";
 import SingleProduct from "./compunent/SingleProduct";
 import CategoryProducts from "./compunent/CategoryProducts";
+import CategoryRedirect from "./compunent/CategoryRedirect";
 import CategoriesPage from "./compunent/CategoriesPage";
 import ContactPage from "./compunent/ContactPage";
 import TrackOrder from "./compunent/TrackOrder";
@@ -109,10 +110,6 @@ const App = () => {
           <Route path="/orders" element={<OrdersList />} />
           <Route path="/deal/:id" element={<SingleDeal />} />
           <Route path="/product/:productName" element={<SingleProduct />} />
-          <Route
-            path="/category/:categoryName"
-            element={<CategoryProducts />}
-          />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/deals" element={<AllDeals />} />
           <Route path="/Contact" element={<ContactPage />} />
@@ -123,6 +120,13 @@ const App = () => {
           <Route path="/returnandrefund" element={<ReturnRefund />} />
           <Route path="/termsandconditions" element={<TermsAndCondition />} />
           <Route path="/faqs" element={<FAQS />} />
+          {/* Backwards-compat redirect from /category/:categoryName -> /:categoryName */}
+          <Route
+            path="/category/:categoryName"
+            element={<CategoryRedirect />}
+          />
+          {/* Root-level category route (kept last to avoid conflicting with other static routes) */}
+          <Route path="/:categoryName" element={<CategoryProducts />} />
         </Routes>
       </div>
     </>

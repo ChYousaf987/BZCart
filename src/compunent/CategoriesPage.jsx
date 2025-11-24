@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { toSlug } from "../utils/slugify";
 import Navbar from "./Navbar";
 import Loader from "./Loader";
 
@@ -87,7 +88,7 @@ const CategoriesPage = () => {
             {filteredData.map((category, index) => (
               <Link
                 key={`${category._id}-${index}`}
-                to={`/category/${category._id}`}
+                to={`/${toSlug(category.name)}`}
                 className="flex flex-col items-center text-center"
               >
                 <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border border-[#f06621] bg-[#fbf6f4] p-1 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-105">
