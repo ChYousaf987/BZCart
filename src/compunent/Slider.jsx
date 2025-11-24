@@ -8,14 +8,14 @@ const HeroSection = () => {
         {/* NEW ARRIVALS LABEL */}
 
         {/* BIG BANNER */}
-        <div className="bg-[#FAF6F1] rounded-3xl overflow-hidden shadow-lg">
+        <div className="bg-black text-white rounded-3xl overflow-hidden shadow-lg">
           <div
             className="px-4 py-6 md:py-10 md:px-12 
 flex flex-row items-center justify-between gap-4 md:gap-10"
           >
             {/* LEFT CONTENT - compact for mobile */}
             <div className="flex-1 space-y-2 md:space-y-6">
-              <h1 className="text-xl sm:text-2xl md:text-6xl font-extrabold leading-tight">
+              <h1 className="text-2xl sm:text-2xl md:text-6xl font-bold md:font-extrabold leading-tight">
                 PREMIUM <br />
                 MEN'S <br />
                 WATCHES
@@ -50,7 +50,7 @@ flex flex-row items-center justify-between gap-4 md:gap-10"
         <div className="grid grid-cols-2 sm:grid-cols-2 gap-4 mt-5">
           {/* MINI BANNER 1 */}
           <div
-            className="bg-[#FAF6F1] rounded-2xl p-4 flex flex-row 
+            className="bg-[#f3cd9f] rounded-2xl p-4 flex flex-row 
                   items-center justify-between gap-4 
                   shadow-sm hover:shadow-lg transition cursor-pointer"
           >
@@ -74,7 +74,7 @@ flex flex-row items-center justify-between gap-4 md:gap-10"
 
           {/* MINI BANNER 2 */}
           <div
-            className="bg-[#FAF6F1] rounded-2xl p-4 flex flex-row 
+            className="bg-[#f3cd9f] rounded-2xl p-4 flex flex-row 
                   items-center justify-between gap-4 
                   shadow-sm hover:shadow-lg transition cursor-pointer"
           >
