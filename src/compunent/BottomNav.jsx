@@ -80,7 +80,7 @@ const getActiveKey = (pathname) => {
   return (
     <div className="fixed bottom-2 left-0 w-full flex justify-center z-50 font-daraz md:hidden ">
       <div
-        className="relative w-[96%]  max-w-md rounded-full h-[7vh] 
+        className="relative w-[94%]  max-w-md rounded-full h-[7vh] 
         bg-white/10 backdrop-blur-xl border border-white/10 
         shadow-[0_8px_25px_rgba(0,0,0,0.25)]
         flex items-center justify-around transition-all duration-300"
