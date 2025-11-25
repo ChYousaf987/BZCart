@@ -68,7 +68,7 @@ flex flex-row items-center justify-between gap-4 md:gap-10"
             <img
               src="https://cdn.shopify.com/s/files/1/0571/6223/6113/files/Sylvi_Watch_Professional_Edge_PU_Collection_Image_Homepage.webp?v=1735719550"
               alt="men watches"
-              className="w-20 sm:w-24 md:w-32 -ml-1 object-contain drop-shadow-xl"
+              className="w-20 sm:w-24 md:w-32 -ml-2 object-contain drop-shadow-xl"
             />
           </div>
 
@@ -92,7 +92,7 @@ flex flex-row items-center justify-between gap-4 md:gap-10"
             <img
               src="https://cdn.shopify.com/s/files/1/0571/6223/6113/files/Sylvi_Watch_Professional_Edge_PU_Collection_Image_Homepage.webp?v=1735719550"
               alt="women fashion"
-              className="w-20 sm:w-24 md:w-32 -ml-2 object-cover rounded-lg drop-shadow-xl"
+              className="w-20 sm:w-24 md:w-32 -ml-3 object-cover rounded-lg drop-shadow-xl"
             />
           </div>
         </div>
