@@ -80,7 +80,7 @@ const getActiveKey = (pathname) => {
   return (
     <div className="fixed bottom-2 left-0 w-full flex justify-center z-50 font-daraz md:hidden ">
       <div
-        className="relative w-[96%]  max-w-md rounded-full h-[8vh] 
+        className="relative w-[96%]  max-w-md rounded-full h-[7vh] 
         bg-white/10 backdrop-blur-xl border border-white/10 
         shadow-[0_8px_25px_rgba(0,0,0,0.25)]
         flex items-center justify-around transition-all duration-300"
@@ -88,7 +88,7 @@ const getActiveKey = (pathname) => {
         {/* 🔥 Floating Circle Indicator (only shows on main pages) */}
         {active && (
           <div
-            className="absolute -top-1 z-50 w-16 h-16 bg-primary rounded-full 
+            className="absolute top-0 z-50 w-12 h-12 bg-primary rounded-full 
             shadow-[0_6px_25px_rgba(242,108,43,0.5)] flex items-center justify-center 
             transition-all duration-500 ease-in-out"
             style={{
@@ -103,8 +103,8 @@ const getActiveKey = (pathname) => {
                 {
                   className:
                     active === "/"
-                      ? "w-8 h-8" // 🏠 Home icon larger
-                      : "w-6 h-6",
+                      ? "w-7 h-7" // 🏠 Home icon larger
+                      : "w-5 h-5",
                 }
               )}
             </div>
@@ -114,7 +114,7 @@ const getActiveKey = (pathname) => {
         {/* 💫 Bar curve under floating circle */}
         {active && (
           <div
-            className="absolute -top-1 w-20 h-10 bg-white/15 backdrop-blur-lg 
+            className="absolute -top-1 w-16 h-9 bg-white/15 backdrop-blur-lg 
             rounded-b-full shadow-[0_4px_12px_rgba(242,108,43,0.25)] 
             border border-white/10 transition-all duration-500"
             style={{
@@ -144,8 +144,8 @@ const getActiveKey = (pathname) => {
               {React.cloneElement(item.icon, {
                 className:
                   item.path === "/"
-                    ? "w-7 h-7" // Slightly bigger for Home
-                    : "w-6 h-6",
+                    ? "w-6 h-6" // Slightly bigger for Home
+                    : "w-5 h-5",
               })}
             </div>
             <span
