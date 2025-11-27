@@ -151,7 +151,7 @@ const Navbar = () => {
           </button>
           <Link to="/">
             <img
-              src="/loggg.png"
+              src="/loggo.png"
               alt="logo"
               className="w-[150px] md:w-[200px] object-contain"
             />
