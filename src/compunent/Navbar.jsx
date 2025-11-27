@@ -130,18 +130,18 @@ const Navbar = () => {
       </div>
 
       {/* Top Info */}
-      <div className="bg-gray-100 text-gray-600 text-xs py-2 max-lg:hidden">
-        <div className="md:w-[95%] mx-auto flex justify-between px-2 md:px-0">
+      {/* <div className="bg-gray-100 text-gray-600 text-xs py-1 max-lg:hidden">
+        <div className="w-full max-w-7xl mx-auto flex justify-between px-2 md:px-0">
           <p>Dinga, Tehsil Kharian District Gujrat, Punjab – Pakistan</p>
           <div className="flex gap-4">
             <span className="cursor-pointer">Eng ▾</span>
             <span className="cursor-pointer">PKR ▾</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Navbar */}
-      <div className="flex justify-between md:w-[95%] mx-auto px-2 md:px-0 items-center py-4 bg-white border-b">
+      <div className="flex justify-between w-full max-w-7xl mx-auto px-2 md:px-0 items-center py-4 bg-white border-b">
         <div className="flex items-center gap-2">
           <button
             className="md:hidden text-gray-700"
@@ -235,7 +235,7 @@ const Navbar = () => {
 
       {/* Categories Menu (Desktop) */}
       <div className="bg-black">
-        <div className="py-2 hidden md:flex md:w-[95%] mx-auto px-2 md:px-0 text-white items-center gap-9">
+        <div className="py-2 hidden md:flex w-full max-w-7xl mx-auto px-2 md:px-0 text-white items-center gap-9">
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setIsCatOpen(!isCatOpen)}

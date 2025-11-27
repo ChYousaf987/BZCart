@@ -134,7 +134,7 @@ const TopBrands = ({ sortedProducts, loading }) => {
   };
 
   return (
-    <div className="md:w-[95%] mx-auto px-2 md:px-0 pb-7 mt-10 topbrands-scroll-container">
+    <div className="w-full max-w-7xl mx-auto px-2 md:px-0 pb-7 mt-10 topbrands-scroll-container">
       <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-gray-500 border-b-2 border-[#f06621] inline-block pb-1">
           Explore From

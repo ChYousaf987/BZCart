@@ -67,7 +67,7 @@ const TopCategories = ({
   };
 
   return (
-    <div className="md:w-[95%] mx-auto px-2 md:px-0">
+    <div className="w-full max-w-7xl mt-8 mx-auto px-2 md:px-0">
       {/* Header */}
       <div className="flex justify-between items-start md:items-center mb-8">
         <h2 className="text-lg md:text-2xl font-bold border-b-2 text-gray-500 border-[#f06621] inline-block pb-1">

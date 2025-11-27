@@ -67,7 +67,7 @@ const Deals = () => {
   };
 
   return (
-    <div className="md:w-[95%] mx-auto px-2 md:px-0 py-6 relative">
+    <div className="w-full max-w-7xl mt-8 mx-auto px-2 md:px-0 py-6 relative">
       {/* Header */}
       <div className="flex justify-between items-start md:items-center mb-6">
         <h2 className="text-lg md:text-2xl font-bold text-dark border-b-2 border-primary inline-block pb-1">
