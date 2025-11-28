@@ -90,7 +90,7 @@ const HeroSection = () => {
                       <img
                         src={item.image}
                         alt={item.alt}
-                        className="w-20 h-20 mt-3 -mr-2"
+                        className="w-20 h-20  -mr-2"
                       />
                     </div>
                     <button className="text-sm text-gray-600 mt-1">
@@ -158,7 +158,7 @@ const HeroSection = () => {
                       <img
                         src={item.image}
                         alt={item.alt}
-                        className="w-20 h-20 mt-3 "
+                        className="w-20 h-20 -mr-2 "
                       />
                     </div>
                     <button className="text-sm text-gray-600 mt-1">
@@ -190,7 +190,7 @@ const HeroSection = () => {
                       <img
                         src={item.image}
                         alt={item.alt}
-                        className="w-16 h-20 mt-3 mx-auto"
+                        className="w-16 h-20 mt- mx-auto"
                       />
                     </div>
                     <p
