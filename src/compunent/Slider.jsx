@@ -26,7 +26,7 @@ const HeroSection = () => {
   const side = sortedSlides.filter((s) => s.size !== "large").slice(0, 2);
 
   return (
-    <div className="w-full flex justify-center py-5 px-4 font-sans">
+    <div className="w-full flex justify-center py-2 px-2 font-sans">
       <div className="w-full max-w-7xl">
         {/* =============================== */}
         {/*     MAIN LARGE BANNER           */}
@@ -68,7 +68,7 @@ const HeroSection = () => {
         {/* =============================== */}
         {/*     4 MEDIUM BANNERS            */}
         {/* =============================== */}
-        <div className="grid grid-cols-2 gap-4 mt-3">
+        <div className="grid grid-cols-2 gap-2 mt-2">
           {mediumBanners.map((item, index) => {
             // Automatically pick style based on index or predefined order
             if (index === 0)
