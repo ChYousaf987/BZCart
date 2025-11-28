@@ -90,7 +90,7 @@ const HeroSection = () => {
                       <img
                         src={item.image}
                         alt={item.alt}
-                        className="w-20 h-20 mt-3 ml-auto"
+                        className="w-20 h-20 mt-3 -mr-2"
                       />
                     </div>
                     <button className="text-sm text-gray-600 mt-1">
