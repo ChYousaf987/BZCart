@@ -95,14 +95,14 @@ const Home = () => {
           </LazyWrapper>
         </Suspense>
 
-        <Suspense fallback={<div></div>}>
+        {/* <Suspense fallback={<div></div>}>
           <LazyWrapper>
             <TopCategories
               categories={categories}
               loading={categoriesLoading}
             />
           </LazyWrapper>
-        </Suspense>
+        </Suspense> */}
 
         <Suspense fallback={<div></div>}>
           <LazyWrapper>

@@ -212,7 +212,7 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Search */}
-      <div className="md:hidden px-4 mt-2 pb-3">
+      {/* <div className="md:hidden px-4 mt-2 pb-3">
         <form
           onSubmit={handleSearch}
           className="flex items-center border border-gray-300 rounded-md overflow-hidden w-full"
@@ -231,7 +231,7 @@ const Navbar = () => {
             Search
           </button>
         </form>
-      </div>
+      </div> */}
 
       {/* Categories Menu (Desktop) */}
       <div className="bg-black">
