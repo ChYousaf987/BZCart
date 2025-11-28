@@ -103,7 +103,10 @@ const HeroSection = () => {
             if (index === 1)
               return (
                 <a key={index} href={item.link}>
-                  <div className="relative rounded-xl shadow-sm h-full flex items-start overflow-hidden">
+                  <div
+                    className="relative rounded-xl shadow-sm h-full flex items-start overflow-hidden"
+                    style={{ backgroundColor: item.bgColor || "#f3cd9f" }}
+                  >
                     {/* Background Image */}
                     <img
                       src={item.image}
