@@ -34,7 +34,7 @@ const HeroSection = () => {
         {large && (
           <a
             href={large.link}
-            className=" text-white rounded-3xl overflow-hidden shadow-lg block"
+            className=" text-white rounded-xl overflow-hidden shadow-lg block"
             style={{ backgroundColor: large.bgColor || "#28a745" }}
           >
             <div className="px-2 py-7 md:py-7 md:px-12 flex flex-row items-center justify-between gap-4 md:gap-10">
