@@ -15,6 +15,7 @@ import { setSearchTerm } from "../features/products/productSlice";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { toSlug } from "../utils/slugify";
+import { TbTruckDelivery } from "react-icons/tb";
 
 const Navbar = () => {
   const location = useLocation();
@@ -197,14 +198,25 @@ const Navbar = () => {
               onClick={handleLogout}
               className="flex items-center gap-2 hover:text-primary"
             >
-              {/* 👇 Hide on mobile, show on sm and up */}
+              {/* Hide name on mobile, show only logout icon */}
               <span className="hidden sm:inline">{getUserDisplayName()}</span>
               <FaSignOutAlt size={20} />
             </button>
           ) : (
-            <Link to="/loginprofile" className="hover:text-primary">
-              <FaRegUser size={20} />
-            </Link>
+            <>
+              {/* Desktop → User Icon */}
+              <Link
+                to="/loginprofile"
+                className="hover:text-primary hidden md:block"
+              >
+                <FaRegUser size={20} />
+              </Link>
+
+              {/* Mobile → Truck Delivery Icon */}
+              <Link to="/orders" className="hover:text-primary md:hidden">
+                <TbTruckDelivery size={24} />
+              </Link>
+            </>
           )}
         </div>
       </div>
@@ -379,7 +391,7 @@ const Navbar = () => {
             ))}
 
             {/* Quick Links */}
-            <div className="border-t border-gray-300 pt-4 space-y-2">
+            {/* <div className="border-t border-gray-300 pt-4 space-y-2">
               <p className="font-semibold text-lg text-primary">Quick Links</p>
               {[
                 { to: "/", label: "Home" },
@@ -401,17 +413,17 @@ const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
-            </div>
+            </div> */}
 
             {/* Account / Wishlist */}
-            <div className="border-t pb-20 border-gray-300 pt-4 flex flex-col space-y-2">
+            {/* <div className="border-t pb-20 border-gray-300 pt-4 flex flex-col space-y-2">
               <Link
                 to="/loginprofile"
                 className="flex items-center gap-2 hover:text-orange-500"
               >
                 <FaRegUser /> Account
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

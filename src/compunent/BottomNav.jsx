@@ -3,8 +3,9 @@ import { LuPackageSearch } from "react-icons/lu";
 import { Link, useLocation } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
 import { HiOutlineViewGrid } from "react-icons/hi";
-import { TbTruckDelivery } from "react-icons/tb"; // 🚚 Tracking icon
+import { GiNestedHearts } from "react-icons/gi"; 
 import { useSelector } from "react-redux";
+import { IoSearch } from "react-icons/io5";
 
 // 🏠 Ultra-Rounded Home SVG Icon (larger, softer)
 const CustomHomeIcon = ({ className = "w-8 h-8", color = "currentColor" }) => (
@@ -47,8 +48,8 @@ const BottomNav = () => {
   const profilePath = user ? "/profile" : "/loginprofile"; // ✅ dynamic route
 
   const navItems = [
-    { path: "/orders", label: "Tracking", icon: <TbTruckDelivery /> },
-    { path: "/cart", label: "Explore", icon: <Compass /> },
+    { path: "/faverat", label: "Favorite", icon: <GiNestedHearts /> },
+    { path: "/search", label: "Search", icon: <IoSearch /> },
     { path: "/", label: "Home", icon: <CustomHomeIcon /> },
     { path: "/categories", label: "Categories", icon: <HiOutlineViewGrid /> },
     { path: profilePath, label: "Profile", icon: <FaRegUser /> }, // ✅ dynamic
@@ -58,8 +59,8 @@ const BottomNav = () => {
 const getActiveKey = (pathname) => {
   if (pathname === "/") return "/";
   if (pathname.startsWith("/categories")) return "/categories";
-  if (pathname.startsWith("/orders")) return "/orders";
-  if (pathname.startsWith("/cart")) return "/cart";
+  if (pathname.startsWith("/faverat")) return "/faverat";
+  if (pathname.startsWith("/search")) return "/search";
   if (pathname.startsWith("/profile")) return "/profile";
   if (pathname.startsWith("/loginprofile")) return "/loginprofile";
   return "";
@@ -114,7 +115,7 @@ const getActiveKey = (pathname) => {
         {/* 💫 Bar curve under floating circle */}
         {active && (
           <div
-            className="absolute -top-1 w-16 h-9 bg-white/15 backdrop-blur-lg 
+            className="absolute -top-1.5 w-16 h-9 bg-white/15 backdrop-blur-lg 
             rounded-b-full shadow-[0_4px_12px_rgba(242,108,43,0.25)] 
             border border-white/10 transition-all duration-500"
             style={{
