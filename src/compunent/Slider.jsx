@@ -37,7 +37,7 @@ const HeroSection = () => {
             className=" text-white rounded-3xl overflow-hidden shadow-lg block"
             style={{ backgroundColor: large.bgColor || "#28a745" }}
           >
-            <div className="px-4 py-6 md:py-10 md:px-12 flex flex-row items-center justify-between gap-4 md:gap-10">
+            <div className="px-2 py-4 md:py-7 md:px-12 flex flex-row items-center justify-between gap-4 md:gap-10">
               <div className="flex-1 space-y-2 md:space-y-6">
                 <h1
                   className="text-2xl sm:text-2xl md:text-6xl font-extrabold leading-tight"
@@ -75,25 +75,31 @@ const HeroSection = () => {
               return (
                 <a key={index} href={item.link}>
                   <div
-                    className="rounded-xl px-2 shadow-sm py-1"
+                    className="rounded-xl px-2 md:px-4 shadow-sm py-1"
                     style={{ backgroundColor: item.bgColor || "#f3cd9f" }}
                   >
-                    <div className="flex justify-center items-center">
+                    <div className="flex justify-center md:justify-between items-center">
                       <div>
                         <p
-                          className="text-xl font-bold"
-                          style={{ color: item.titleColor || "#f3cd9f" }}
+                          className="text-xl md:text-3xl font-bold"
+                          style={{ color: item.titleColor || "#1A1A1A" }}
                         >
                           {item.title}
                         </p>
+                        {/* Upper button: desktop only */}
+                        <button className=" text-sm md:text-lg md:font-medium mt-5 text-gray-600 hidden md:inline-block">
+                          {item.subtitle || "View Collection"}
+                        </button>
                       </div>
                       <img
                         src={item.image}
                         alt={item.alt}
-                        className="w-20 h-20  -mr-2"
+                        className="w-20 h-20 md:w-36 md:h-36 -mr-2"
                       />
                     </div>
-                    <button className="text-sm text-gray-600 mt-1">
+
+                    {/* Bottom button: mobile only */}
+                    <button className="text-sm text-gray-600 mt-1 md:hidden block">
                       {item.subtitle || "View Collection"}
                     </button>
                   </div>
@@ -116,14 +122,14 @@ const HeroSection = () => {
                     {/* Content */}
                     <div className="relative p-2 rounded-md text-green-400 text-center m-auto flex flex-col items-center justify-center">
                       <p
-                        className="text-lg font-bold"
+                        className=" text-xl md:text-5xl  font-bold"
                         style={{ color: item.titleColor || "#f3cd9f" }}
                       >
                         {item.title}
                       </p>
                       {item.subtitle && (
                         <p
-                          className="text-sm mt-2"
+                          className="text-sm mt-2 md:text-lg md:font-medium md:mt-5"
                           style={{ color: item.titleColor || "#f3cd9f" }}
                         >
                           {item.subtitle}
@@ -143,25 +149,31 @@ const HeroSection = () => {
               return (
                 <a key={index} href={item.link}>
                   <div
-                    className=" rounded-xl px-2 shadow-sm py-1 h-full"
+                    className="rounded-xl px-2 md:px-4 shadow-sm py-1 h-full"
                     style={{ backgroundColor: item.bgColor || "#f3cd9f" }}
                   >
-                    <div className="flex justify-center items-center">
+                    <div className="flex justify-center md:justify-between items-center ">
                       <div>
                         <p
-                          className="text-xl font-bold"
-                          style={{ color: item.titleColor || "#f3d9f" }}
+                          className="text-xl md:text-3xl font-bold"
+                          style={{ color: item.titleColor || "#1A1A1A" }}
                         >
                           {item.title}
                         </p>
+                        {/* Upper button: desktop only */}
+                        <button className=" text-sm md:text-lg md:font-medium mt-5 text-gray-600 hidden md:inline-block">
+                          {item.subtitle || "View Collection"}
+                        </button>
                       </div>
                       <img
                         src={item.image}
                         alt={item.alt}
-                        className="w-20 h-20 -mr-2 "
+                        className="w-20 h-20 md:w-36 md:h-36 -mr-2"
                       />
                     </div>
-                    <button className="text-sm text-gray-600 mt-1">
+
+                    {/* Bottom button: mobile only */}
+                    <button className="text-sm text-gray-600 mt-1 md:hidden block">
                       {item.subtitle || "View Collection"}
                     </button>
                   </div>
@@ -172,34 +184,40 @@ const HeroSection = () => {
               return (
                 <a key={index} href={item.link}>
                   <div
-                    className=" text-white rounded-xl py-1 px-2 shadow-sm"
+                    className=" text-white rounded-xl py-1 px-2 md:px-4 shadow-sm  h-full"
                     style={{ backgroundColor: item.bgColor || "#f3cd9f" }}
                   >
-                    <div className="flex">
+                    <div className="flex justify-between items-center">
                       <div>
-                        <p className="text-orange-400 font-bold mt-2 text-sm">
+                        <p className="text-orange-400 font-bold mt-2 md:mb-2 text-sm md:text-2xl">
                           FLASH SALE
                         </p>
                         <p
-                          className=" font-bold text-lg"
+                          className=" font-bold text-lg md:text-3xl"
                           style={{ color: item.titleColor || "#f3cd9f" }}
                         >
                           {item.title}
                         </p>
+                        <button
+                          className=" text-sm md:text-lg md:font-medium mt-5 hidden md:inline-block"
+                          style={{ color: item.subtitleColor || "#d9f" }}
+                        >
+                          {item.subtitle || "View Collection"}
+                        </button>
                       </div>
                       <img
                         src={item.image}
                         alt={item.alt}
-                        className="w-16 h-20 mt- mx-auto"
+                        className="w-16 h-20 md:w-36 md:h-36"
                       />
                     </div>
                     <p
-                      className="text-sm  mt-1"
+                      className="text-sm  mt-1 md:hidden block"
                       style={{ color: item.titleColor || "#f3cd9f" }}
                     >
                       {item.subtitle}
                     </p>
-                    <p className="text-xs text-gray-300 mt-1">
+                    <p className="text-xs text-gray-300 mt-1 md:hidden block">
                       {item.bottomText}
                     </p>
                   </div>
