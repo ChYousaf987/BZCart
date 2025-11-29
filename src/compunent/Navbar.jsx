@@ -183,8 +183,10 @@ const Navbar = () => {
             <p className="text-xs text-gray-500">Customer Services</p>
             <p className="font-semibold text-sm">+92 329-7609190</p>
           </div>
-
-          <div className="relative">
+          <Link to="/orders" className="hover:text-primary md:hidden">
+            <TbTruckDelivery size={28} />
+          </Link>
+          <div className="relative mr-1">
             <Link to="/payment" className="hover:text-primary">
               <SlHandbag size={22} />
             </Link>
@@ -213,9 +215,6 @@ const Navbar = () => {
               </Link>
 
               {/* Mobile → Truck Delivery Icon */}
-              <Link to="/orders" className="hover:text-primary md:hidden">
-                <TbTruckDelivery size={24} />
-              </Link>
             </>
           )}
         </div>

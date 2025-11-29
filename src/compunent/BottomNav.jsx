@@ -6,6 +6,7 @@ import { HiOutlineViewGrid } from "react-icons/hi";
 import { GiNestedHearts } from "react-icons/gi"; 
 import { useSelector } from "react-redux";
 import { IoSearch } from "react-icons/io5";
+import { IoMdHeartEmpty } from "react-icons/io";
 
 // 🏠 Ultra-Rounded Home SVG Icon (larger, softer)
 const CustomHomeIcon = ({ className = "w-8 h-8", color = "currentColor" }) => (
@@ -48,7 +49,7 @@ const BottomNav = () => {
   const profilePath = user ? "/profile" : "/loginprofile"; // ✅ dynamic route
 
   const navItems = [
-    { path: "/faverat", label: "Favorite", icon: <GiNestedHearts /> },
+    { path: "/faverat", label: "Favorite", icon: <IoMdHeartEmpty /> },
     { path: "/search", label: "Search", icon: <IoSearch /> },
     { path: "/", label: "Home", icon: <CustomHomeIcon /> },
     { path: "/categories", label: "Categories", icon: <HiOutlineViewGrid /> },
