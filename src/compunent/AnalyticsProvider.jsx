@@ -21,6 +21,11 @@ const AnalyticsProvider = ({ children }) => {
       meta.os_name = "Android";
       meta.os_version = m ? m[1] : null;
       meta.device_type = "mobile";
+      // try to extract device model for Android (e.g. SM-G991B, Pixel 7)
+      const modelMatch = ua.match(
+        /Android[\d\.]*;\s*([^;\)]+)\s*(Build|AppleWebKit|;)/i
+      );
+      if (modelMatch && modelMatch[1]) meta.device_model = modelMatch[1].trim();
     } else if (
       /iPhone OS\s*([0-9_]+)/i.test(ua) ||
       /iPad; CPU OS\s*([0-9_]+)/i.test(ua)
@@ -29,6 +34,9 @@ const AnalyticsProvider = ({ children }) => {
       meta.os_name = "iOS";
       meta.os_version = m ? m[1].replace(/_/g, ".") : null;
       meta.device_type = /iPad/i.test(ua) ? "tablet" : "mobile";
+      // set device model to iPhone or iPad when present
+      if (/iPad/i.test(ua)) meta.device_model = "iPad";
+      else if (/iPhone/i.test(ua)) meta.device_model = "iPhone";
     } else if (/windows nt\s*([0-9\.]+)/i.test(lower)) {
       meta.os_name = "Windows";
       meta.device_type = "desktop";
@@ -40,6 +48,13 @@ const AnalyticsProvider = ({ children }) => {
       meta.device_type = /mobile|android|iphone|ipad/i.test(ua)
         ? "mobile"
         : "desktop";
+    }
+    // best-effort device model from UA for desktops
+    if (!meta.device_model) {
+      const platform = navigator.platform || "";
+      if (/Mac/i.test(platform)) meta.device_model = "Mac";
+      else if (/Win/i.test(platform)) meta.device_model = "Windows PC";
+      else if (/Linux/i.test(platform)) meta.device_model = "Linux";
     }
     return meta;
   };

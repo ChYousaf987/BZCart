@@ -133,6 +133,18 @@ const Carts = () => {
             ? updatedCarts.reduce((t, it) => t + (it.quantity || 0), 0)
             : undefined;
 
+          // helper: best-effort device_model for this non-captured event
+          const ua = navigator.userAgent || "";
+          const detectModel = () => {
+            if (/iPad/i.test(ua)) return "iPad";
+            if (/iPhone/i.test(ua)) return "iPhone";
+            const m = ua.match(
+              /Android[\d\.]*;\s*([^;\)]+)\s*(Build|AppleWebKit|;)/i
+            );
+            if (m && m[1]) return m[1].trim();
+            return "";
+          };
+
           sendAnalyticsEvent({
             event_type: "add_to_cart",
             user_id:
@@ -146,6 +158,7 @@ const Carts = () => {
             guest_id: guestId,
             session_id: localStorage.getItem("analyticsSession") || undefined,
             url: window.location.href,
+            meta: { ua, device_model: detectModel() },
             data: {
               product_id:
                 productObj?._id || item.product_id._id || item.product_id,
