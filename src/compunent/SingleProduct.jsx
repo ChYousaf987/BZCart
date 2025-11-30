@@ -9,6 +9,9 @@ import {
   FaTruck,
   FaUndo,
   FaStar,
+  FaAngleDown,
+  FaFacebook,
+  FaInstagram,
 } from "react-icons/fa";
 import {
   fetchProductById,
@@ -23,6 +26,7 @@ import Slider from "react-slick";
 import { fromSlug, toSlug } from "../utils/slugify";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
 
 const SingleProduct = () => {
   const navigate = useNavigate();
@@ -42,6 +46,11 @@ const SingleProduct = () => {
   const [activeTab, setActiveTab] = useState("description");
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
+  // Add these lines with your other useState hooks
+  const [openDesc, setOpenDesc] = useState(false);
+  const [openShip, setOpenShip] = useState(false);
+  const [openCare, setOpenCare] = useState(false);
+  const [openNote, setOpenNote] = useState(false);
 
   // Critical: Track if we're currently resolving the product
   const [resolvingProduct, setResolvingProduct] = useState(true);
@@ -545,15 +554,15 @@ const SingleProduct = () => {
             <div className="mt-6 space-y-4">
               <button
                 onClick={handleAddToCart}
-                className={`w-full py-3 rounded-lg font-semibold text-white shadow-lg shadow-orange-600 transition-all duration-300 ${
+                className={`w-full py-3 rounded-sm font-semibold shadow-lg border border-orange-600 transition-all duration-300 ${
                   product.sizes?.length > 0
                     ? !selectedSize ||
                       product.sizes.find((s) => s.size === selectedSize)
                         ?.stock <= 0
                       ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-orange-500 hover:shadow-lg hover:scale-[1.02]"
+                      : "bg--500 hover:shadow-lg hover:scale-[1.02]"
                     : product.product_stock > 0
-                    ? "bg-orange-500  hover:shadow-lg hover:scale-[1.02]"
+                    ? "bg--500  hover:shadow-lg hover:scale-[1.02]"
                     : "bg-gray-300 cursor-not-allowed"
                 }`}
                 disabled={
@@ -564,16 +573,15 @@ const SingleProduct = () => {
                     : product.product_stock <= 0
                 }
               >
-                🛒 Add to Cart
+                ADD TO CART
               </button>
 
-              <div className="flex gap-3">
+              <div className="">
                 {/* ⚡ Buy Now */}
                 <button
                   onClick={handleBuyNow}
-                  className={`w-1/2 py-3 rounded-lg font-semibold text-orange-600
-      bg-white
-      shadow-orange-600 shadow-lg
+                  className={`w-full py-3 rounded-sm font-semibold border border-orange-800
+      bg-primary shadow-lg
       hover:shadow-[inset_0_3px_6px_rgba(0,0,0,0.08),_0_3px_6px_rgba(0,0,0,0.12)]
       hover:scale-[1.02] transition-all duration-300 ${
         product.sizes?.length > 0
@@ -593,19 +601,19 @@ const SingleProduct = () => {
                       : product.product_stock <= 0
                   }
                 >
-                  Buy Now
+                  BUY IT NOW
                 </button>
 
                 {/* 💬 WhatsApp */}
                 <button
                   onClick={handleOrderOnWhatsapp}
-                  className={`w-1/2 flex items-center justify-center gap-2 py-3 rounded-lg font-semibold shadow-green-400 text-white shadow-lg transition-all duration-300 ${
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-sm mt-3 font-semibold border border-orange-800 text- shadow-lg transition-all duration-300 ${
                     product.sizes?.length > 0
                       ? !selectedSize ||
                         product.sizes.find((s) => s.size === selectedSize)
                           ?.stock <= 0
                         ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-green-500 hover:shadow-lg hover:scale-[1.02]"
+                        : "bg-primary hover:shadow-lg hover:scale-[1.02]"
                       : product.product_stock > 0
                       ? "bg-green-500 hover:shadow-lg hover:scale-[1.02]"
                       : "bg-gray-300 cursor-not-allowed"
@@ -618,6 +626,7 @@ const SingleProduct = () => {
                       : product.product_stock <= 0
                   }
                 >
+                  WHATSAPP
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
@@ -626,12 +635,11 @@ const SingleProduct = () => {
                   >
                     <path d="M12.04 2c-5.52 0-10 4.47-10 9.99 0 1.76.46 3.46 1.34 4.97L2 22l5.19-1.36c1.45.79 3.08 1.2 4.85 1.2 5.53 0 10-4.48 10-10s-4.47-9.84-10-9.84zm.04 18.03c-1.54 0-3.02-.41-4.3-1.2l-.31-.19-3.07.8.82-3.02-.2-.31c-.84-1.33-1.28-2.86-1.28-4.41 0-4.53 3.7-8.23 8.23-8.23 2.19 0 4.25.85 5.79 2.39 1.55 1.55 2.4 3.61 2.4 5.79-.01 4.53-3.7 8.38-8.28 8.38zm4.67-6.23c-.26-.13-1.54-.76-1.78-.84-.24-.09-.41-.13-.58.13-.17.26-.67.84-.82 1.01-.15.17-.3.2-.56.07-.26-.13-1.1-.4-2.1-1.27-.77-.68-1.28-1.52-1.43-1.78-.15-.26-.02-.41.11-.54.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.07-.13-.58-1.39-.8-1.9-.21-.51-.42-.44-.58-.45-.15-.01-.32-.01-.49-.01-.17 0-.45.07-.69.32-.24.26-.9.88-.9 2.15s.92 2.49 1.05 2.66c.13.17 1.8 2.75 4.35 3.86.61.27 1.09.43 1.46.55.61.19 1.17.16 1.61.1.49-.07 1.54-.63 1.76-1.23.22-.61.22-1.13.15-1.23-.06-.1-.24-.16-.5-.29z" />
                   </svg>
-                  WhatsApp
                 </button>
               </div>
             </div>
 
-            {/* 🚚 Icons Section */}
+            {/* 🚚 Icons Section
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
               <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
                 <FaTruck className="text-orange-600 text-xl" />
@@ -661,36 +669,209 @@ const SingleProduct = () => {
                   <p className="text-xs text-gray-500">Phone & Email</p>
                 </div>
               </div>
-            </div>
+            </div> */}
+            {/* ==================== NEW COLLAPSIBLE ACCORDION SECTION (Clean & Working) ==================== */}
+            <div className="mt-10 md:w-[95%] mx-auto px-4 md:px-0 font-darazs">
+              {/* WhatsApp Big Button */}
 
-            {/* 📋 Highlights */}
-            {product.highlights && product.highlights.length > 0 && (
-              <div className="mt-6">
-                <h3 className="text-md font-semibold text-gray-700 mb-2 uppercase tracking-wide">
-                  Product Highlights
-                </h3>
-                <ul className="list-disc list-inside text-gray-500 text-sm leading-relaxed space-y-1">
-                  {product.highlights.map((h, idx) => (
-                    <li key={idx}>{h}</li>
-                  ))}
-                </ul>
+              <div className="">
+                {/* DESCRIPTION */}
+                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                  <button
+                    onClick={() => setOpenDesc(!openDesc)}
+                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                  >
+                    <span className="uppercase tracking-wider text-sm md:text-base">
+                      DESCRIPTION
+                    </span>
+                    <span
+                      className={`text-xl transition-transform duration-300 ${
+                        openDesc ? "rotate-180" : ""
+                      }`}
+                    >
+                      <FaAngleDown />
+                    </span>
+                  </button>
+                  {openDesc && (
+                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm leading-relaxed space-y-4">
+                      <p className="whitespace-pre-line">
+                        {product.product_description ||
+                          "No description available."}
+                      </p>
+
+                      {product.highlights && product.highlights.length > 0 && (
+                        <div>
+                          <p className="font-bold text-gray-800 mb-2">
+                            Highlights:
+                          </p>
+                          <ul className="list-disc list-inside space-y-1">
+                            {product.highlights.map((h, i) => (
+                              <li key={i}>{h}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {product.warranty && (
+                        <p>
+                          <strong>Warranty:</strong> {product.warranty}
+                        </p>
+                      )}
+
+                      {product.sizes?.length > 0 && (
+                        <div>
+                          <p className="font-bold text-gray-800 mb-3">
+                            Available Sizes:
+                          </p>
+                          <div className="flex flex-wrap gap-3">
+                            {product.sizes.map((s) => (
+                              <span
+                                key={s.size}
+                                className={`px-4 py-2 rounded-full text-sm font-medium border ${
+                                  s.stock > 0
+                                    ? "bg-green-100 text-green-700 border-green-300"
+                                    : "bg-red-100 text-red-700 border-red-300 line-through"
+                                }`}
+                              >
+                                {s.size}{" "}
+                                {s.stock > 0
+                                  ? `(${s.stock} left)`
+                                  : "(Out of stock)"}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Product Highlights */}
+                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                  <button
+                    onClick={() => setOpenNote(!openNote)}
+                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                  >
+                    <span className="uppercase tracking-wider text-sm md:text-base">
+                      Product Highlights
+                    </span>
+                    <span
+                      className={`text-xl transition-transform duration-300 ${
+                        openNote ? "rotate-180" : ""
+                      }`}
+                    >
+                      <FaAngleDown />
+                    </span>
+                  </button>
+                  {openNote && (
+                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm italic">
+                      <h3 className="text-md font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                        Product Highlights
+                      </h3>
+                      <ul className="list-disc list-inside text-gray-500 text-sm leading-relaxed space-y-1">
+                        {product.highlights.map((h, idx) => (
+                          <li key={idx}>{h}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                {/* SHIPPING INFORMATION */}
+                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                  <button
+                    onClick={() => setOpenShip(!openShip)}
+                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                  >
+                    <span className="uppercase tracking-wider text-sm md:text-base">
+                      SHIPPING INFORMATION
+                    </span>
+                    <span
+                      className={`text-xl transition-transform duration-300 ${
+                        openShip ? "rotate-180" : ""
+                      }`}
+                    >
+                      <FaAngleDown />
+                    </span>
+                  </button>
+                  {openShip && (
+                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm space-y-2">
+                      <p>• Delivery within 3–7 business days</p>
+                      <p>• Cash on Delivery (COD) available nationwide</p>
+                      <p>• Tracking number provided after dispatch</p>
+                      {product.shipping > 0 ? (
+                        <p>
+                          • Shipping charges:{" "}
+                          <strong>Rs. {product.shipping}</strong>
+                        </p>
+                      ) : (
+                        <p className="text-green-600 font-bold">
+                          Free Shipping
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {/* CARE INSTRUCTION */}
+                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                  <button
+                    onClick={() => setOpenCare(!openCare)}
+                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                  >
+                    <span className="uppercase tracking-wider text-sm md:text-base">
+                      CARE INSTRUCTION
+                    </span>
+                    <span
+                      className={`text-xl transition-transform duration-300 ${
+                        openCare ? "rotate-180" : ""
+                      }`}
+                    >
+                      <FaAngleDown />
+                    </span>
+                  </button>
+                  {openCare && (
+                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm">
+                      <ul className="list-disc list-inside space-y-2">
+                        <li>Machine wash cold</li>
+                        <li>Do not bleach</li>
+                        <li>Tumble dry low</li>
+                        <li>Iron on low heat if needed</li>
+                        <li>Wash with similar colors</li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                {/* NOTE */}
               </div>
-            )}
+              {/* Share Buttons */}
+              <div className="flex justify-center gap-8 mt-10 pb-8">
+                <button className="flex items-center gap-2 text-gray-600 hover:text-[#1877f2] transition">
+                  <FaFacebook size={22} />
+                  <span className="text-sm font-medium">Share</span>
+                </button>
+
+                <button className="flex items-center gap-2 text-gray-600 hover:text-[#1da1f2] transition">
+                  <svg
+                    className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.28 4.28 0 0 0 1.88-2.36 8.52 8.52 0 0 1-2.71.96 4.25 4.25 0 0 0-7.23 3.87 12.06 12.06 0 0 1-8.76-4.44 4.25 4.25 0 0 0 1.31 5.67c-.64-.02-1.24-.2-1.77-.49v.05a4.25 4.25 0 0 0 3.41 4.17c-.66.18-1.36.2-2.06.08a4.25 4.25 0 0 0 3.97 2.95 8.52 8.52 0 0 1-5.29 1.82c-.34 0-.68-.02-1.02-.06a12.04 12.04 0 0 0 6.52 1.91c7.82 0 12.1-6.48 12.1-12.1 0-.09-.02-.14-.03a8.62 8.62 0 0 0 2.11-2.19z" />
+                  </svg>
+                  <span className="text-sm font-medium">Share</span>
+                </button>
+
+                <button className="flex items-center gap-2 text-gray-600 hover:text-pink-600 transition">
+                  <FaInstagram size={22} />
+                  <span className="text-sm font-medium">Pin it</span>
+                </button>
+              </div>
+            </div>
+            {/* ==================== END OF ACCORDION SECTION ==================== */}
           </div>
         </div>
 
         <div className="mt-8">
           <div className="flex border-b">
-            <button
-              className={`py-2 px-4 font-semibold transition-colors duration-300 ${
-                activeTab === "description"
-                  ? "border-b-2 border-red-600 text-gray-700"
-                  : "text-gray-600 hover:text-red-500"
-              }`}
-              onClick={() => setActiveTab("description")}
-            >
-              Description
-            </button>
             <button
               className={`py-2 px-4 font-semibold transition-colors duration-300 ${
                 activeTab === "reviews"
@@ -704,55 +885,6 @@ const SingleProduct = () => {
           </div>
 
           {/* 🌟 Description Section */}
-          {activeTab === "description" && (
-            <div className="relative  bg-gray-50 text-sm rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-              <div
-                className="p-2 text-gray-500 whitespace-pre-line scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 break-words"
-                style={{
-                  scrollBehavior: "smooth",
-                  wordBreak: "break-word", // ✅ ensures long words/links wrap properly
-                }}
-              >
-                <p className="leading-relaxed break-words">
-                  {product.product_description || "No description available."}
-                </p>
-
-                {product.warranty && (
-                  <p className="mt-2 break-words">
-                    <strong className="text-gray-800">Warranty:</strong>{" "}
-                    {product.warranty}
-                  </p>
-                )}
-
-                {product.sizes?.length > 0 && (
-                  <div className="mt-2 break-words">
-                    <p className="text-gray-700 font-medium mb-1">
-                      Available Sizes & Stock:
-                    </p>
-                    <ul className="list-disc list-inside text-sm text-gray-600">
-                      {product.sizes.map((size) => (
-                        <li key={size.size} className="break-words">
-                          {size.size}:{" "}
-                          <span
-                            className={
-                              size.stock === 0
-                                ? "text-red-600"
-                                : "text-green-600"
-                            }
-                          >
-                            {size.stock} available
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              {/* ✨ Fade effect at bottom */}
-              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none"></div>
-            </div>
-          )}
 
           {activeTab === "reviews" && (
             <div className="mt-4">

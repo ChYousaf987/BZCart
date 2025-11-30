@@ -15,7 +15,7 @@ import { setSearchTerm } from "../features/products/productSlice";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { toSlug } from "../utils/slugify";
-import { TbTruckDelivery } from "react-icons/tb";
+import { CiDeliveryTruck } from "react-icons/ci";
 
 const Navbar = () => {
   const location = useLocation();
@@ -45,6 +45,16 @@ const Navbar = () => {
   const totalCartItems = cartItems.reduce(
     (total, item) => total + (item.quantity || 0),
     0
+  );
+  const Tracking = ({ className = "w-6 h-6", color = "currentColor" }) => (
+    <svg
+      class="sr4-icon sr4-icon--track-order"
+      aria-hidden="true"
+      focusable="false"
+      role="presentation"
+    >
+      <use href="#icon-h-track-order"></use>
+    </svg>
   );
 
   // Fetch categories
@@ -184,7 +194,7 @@ const Navbar = () => {
             <p className="font-semibold text-sm">+92 329-7609190</p>
           </div>
           <Link to="/orders" className="hover:text-primary md:hidden">
-            <TbTruckDelivery size={28} />
+            <CiDeliveryTruck  size={28} />
           </Link>
           <div className="relative mr-1">
             <Link to="/payment" className="hover:text-primary">

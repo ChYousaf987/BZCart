@@ -28,6 +28,8 @@ import BottomNav from "./compunent/BottomNav";
 import OrdersList from "./compunent/OrdersList";
 import LoginProfile from "./compunent/LoginProfile";
 import Profile from "./compunent/Profile";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "./compunent/PageTransition";
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -95,39 +97,213 @@ const App = () => {
       {!["/auth", "/checkout", "/Cashout", "/paymentMethods"].some((path) =>
         location.pathname.startsWith(path)
       ) && <BottomNav />}
-      <div className="pb-[9vh] md:pb-0 ">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/loginprofile" element={<LoginProfile />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/Cashout" element={<Cashout />} />
-          <Route path="/Checkout" element={<Checkout />} />
-          <Route path="/paymentMethods" element={<PaymentMethods />} />
-          <Route path="/track-order/:id" element={<TrackOrder />} />
-          <Route path="/orders" element={<OrdersList />} />
-          <Route path="/deal/:id" element={<SingleDeal />} />
-          <Route path="/product/:productName" element={<SingleProduct />} />
-          <Route path="/categories" element={<CategoriesPage />} />
-          <Route path="/deals" element={<AllDeals />} />
-          <Route path="/Contact" element={<ContactPage />} />
-          <Route path="/products" element={<AllProducts />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-          <Route path="/returnandrefund" element={<ReturnRefund />} />
-          <Route path="/termsandconditions" element={<TermsAndCondition />} />
-          <Route path="/faqs" element={<FAQS />} />
-          {/* Backwards-compat redirect from /category/:categoryName -> /:categoryName */}
-          <Route
-            path="/category/:categoryName"
-            element={<CategoryRedirect />}
-          />
-          {/* Root-level category route (kept last to avoid conflicting with other static routes) */}
-          <Route path="/:categoryName" element={<CategoryProducts />} />
-        </Routes>
+      <div className="pb-[9vh] md:pb-0">
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route
+              path="/"
+              element={
+                <PageTransition>
+                  <Home />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/auth"
+              element={
+                <PageTransition>
+                  <Auth />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/loginprofile"
+              element={
+                <PageTransition>
+                  <LoginProfile />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PageTransition>
+                  <Profile />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/cart"
+              element={
+                <PageTransition>
+                  <Cart />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/payment"
+              element={
+                <PageTransition>
+                  <Payment />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/Cashout"
+              element={
+                <PageTransition>
+                  <Cashout />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/Checkout"
+              element={
+                <PageTransition>
+                  <Checkout />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/paymentMethods"
+              element={
+                <PageTransition>
+                  <PaymentMethods />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/track-order/:id"
+              element={
+                <PageTransition>
+                  <TrackOrder />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/orders"
+              element={
+                <PageTransition>
+                  <OrdersList />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/deal/:id"
+              element={
+                <PageTransition>
+                  <SingleDeal />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/product/:productName"
+              element={
+                <PageTransition>
+                  <SingleProduct />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/categories"
+              element={
+                <PageTransition>
+                  <CategoriesPage />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/deals"
+              element={
+                <PageTransition>
+                  <AllDeals />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/Contact"
+              element={
+                <PageTransition>
+                  <ContactPage />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/products"
+              element={
+                <PageTransition>
+                  <AllProducts />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <PageTransition>
+                  <SearchPage />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <PageTransition>
+                  <About />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/privacypolicy"
+              element={
+                <PageTransition>
+                  <PrivacyPolicy />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/returnandrefund"
+              element={
+                <PageTransition>
+                  <ReturnRefund />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/termsandconditions"
+              element={
+                <PageTransition>
+                  <TermsAndCondition />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/faqs"
+              element={
+                <PageTransition>
+                  <FAQS />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/category/:categoryName"
+              element={
+                <PageTransition>
+                  <CategoryRedirect />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/:categoryName"
+              element={
+                <PageTransition>
+                  <CategoryProducts />
+                </PageTransition>
+              }
+            />
+          </Routes>
+        </AnimatePresence>
       </div>
     </>
   );
