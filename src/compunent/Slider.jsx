@@ -26,7 +26,7 @@ const HeroSection = () => {
   const side = sortedSlides.filter((s) => s.size !== "large").slice(0, 2);
 
   return (
-    <div className="w-full flex justify-center py-2 px-2 font-sans">
+    <div className="w-full flex justify-center py-4 px-2 font-sans">
       <div className="w-full max-w-7xl">
         {/* =============================== */}
         {/*     MAIN LARGE BANNER           */}
@@ -34,10 +34,10 @@ const HeroSection = () => {
         {large && (
           <a
             href={large.link}
-            className=" text-white rounded-3xl overflow-hidden shadow-lg block"
+            className=" text-white rounded-xl overflow-hidden shadow-lg block"
             style={{ backgroundColor: large.bgColor || "#28a745" }}
           >
-            <div className="px-2 py-4 md:py-7 md:px-12 flex flex-row items-center justify-between gap-4 md:gap-10">
+            <div className="px-2 py-7 md:py-7 md:px-12 flex flex-row items-center justify-between gap-4 md:gap-10">
               <div className="flex-1 space-y-2 md:space-y-6">
                 <h1
                   className="text-2xl sm:text-2xl md:text-6xl font-extrabold leading-tight"
@@ -68,14 +68,14 @@ const HeroSection = () => {
         {/* =============================== */}
         {/*     4 MEDIUM BANNERS            */}
         {/* =============================== */}
-        <div className="grid grid-cols-2 gap-2 mt-2">
+        <div className="grid grid-cols-2 gap-2 mt-4">
           {mediumBanners.map((item, index) => {
             // Automatically pick style based on index or predefined order
             if (index === 0)
               return (
                 <a key={index} href={item.link}>
                   <div
-                    className="rounded-xl px-2 md:px-4 shadow-sm py-1"
+                    className="rounded-xl px-2 md:px-4 shadow-sm py-3"
                     style={{ backgroundColor: item.bgColor || "#f3cd9f" }}
                   >
                     <div className="flex justify-center md:justify-between items-center">
@@ -149,7 +149,7 @@ const HeroSection = () => {
               return (
                 <a key={index} href={item.link}>
                   <div
-                    className="rounded-xl px-2 md:px-4 shadow-sm py-1 h-full"
+                    className="rounded-xl px-2 md:px-4 shadow-sm py-3 h-full"
                     style={{ backgroundColor: item.bgColor || "#f3cd9f" }}
                   >
                     <div className="flex justify-center md:justify-between items-center ">
@@ -184,7 +184,7 @@ const HeroSection = () => {
               return (
                 <a key={index} href={item.link}>
                   <div
-                    className=" text-white rounded-xl py-1 px-2 md:px-4 shadow-sm  h-full"
+                    className=" text-white rounded-xl py-3 px-2 md:px-4 shadow-sm  h-full"
                     style={{ backgroundColor: item.bgColor || "#f3cd9f" }}
                   >
                     <div className="flex justify-between items-center">

@@ -7,11 +7,14 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import Footer from "./Footer";
+// import { setSearchTerm } from "../features/products/productSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { toSlug } from "../utils/slugify";
+import { useNavigate } from "react-router-dom";
 
 const SearchPage = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -19,6 +22,7 @@ const SearchPage = () => {
 
   const { products, loading, error } = useSelector((state) => state.products);
   const [categories, setCategories] = useState([]);
+  const [searchTerm, setLocalSearchTerm] = useState("");
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [categoriesError, setCategoriesError] = useState(null);
 
@@ -54,11 +58,45 @@ const SearchPage = () => {
     c.name?.toLowerCase().includes(query.toLowerCase())
   );
 
+  // Search handling
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setLocalSearchTerm(value);
+    dispatch(setSearchTerm(value));
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) {
+      toast.error("Please enter a search term");
+      return;
+    }
+    navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+  };
+
   return (
     <div className="font-daraz bg-white">
-
-
       <div className="md:w-[95%] mx-auto px-2 md:px-0 py-8">
+        <div className=" px-4 mt-2 pb-3">
+          <form
+            onSubmit={handleSearch}
+            className="flex items-center border border-gray-300 rounded-md overflow-hidden w-full"
+          >
+            <input
+              type="text"
+              placeholder="Search for products or categories..."
+              className="px-3 py-2 w-full outline-none text-sm"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <button
+              type="submit"
+              className="bg-primary text-white px-5 py-2 text-sm font-medium hover:bg-primary"
+            >
+              Search
+            </button>
+          </form>
+        </div>
         <h2 className="text-2xl md:text-3xl font-bold text-gray-500 mb-8">
           Search Results for <span className="text-[#f06621]">"{query}"</span>
         </h2>

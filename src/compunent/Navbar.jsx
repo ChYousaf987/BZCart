@@ -15,6 +15,7 @@ import { setSearchTerm } from "../features/products/productSlice";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { toSlug } from "../utils/slugify";
+import { CiDeliveryTruck } from "react-icons/ci";
 
 const Navbar = () => {
   const location = useLocation();
@@ -44,6 +45,16 @@ const Navbar = () => {
   const totalCartItems = cartItems.reduce(
     (total, item) => total + (item.quantity || 0),
     0
+  );
+  const Tracking = ({ className = "w-6 h-6", color = "currentColor" }) => (
+    <svg
+      class="sr4-icon sr4-icon--track-order"
+      aria-hidden="true"
+      focusable="false"
+      role="presentation"
+    >
+      <use href="#icon-h-track-order"></use>
+    </svg>
   );
 
   // Fetch categories
@@ -182,8 +193,10 @@ const Navbar = () => {
             <p className="text-xs text-gray-500">Customer Services</p>
             <p className="font-semibold text-sm">+92 329-7609190</p>
           </div>
-
-          <div className="relative">
+          <Link to="/orders" className="hover:text-primary md:hidden">
+            <CiDeliveryTruck  size={28} />
+          </Link>
+          <div className="relative mr-1">
             <Link to="/payment" className="hover:text-primary">
               <SlHandbag size={22} />
             </Link>
@@ -197,14 +210,22 @@ const Navbar = () => {
               onClick={handleLogout}
               className="flex items-center gap-2 hover:text-primary"
             >
-              {/* 👇 Hide on mobile, show on sm and up */}
+              {/* Hide name on mobile, show only logout icon */}
               <span className="hidden sm:inline">{getUserDisplayName()}</span>
               <FaSignOutAlt size={20} />
             </button>
           ) : (
-            <Link to="/loginprofile" className="hover:text-primary">
-              <FaRegUser size={20} />
-            </Link>
+            <>
+              {/* Desktop → User Icon */}
+              <Link
+                to="/loginprofile"
+                className="hover:text-primary hidden md:block"
+              >
+                <FaRegUser size={20} />
+              </Link>
+
+              {/* Mobile → Truck Delivery Icon */}
+            </>
           )}
         </div>
       </div>
@@ -379,7 +400,7 @@ const Navbar = () => {
             ))}
 
             {/* Quick Links */}
-            <div className="border-t border-gray-300 pt-4 space-y-2">
+            {/* <div className="border-t border-gray-300 pt-4 space-y-2">
               <p className="font-semibold text-lg text-primary">Quick Links</p>
               {[
                 { to: "/", label: "Home" },
@@ -401,17 +422,17 @@ const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
-            </div>
+            </div> */}
 
             {/* Account / Wishlist */}
-            <div className="border-t pb-20 border-gray-300 pt-4 flex flex-col space-y-2">
+            {/* <div className="border-t pb-20 border-gray-300 pt-4 flex flex-col space-y-2">
               <Link
                 to="/loginprofile"
                 className="flex items-center gap-2 hover:text-orange-500"
               >
                 <FaRegUser /> Account
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
