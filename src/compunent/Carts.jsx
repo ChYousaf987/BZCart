@@ -325,9 +325,12 @@ const Carts = () => {
                 item.product_id?.sizes?.length > 0 && !item.selected_size;
               return (
                 <div
-                  key={`${item.product_id?._id || index}-${
-                    item.selected_image
-                  }-${item.selected_size}`}
+                  key={
+                    item._id ||
+                    `${item.product_id?._id || index}-${item.selected_image}-${
+                      item.selected_size
+                    }`
+                  }
                   className="flex items-center justify-between bg-light p-4 rounded-xl"
                 >
                   <div className="flex items-center gap-4">
@@ -456,9 +459,12 @@ const Carts = () => {
 
             {cart.map((item) => (
               <div
-                key={`${item.product_id?._id || item._id}-${
-                  item.selected_image
-                }-${item.selected_size}`}
+                key={
+                  item._id ||
+                  `${item.product_id?._id || item._id}-${item.selected_image}-${
+                    item.selected_size
+                  }`
+                }
                 className="flex justify-between text-sm text-dark"
               >
                 <span>

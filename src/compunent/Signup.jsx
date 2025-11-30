@@ -22,20 +22,20 @@ const OtpSVG = () => (
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M115.481 222.507C168.057 222.743 210.869 180.313 211.105 127.737C211.342 75.1616 168.912 32.3491 116.336 32.1128C63.7606 31.8766 20.948 74.3062 20.7118 126.882C20.4756 179.458 62.9051 222.27 115.481 222.507Z"
         stroke="#F26C2B"
-        stroke-width="0.641063"
-        stroke-dasharray="3.85 3.85"
+        strokeWidth="0.641063"
+        strokeDasharray="3.85 3.85"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M115.39 242.7C179.118 242.986 231.012 191.556 231.299 127.828C231.585 64.1001 180.155 12.206 116.427 11.9197C52.6988 11.6334 0.804724 63.0632 0.518396 126.791C0.232069 190.52 51.6619 242.414 115.39 242.7Z"
         stroke="#F26C2B"
-        stroke-width="0.641063"
-        stroke-dasharray="3.85 3.85"
+        strokeWidth="0.641063"
+        strokeDasharray="3.85 3.85"
       />
       <path
         d="M192.971 164.418C193.035 150.984 182.864 139.708 169.495 138.39C156.125 137.072 143.949 146.145 141.388 159.333L61.3973 156.804L62.2138 170.552C62.2138 170.552 50.688 196.823 110.611 204.105L110.492 230.709L179.803 231.021L180.001 186.788C187.987 182.16 192.922 173.647 192.971 164.418Z"
@@ -140,9 +140,9 @@ const OtpSVG = () => (
           y2="138.089"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#F26C2B" stop-opacity="0.25" />
-          <stop offset="0.54" stop-color="#F26C2B" stop-opacity="0.12" />
-          <stop offset="1" stop-color="#F26C2B" stop-opacity="0.1" />
+          <stop stopColor="#F26C2B" stopOpacity="0.25" />
+          <stop offset="0.54" stopColor="#F26C2B" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#F26C2B" stopOpacity="0.1" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_1_18"
@@ -152,9 +152,9 @@ const OtpSVG = () => (
           y2="23.8012"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#F26C2B" stop-opacity="0.25" />
-          <stop offset="0.54" stop-color="#F26C2B" stop-opacity="0.12" />
-          <stop offset="1" stop-color="#F26C2B" stop-opacity="0.1" />
+          <stop stopColor="#F26C2B" stopOpacity="0.25" />
+          <stop offset="0.54" stopColor="#F26C2B" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#F26C2B" stopOpacity="0.1" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_1_18"
@@ -164,9 +164,9 @@ const OtpSVG = () => (
           y2="0.503037"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#F26C2B" stop-opacity="0.25" />
-          <stop offset="0.54" stop-color="#F26C2B" stop-opacity="0.12" />
-          <stop offset="1" stop-color="#F26C2B" stop-opacity="0.1" />
+          <stop stopColor="#F26C2B" stopOpacity="0.25" />
+          <stop offset="0.54" stopColor="#F26C2B" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#F26C2B" stopOpacity="0.1" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_1_18"
@@ -176,9 +176,9 @@ const OtpSVG = () => (
           y2="81.0391"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#F26C2B" stop-opacity="0.25" />
-          <stop offset="0.54" stop-color="#F26C2B" stop-opacity="0.12" />
-          <stop offset="1" stop-color="#F26C2B" stop-opacity="0.1" />
+          <stop stopColor="#F26C2B" stopOpacity="0.25" />
+          <stop offset="0.54" stopColor="#F26C2B" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#F26C2B" stopOpacity="0.1" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_1_18"
@@ -188,9 +188,9 @@ const OtpSVG = () => (
           y2="220.563"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#F26C2B" stop-opacity="0.25" />
-          <stop offset="0.54" stop-color="#F26C2B" stop-opacity="0.12" />
-          <stop offset="1" stop-color="#F26C2B" stop-opacity="0.1" />
+          <stop stopColor="#F26C2B" stopOpacity="0.25" />
+          <stop offset="0.54" stopColor="#F26C2B" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#F26C2B" stopOpacity="0.1" />
         </linearGradient>
         <linearGradient
           id="paint5_linear_1_18"

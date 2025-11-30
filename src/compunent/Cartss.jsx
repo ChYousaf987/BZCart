@@ -98,9 +98,12 @@ const Cartss = () => {
     }
     const stock = getStock(item);
     if (stock <= item.quantity) {
-      toast.error(`Cannot add more: ${item.selected_size || "Item"} out of stock`, {
-        position: "top-right",
-      });
+      toast.error(
+        `Cannot add more: ${item.selected_size || "Item"} out of stock`,
+        {
+          position: "top-right",
+        }
+      );
       return;
     }
     dispatch(
@@ -260,7 +263,12 @@ const Cartss = () => {
                 item.product_id?.sizes?.length > 0 && !item.selected_size;
               return (
                 <div
-                  key={`${item.product_id?._id || index}-${item.selected_image}-${item.selected_size}`}
+                  key={
+                    item._id ||
+                    `${item.product_id?._id || index}-${item.selected_image}-${
+                      item.selected_size
+                    }`
+                  }
                   className="flex items-center justify-between bg-light p-4 rounded-xl"
                 >
                   <div className="flex items-center gap-4">
@@ -389,7 +397,12 @@ const Cartss = () => {
 
             {cart.map((item) => (
               <div
-                key={`${item.product_id?._id || item._id}-${item.selected_image}-${item.selected_size}`}
+                key={
+                  item._id ||
+                  `${item.product_id?._id || item._id}-${item.selected_image}-${
+                    item.selected_size
+                  }`
+                }
                 className="flex justify-between text-sm text-dark"
               >
                 <span>
