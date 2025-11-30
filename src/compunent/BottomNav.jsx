@@ -167,7 +167,7 @@ const getActiveKey = (pathname) => {
         {/* 💫 Bar curve under floating circle */}
         {active && (
           <div
-            className="absolute -top-1.5 w-16 h-9 bg-white/15 backdrop-blur-lg 
+            className="absolute -top-1 w-16 h-9 bg-white/15 backdrop-blur-lg 
             rounded-b-full shadow-[0_4px_12px_rgba(242,108,43,0.25)] 
             border border-white/10 transition-all duration-500"
             style={{
