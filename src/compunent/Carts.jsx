@@ -116,10 +116,23 @@ const Carts = () => {
       })
     )
       .unwrap()
-      .then(() => toast.success("Quantity updated!", { position: "top-right" }))
-      .then(() => {
-        // send add_to_cart analytics event (non-blocking)
+      .then((updatedCarts) => {
+        toast.success("Quantity updated!", { position: "top-right" });
+        // send add_to_cart analytics event (non-blocking) using server-canonical data
         try {
+          const cartItem = Array.isArray(updatedCarts)
+            ? updatedCarts.find(
+                (c) =>
+                  String(c.product_id?._id || c.product_id) ===
+                  String(item.product_id._id || item.product_id)
+              ) || updatedCarts[0]
+            : null;
+
+          const productObj = cartItem?.product_id || item.product_id || {};
+          const cartCount = Array.isArray(updatedCarts)
+            ? updatedCarts.reduce((t, it) => t + (it.quantity || 0), 0)
+            : undefined;
+
           sendAnalyticsEvent({
             event_type: "add_to_cart",
             user_id:
@@ -134,12 +147,18 @@ const Carts = () => {
             session_id: localStorage.getItem("analyticsSession") || undefined,
             url: window.location.href,
             data: {
-              product_id: item.product_id._id,
-              product_name: item.product_id.product_name,
+              product_id:
+                productObj?._id || item.product_id._id || item.product_id,
+              product_name:
+                productObj?.product_name || item.product_id.product_name,
+              selected_image: cartItem?.selected_image || item.selected_image,
               quantity: 1,
               price:
+                productObj?.product_discounted_price ||
+                productObj?.product_base_price ||
                 item.product_id.product_discounted_price ||
                 item.product_id.product_base_price,
+              cart_item_count: cartCount,
             },
           });
         } catch (err) {
