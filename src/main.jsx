@@ -8,6 +8,7 @@ import "./index.css";
 import App from "./App.jsx";
 import { store } from "./app/store.js";
 import Navbar from "./compunent/Navbar.jsx";
+import AnalyticsProvider from "./compunent/AnalyticsProvider";
 
 // ✅ Custom wrapper component to handle conditional Navbar
 function Layout() {
@@ -17,11 +18,11 @@ function Layout() {
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (
-    <>
+    <AnalyticsProvider>
       {!shouldHideNavbar && <Navbar />}
       <App />
       <ToastContainer position="top-right" autoClose={3000} />
-    </>
+    </AnalyticsProvider>
   );
 }
 
