@@ -166,3 +166,4 @@ const getActiveKey = (pathname) => {
 };
 
 export default BottomNav;
+
