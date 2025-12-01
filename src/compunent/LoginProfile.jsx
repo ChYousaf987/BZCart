@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function LoginProfile() {
   return (
-    <div className="relative flex flex-col justify-between items-center min-h-screen bg-gradient-to-b from-white via-light to-white text-center px-6 py-10 font-daraz overflow-hidden">
+    <div className="relative flex flex-col justify-between items-center bg-gradient-to-b from-white via-light to-white text-center px-6 py-10 font-daraz overflow-hidden">
       {/* Decorative Background Glow */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-72 h-72 bg-primary/20 blur-[120px] rounded-full" />
@@ -32,7 +32,7 @@ export default function LoginProfile() {
       </div>
 
       {/* Bottom Section */}
-      <div className="w-full mb-10 animate-slideInUp">
+      <div className="w-full md:w-auto mt-16 animate-slideInUp">
         <Link to="/auth?mode=signup">
           <button className="w-full bg-gradient-to-r from-primary to-orange-500 text-white font-semibold py-3.5 rounded-xl text-lg shadow-lg shadow-orange-200 hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-300">
             Sign up

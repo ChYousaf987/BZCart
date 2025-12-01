@@ -11,7 +11,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import Loader from "./Loader";
-import { sendAnalyticsEvent } from "../utils/analytics";
 
 const colorNames = [
   "Red",
@@ -99,12 +98,9 @@ const Carts = () => {
     }
     const stock = getStock(item);
     if (stock <= item.quantity) {
-      toast.error(
-        `Cannot add more: ${item.selected_size || "Item"} out of stock`,
-        {
-          position: "top-right",
-        }
-      );
+      toast.error(`Cannot add more: ${item.selected_size || "Item"} out of stock`, {
+        position: "top-right",
+      });
       return;
     }
     dispatch(
@@ -117,35 +113,6 @@ const Carts = () => {
     )
       .unwrap()
       .then(() => toast.success("Quantity updated!", { position: "top-right" }))
-      .then(() => {
-        // send add_to_cart analytics event (non-blocking)
-        try {
-          sendAnalyticsEvent({
-            event_type: "add_to_cart",
-            user_id:
-              JSON.parse(localStorage.getItem("myUser"))?.id ||
-              JSON.parse(localStorage.getItem("myUser"))?._id ||
-              null,
-            user_display:
-              JSON.parse(localStorage.getItem("myUser"))?.username ||
-              JSON.parse(localStorage.getItem("myUser"))?.name ||
-              null,
-            guest_id: guestId,
-            session_id: localStorage.getItem("analyticsSession") || undefined,
-            url: window.location.href,
-            data: {
-              product_id: item.product_id._id,
-              product_name: item.product_id.product_name,
-              quantity: 1,
-              price:
-                item.product_id.product_discounted_price ||
-                item.product_id.product_base_price,
-            },
-          });
-        } catch (err) {
-          /* swallow */
-        }
-      })
       .catch((err) =>
         toast.error(err?.message || err || "Failed to update quantity", {
           position: "top-right",
@@ -293,9 +260,7 @@ const Carts = () => {
                 item.product_id?.sizes?.length > 0 && !item.selected_size;
               return (
                 <div
-                  key={`${item.product_id?._id || index}-${
-                    item.selected_image
-                  }-${item.selected_size}`}
+                  key={`${item.product_id?._id || index}-${item.selected_image}-${item.selected_size}`}
                   className="flex items-center justify-between bg-light p-4 rounded-xl"
                 >
                   <div className="flex items-center gap-4">
@@ -424,9 +389,7 @@ const Carts = () => {
 
             {cart.map((item) => (
               <div
-                key={`${item.product_id?._id || item._id}-${
-                  item.selected_image
-                }-${item.selected_size}`}
+                key={`${item.product_id?._id || item._id}-${item.selected_image}-${item.selected_size}`}
                 className="flex justify-between text-sm text-dark"
               >
                 <span>
