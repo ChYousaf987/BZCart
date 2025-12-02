@@ -57,23 +57,41 @@ const Navbar = () => {
     </svg>
   );
 
-  // Fetch categories
   useEffect(() => {
+    const preferredOrder = [
+      "Men’s Watches",
+      "Men’s Fashion",
+      "Women’s Fashion",
+      "Skin Care",
+      "Home & Kitchen",
+      "Babies & Toddlers",
+      "Fragrances & Perfumes",
+    ];
+
     axios
       .get("https://bzbackend.online/api/categories/categories")
       .then((res) => {
         const parent = res.data.filter((c) => !c.parent_category);
-        const formatted = parent.map((p) => ({
+
+        let formatted = parent.map((p) => ({
           name: p.name,
           _id: p._id,
           sub: res.data
             .filter((s) => s.parent_category?._id === p._id)
             .map((s) => ({ name: s.name, _id: s._id })),
         }));
+
+        // Sort categories according to preferredOrder
+        formatted.sort(
+          (a, b) =>
+            preferredOrder.indexOf(a.name) - preferredOrder.indexOf(b.name)
+        );
+
         setCategories(formatted);
       })
       .catch(() => toast.error("Failed to fetch categories"));
   }, []);
+
 
   // Fetch cart
   useEffect(() => {
