@@ -100,11 +100,11 @@ const BottomNav = () => {
   const profilePath = user ? "/profile" : "/loginprofile"; // ✅ dynamic route
 
   const navItems = [
-    { path: "/faverat", label: "Favorite", icon: <Heart /> },
-    { path: "/search", label: "Search", icon: <Search /> },
     { path: "/", label: "Home", icon: <CustomHomeIcon /> },
-    { path: "/categories", label: "Categories", icon: <Catogery /> },
+    { path: "/search", label: "Search", icon: <Search /> },
+    { path: "/faverat", label: "Favorite", icon: <Heart /> },
     { path: profilePath, label: "Profile", icon: <User /> }, // ✅ dynamic
+    { path: "/categories", label: "Categories", icon: <Catogery /> },
   ];
 
   // ✅ Fixed highlight logic
@@ -209,7 +209,7 @@ const getActiveKey = (pathname) => {
                   : "text-gray-800/70 group-hover:text-primary"
               }`}
             >
-              {item.label}
+              {/* {item.label} */}
             </span>
           </Link>
         ))}
