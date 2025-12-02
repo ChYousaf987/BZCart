@@ -419,14 +419,14 @@ const SingleProduct = () => {
               </div>
 
               {/* ⭐ Rating + Reviews */}
-              <div className="flex items-center ">
+              {/* <div className="flex items-center ">
                 {renderStars(product.rating || 0)}
                 <p className="text-gray-500 text-sm ml-2 font-medium">
                   {reviews.length > 0
                     ? `${reviews.length} review${reviews.length > 1 ? "s" : ""}`
                     : "No reviews yet"}
                 </p>
-              </div>
+              </div> */}
 
               {/* 💰 Pricing */}
               <div>
@@ -490,7 +490,7 @@ const SingleProduct = () => {
                 </div>
               ) : (
                 <div>
-                  {product.product_stock > 0 ? (
+                  {/* {product.product_stock > 0 ? (
                     <div
                       className={`flex items-center gap-2 text-sm font-semibold ${
                         product.product_stock < 4
@@ -510,12 +510,12 @@ const SingleProduct = () => {
                       <span className="text-lg">❌</span>
                       Out of Stock
                     </div>
-                  )}
+                  )} */}
                 </div>
               )}
 
               {/* 🚚 Shipping, Warranty, Payment */}
-              <div className="space-y-1 text-[15px]">
+              {/* <div className="space-y-1 text-[15px]">
                 <p className="flex items-center gap-2 mt-2">
                   <span className="text-gray-600 font-medium">
                     🚚 Shipping:
@@ -546,7 +546,7 @@ const SingleProduct = () => {
                     {product.payment?.join(", ")}
                   </span>
                 </p>
-              </div>
+              </div> */}
             </div>
 
             {/* 🛒 Add to Cart / Buy Now Buttons */}
@@ -575,11 +575,11 @@ const SingleProduct = () => {
                 ADD TO CART
               </button>
 
-              <div className="">
+              <div className="flex items-center justify-center gap-2">
                 {/* Buy Now */}
                 <button
                   onClick={handleBuyNow}
-                  className={`w-full py-3 rounded-sm font-semibold border border-orange-800 bg-primary shadow-lg hover:shadow[inset_0_3px_6px_rgba(0,0,0,0.08),_0_3px_6px_rgba(0,0,0,0.12)] hover:scale-[1.02] transition-all duration-300 ${
+                  className={`w-full py-3 rounded-sm font-semibold  border-2 border-orange-600 shadow-lg hover:shadow[inset_0_3px_6px_rgba(0,0,0,0.08),_0_3px_6px_rgba(0,0,0,0.12)] hover:scale-[1.02] transition-all duration-300 ${
                     product.sizes?.length > 0
                       ? !selectedSize ||
                         product.sizes.find((s) => s.size === selectedSize)
@@ -587,7 +587,7 @@ const SingleProduct = () => {
                         ? "bg-gray-500 text-gray-400 cursor-not-allowed shadow-none"
                         : ""
                       : product.product_stock > 0
-                      ? "bg-primary hover:shadow-lg hover:scale-[1.02]"
+                      ? "bg- hover:shadow-lg hover:scale-[1.02]"
                       : "bg-gray-300 cursor-not-allowed"
                   }`}
                   disabled={
@@ -604,15 +604,15 @@ const SingleProduct = () => {
                 {/* 💬 WhatsApp */}
                 <button
                   onClick={handleOrderOnWhatsapp}
-                  className={`w-full flex items-center bg-primary justify-center gap-2 py-3 rounded-sm mt-3 font-semibold border border-orange-800 text- shadow-lg transition-all duration-300 ${
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-sm  font-semibold  border-2 border-orange-600 text- shadow-lg transition-all duration-300 ${
                     product.sizes?.length > 0
                       ? !selectedSize ||
                         product.sizes.find((s) => s.size === selectedSize)
                           ?.stock <= 0
                         ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-primary hover:shadow-lg hover:scale-[1.02]"
+                        : "bg- hover:shadow-lg hover:scale-[1.02]"
                       : product.product_stock > 0
-                      ? "bg-primary hover:shadow-lg hover:scale-[1.02]"
+                      ? "bg- hover:shadow-lg hover:scale-[1.02]"
                       : "bg-gray-300 cursor-not-allowed"
                   }`}
                   disabled={

@@ -236,7 +236,7 @@ const TopBrands = ({ sortedProducts, loading }) => {
                             }}
                           >
                             <Skeleton
-                              height={240}
+                              height={265}
                               className="rounded-lg h-full w-full"
                             />
                           </div>
