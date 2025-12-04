@@ -3,20 +3,24 @@ import axios from "axios";
 
 const FridayBannerDisplay = () => {
   const [banner, setBanner] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(null);
+  const [timeLeft, setTimeLeft] = useState("");
 
-  const API = "http://localhost:3003/api/friday-banner";
+  const API = "https://bzbackend.online/api/friday-banner";
 
-  // Fetch banner from backend
   useEffect(() => {
     const fetchBanner = async () => {
       try {
         const { data } = await axios.get(API);
+        if (!data) return;
+
+        // Hide expired banners
+        if (data.timer && new Date(data.timer).getTime() < Date.now()) return;
+
         setBanner(data);
 
         if (data.timer) {
           const endTime = new Date(data.timer).getTime();
-          const updateTimer = () => {
+          const timerInterval = setInterval(() => {
             const now = new Date().getTime();
             const distance = endTime - now;
 
@@ -24,6 +28,7 @@ const FridayBannerDisplay = () => {
               setTimeLeft("Deal Ended");
               clearInterval(timerInterval);
             } else {
+              const days = Math.floor(distance / (1000 * 60 * 60 * 24));
               const hours = Math.floor(
                 (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
               );
@@ -31,12 +36,10 @@ const FridayBannerDisplay = () => {
                 (distance % (1000 * 60 * 60)) / (1000 * 60)
               );
               const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-              setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+              setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
             }
-          };
+          }, 1000);
 
-          updateTimer(); // initial call
-          const timerInterval = setInterval(updateTimer, 1000);
           return () => clearInterval(timerInterval);
         }
       } catch (err) {
@@ -69,7 +72,7 @@ const FridayBannerDisplay = () => {
       )}
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-center p-4">
+      <div className="absolute inset-0  flex flex-col items-center justify-center text-center p-4">
         {banner.title && (
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
             {banner.title}
@@ -77,7 +80,7 @@ const FridayBannerDisplay = () => {
         )}
 
         {timeLeft && (
-          <div className="text-lg md:text-2xl font-semibold text-yellow-400 mb-4">
+          <div className="text-2xl font-semibold text-red-900 mb-4">
             {timeLeft}
           </div>
         )}
