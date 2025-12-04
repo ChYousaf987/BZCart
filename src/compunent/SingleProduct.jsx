@@ -32,9 +32,14 @@ const SingleProduct = () => {
   const { productName } = useParams();
   const dispatch = useDispatch();
 
-  const { product, loading, error, reviews, reviewsLoading } = useSelector(
-    (state) => state.products
-  );
+  const {
+    product,
+    loading,
+    error,
+    reviews,
+    reviewsLoading,
+    reviewsError, // ← ADD THIS
+  } = useSelector((state) => state.products);
   const { user, userLoading, token } = useSelector((state) => state.auth);
 
   // Local state
@@ -42,7 +47,7 @@ const SingleProduct = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [activeSlide, setActiveSlide] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
-  const [activeTab, setActiveTab] = useState("description");
+  const [activeTab, setActiveTab] = useState("reviews");
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
   // Add these lines with your other useState hooks
@@ -549,37 +554,36 @@ const SingleProduct = () => {
               </div> */}
             </div>
 
-            {/* 🛒 Add to Cart / Buy Now Buttons */}
             <div className="mt-6 space-y-4">
-              <button
-                onClick={handleAddToCart}
-                className={`w-full py-3 rounded-sm font-semibold shadow-lg border-2 border-orange-600 transition-all duration-300 ${
-                  product.sizes?.length > 0
-                    ? !selectedSize ||
-                      product.sizes.find((s) => s.size === selectedSize)
-                        ?.stock <= 0
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg--500 hover:shadow-lg hover:scale-[1.02]"
-                    : product.product_stock > 0
-                    ? "  hover:shadow-lg hover:scale-[1.02]"
-                    : "bg-gray-300 cursor-not-allowed"
-                }`}
-                disabled={
-                  product.sizes?.length > 0
-                    ? !selectedSize ||
-                      product.sizes.find((s) => s.size === selectedSize)
-                        ?.stock <= 0
-                    : product.product_stock <= 0
-                }
-              >
-                ADD TO CART
-              </button>
-
               <div className="flex items-center justify-center gap-2">
-                {/* Buy Now */}
+                {/* 🛒 Add to Cart / Buy Now Buttons */}
+                <button
+                  onClick={handleAddToCart}
+                  className={`w-full py-3 rounded-sm font-semibold shadow-lg border border-primary transition-all duration-300 ${
+                    product.sizes?.length > 0
+                      ? !selectedSize ||
+                        product.sizes.find((s) => s.size === selectedSize)
+                          ?.stock <= 0
+                        ? "bg-gray-300 cursor-not-allowed"
+                        : "bg--500 hover:shadow-lg hover:scale-[1.02]"
+                      : product.product_stock > 0
+                      ? "  hover:shadow-lg hover:scale-[1.02]"
+                      : "bg-gray-300 cursor-not-allowed"
+                  }`}
+                  disabled={
+                    product.sizes?.length > 0
+                      ? !selectedSize ||
+                        product.sizes.find((s) => s.size === selectedSize)
+                          ?.stock <= 0
+                      : product.product_stock <= 0
+                  }
+                >
+                  ADD TO CART
+                </button>
+
                 <button
                   onClick={handleBuyNow}
-                  className={`w-full py-3 rounded-sm font-semibold  border-2 border-orange-600 shadow-lg hover:shadow[inset_0_3px_6px_rgba(0,0,0,0.08),_0_3px_6px_rgba(0,0,0,0.12)] hover:scale-[1.02] transition-all duration-300 ${
+                  className={`w-full py-3 rounded-sm font-semibold  border border-primary shadow-lg hover:shadow[inset_0_3px_6px_rgba(0,0,0,0.08),_0_3px_6px_rgba(0,0,0,0.12)] hover:scale-[1.02] transition-all duration-300 ${
                     product.sizes?.length > 0
                       ? !selectedSize ||
                         product.sizes.find((s) => s.size === selectedSize)
@@ -600,40 +604,39 @@ const SingleProduct = () => {
                 >
                   BUY IT NOW
                 </button>
-
-                {/* 💬 WhatsApp */}
-                <button
-                  onClick={handleOrderOnWhatsapp}
-                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-sm  font-semibold  border-2 border-orange-600 text- shadow-lg transition-all duration-300 ${
-                    product.sizes?.length > 0
-                      ? !selectedSize ||
-                        product.sizes.find((s) => s.size === selectedSize)
-                          ?.stock <= 0
-                        ? "bg-gray-300 cursor-not-allowed"
-                        : "bg- hover:shadow-lg hover:scale-[1.02]"
-                      : product.product_stock > 0
-                      ? "bg- hover:shadow-lg hover:scale-[1.02]"
-                      : "bg-gray-300 cursor-not-allowed"
-                  }`}
-                  disabled={
-                    product.sizes?.length > 0
-                      ? !selectedSize ||
-                        product.sizes.find((s) => s.size === selectedSize)
-                          ?.stock <= 0
-                      : product.product_stock <= 0
-                  }
-                >
-                  WHATSAPP
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12.04 2c-5.52 0-10 4.47-10 9.99 0 1.76.46 3.46 1.34 4.97L2 22l5.19-1.36c1.45.79 3.08 1.2 4.85 1.2 5.53 0 10-4.48 10-10s-4.47-9.84-10-9.84zm.04 18.03c-1.54 0-3.02-.41-4.3-1.2l-.31-.19-3.07.8.82-3.02-.2-.31c-.84-1.33-1.28-2.86-1.28-4.41 0-4.53 3.7-8.23 8.23-8.23 2.19 0 4.25.85 5.79 2.39 1.55 1.55 2.4 3.61 2.4 5.79-.01 4.53-3.7 8.38-8.28 8.38zm4.67-6.23c-.26-.13-1.54-.76-1.78-.84-.24-.09-.41-.13-.58.13-.17.26-.67.84-.82 1.01-.15.17-.3.2-.56.07-.26-.13-1.1-.4-2.1-1.27-.77-.68-1.28-1.52-1.43-1.78-.15-.26-.02-.41.11-.54.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.07-.13-.58-1.39-.8-1.9-.21-.51-.42-.44-.58-.45-.15-.01-.32-.01-.49-.01-.17 0-.45.07-.69.32-.24.26-.9.88-.9 2.15s.92 2.49 1.05 2.66c.13.17 1.8 2.75 4.35 3.86.61.27 1.09.43 1.46.55.61.19 1.17.16 1.61.1.49-.07 1.54-.63 1.76-1.23.22-.61.22-1.13.15-1.23-.06-.1-.24-.16-.5-.29z" />
-                  </svg>
-                </button>
               </div>
+              {/* 💬 WhatsApp */}
+              <button
+                onClick={handleOrderOnWhatsapp}
+                className={`w-full flex items-center justify-center gap-2 py-3 rounded-sm  font-semibold  border border-primary text- shadow-lg transition-all duration-300 ${
+                  product.sizes?.length > 0
+                    ? !selectedSize ||
+                      product.sizes.find((s) => s.size === selectedSize)
+                        ?.stock <= 0
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg- hover:shadow-lg hover:scale-[1.02]"
+                    : product.product_stock > 0
+                    ? "bg- hover:shadow-lg hover:scale-[1.02]"
+                    : "bg-gray-300 cursor-not-allowed"
+                }`}
+                disabled={
+                  product.sizes?.length > 0
+                    ? !selectedSize ||
+                      product.sizes.find((s) => s.size === selectedSize)
+                        ?.stock <= 0
+                    : product.product_stock <= 0
+                }
+              >
+                WHATSAPP
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12.04 2c-5.52 0-10 4.47-10 9.99 0 1.76.46 3.46 1.34 4.97L2 22l5.19-1.36c1.45.79 3.08 1.2 4.85 1.2 5.53 0 10-4.48 10-10s-4.47-9.84-10-9.84zm.04 18.03c-1.54 0-3.02-.41-4.3-1.2l-.31-.19-3.07.8.82-3.02-.2-.31c-.84-1.33-1.28-2.86-1.28-4.41 0-4.53 3.7-8.23 8.23-8.23 2.19 0 4.25.85 5.79 2.39 1.55 1.55 2.4 3.61 2.4 5.79-.01 4.53-3.7 8.38-8.28 8.38zm4.67-6.23c-.26-.13-1.54-.76-1.78-.84-.24-.09-.41-.13-.58.13-.17.26-.67.84-.82 1.01-.15.17-.3.2-.56.07-.26-.13-1.1-.4-2.1-1.27-.77-.68-1.28-1.52-1.43-1.78-.15-.26-.02-.41.11-.54.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.07-.13-.58-1.39-.8-1.9-.21-.51-.42-.44-.58-.45-.15-.01-.32-.01-.49-.01-.17 0-.45.07-.69.32-.24.26-.9.88-.9 2.15s.92 2.49 1.05 2.66c.13.17 1.8 2.75 4.35 3.86.61.27 1.09.43 1.46.55.61.19 1.17.16 1.61.1.49-.07 1.54-.63 1.76-1.23.22-.61.22-1.13.15-1.23-.06-.1-.24-.16-.5-.29z" />
+                </svg>
+              </button>
             </div>
 
             {/* 🚚 Icons Section
