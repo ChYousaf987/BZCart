@@ -272,14 +272,14 @@ const TopBrands = ({ sortedProducts, loading }) => {
                     {/* Price Info */}
                     <div className="px-2 pb-4 bg-orange-">
                       <div className="flex items-center justify-start gap-3">
+                        <span className="font-semibold text-black">
+                          Rs. {product.product_discounted_price || "N/A"}
+                        </span>
                         <div className="flex items-center gap-2 text-sm">
                           <span className="line-through text-gray-400 text-xs">
                             Rs. {product.product_base_price || "N/A"}
                           </span>
                         </div>
-                        <span className="font-semibold text-black">
-                          Rs. {product.product_discounted_price || "N/A"}
-                        </span>
                       </div>
 
                       {/* {product.product_base_price &&

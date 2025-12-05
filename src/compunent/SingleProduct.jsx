@@ -907,7 +907,7 @@ const SingleProduct = () => {
 
                   <button
                     type="submit"
-                    className="w-full bg-black text-white py-4  font-bold text-lg hover:bg-gray-900 transition transform hover:scale-[1.01] shadow-lg border rounded-lg border-primary"
+                    className="w-full   py-4  font-bold text-lg  transition transform hover:scale-[1.01] shadow-lg border rounded-lg border-primary"
                   >
                     Submit Review
                   </button>

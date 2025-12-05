@@ -13,6 +13,7 @@ const FridayBannerDisplay = () => {
         const { data } = await axios.get(API);
         if (!data) return;
 
+        // Check if timer is already passed
         if (data.timer && new Date(data.timer).getTime() < Date.now()) return;
 
         setBanner(data);
@@ -55,18 +56,29 @@ const FridayBannerDisplay = () => {
     <>
       <a
         href={banner.buttonLink || "#"}
-        className="relative w-[97%] mx-auto  overflow-hidden rounded-lg shadow-lg block"
+        className="relative w-[97%] mx-auto overflow-hidden rounded-lg shadow-lg block"
         style={{ textDecoration: "none" }}
         target="_blank"
         rel="noopener noreferrer"
       >
         {/* Video or Image */}
-        {banner.video ? (
+        {banner.videoUrl ? (
+          <video
+            src={banner.videoUrl} // Use proper URL from backend
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-auto object-cover"
+          />
+        ) : banner.video ? (
+          // fallback if backend only gives base64
           <video
             src={`data:video/mp4;base64,${banner.video}`}
             autoPlay
             loop
             muted
+            playsInline
             className="w-full h-auto object-cover"
           />
         ) : (
@@ -92,17 +104,15 @@ const FridayBannerDisplay = () => {
               </div>
             )}
           </div>
-
-          {/* Timer at bottom */}
         </div>
       </a>
-      <div className="">
-        {timeLeft && (
-          <div className="text-2xl text-center font-semibold text-red-500 drop-shadow-lg bg-white/70 px-4 py-1 rounded ">
-            {timeLeft}
-          </div>
-        )}
-      </div>
+
+      {/* Timer */}
+      {timeLeft && (
+        <div className="text-2xl text-center font-semibold text-red-500 drop-shadow-lg bg-white/70 px-4 py-1 rounded mt-2">
+          {timeLeft}
+        </div>
+      )}
     </>
   );
 };
