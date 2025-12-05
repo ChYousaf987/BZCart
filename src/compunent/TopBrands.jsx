@@ -170,8 +170,8 @@ const TopBrands = ({ sortedProducts, loading }) => {
             {sortedProducts.slice(0, visibleCount).map((product) => {
               const isLoaded = loadedImages[product._id];
               return (
-                <div key={product._id} className="snap-start flex-shrink-0">
-                  <div className="group mb-3 bg-white rounded-2xl border shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
+                <div key={product._id} className="snap-start flex-shrink-0 ">
+                  <div className="group mb-3  bg-white rounded-2xl border border-primary shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
                     {/* Discount Badge */}
                     {getDiscountPercent(
                       product.product_base_price,

@@ -642,329 +642,277 @@ const SingleProduct = () => {
               </button>
             </div>
 
-            {/* 🚚 Icons Section
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
-              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                <FaTruck className="text-orange-600 text-xl" />
-                <div>
-                  <h4 className="font-semibold text-sm">Fast Shipping</h4>
-                  <p className="text-xs text-gray-500">Shipped In 1–3 Days</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                <FaUndo className="text-orange-600 text-xl" />
-                <div>
-                  <h4 className="font-semibold text-sm">Free Returns</h4>
-                  <p className="text-xs text-gray-500">7 Days Return</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                <FaMoneyBillAlt className="text-orange-600 text-xl" />
-                <div>
-                  <h4 className="font-semibold text-sm">Cash on Delivery</h4>
-                  <p className="text-xs text-gray-500">COD Available</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                <FaHeadset className="text-orange-600 text-xl" />
-                <div>
-                  <h4 className="font-semibold text-sm">Customer Support</h4>
-                  <p className="text-xs text-gray-500">Phone & Email</p>
-                </div>
-              </div>
-            </div> */}
             {/* ==================== NEW COLLAPSIBLE ACCORDION SECTION (Clean & Working) ==================== */}
             <div className="mt-10 md:w-[95%] mx-auto md:px-0 font-darazs">
               {/* WhatsApp Big Button */}
 
-              <div className="">
+              <div className="mt-10 space-y-4">
                 {/* DESCRIPTION */}
-                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
                   <button
                     onClick={() => setOpenDesc(!openDesc)}
-                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                    className="w-full px-6 py-5 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition-all duration-300 flex justify-between items-center group"
                   >
                     <span className="uppercase tracking-wider text-sm md:text-base">
                       DESCRIPTION
                     </span>
-                    <span
-                      className={`text-xl transition-transform duration-300 ${
+                    <FaAngleDown
+                      className={`text-xl transition-transform duration-500 ease-out ${
                         openDesc ? "rotate-180" : ""
-                      }`}
-                    >
-                      <FaAngleDown />
-                    </span>
+                      } group-hover:scale-110`}
+                    />
                   </button>
-                  {openDesc && (
-                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm leading-relaxed space-y-4">
+
+                  {/* Animated Content */}
+                  <div
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      openDesc ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="px-6 py-6 bg-gray-50 text-gray-700 text-sm leading-relaxed space-y-5">
                       <p className="whitespace-pre-line">
                         {product.product_description ||
                           "No description available."}
                       </p>
 
                       {product.highlights && product.highlights.length > 0 && (
-                        <div>
-                          <p className="font-bold text-gray-800 mb-2">
-                            Highlights:
-                          </p>
-                          <ul className="list-disc list-inside space-y-1">
+                        <div className="space-y-2">
+                          <p className="font-bold text-gray-900">Highlights:</p>
+                          <ul className="list-disc list-inside space-y-1 pl-4">
                             {product.highlights.map((h, i) => (
-                              <li key={i}>{h}</li>
+                              <li key={i} className="text-gray-600">
+                                {h}
+                              </li>
                             ))}
                           </ul>
                         </div>
                       )}
 
                       {product.warranty && (
-                        <p>
-                          <strong>Warranty:</strong> {product.warranty}
+                        <p className="font-medium">
+                          <span className="text-gray-900 font-bold">
+                            Warranty:
+                          </span>{" "}
+                          {product.warranty}
                         </p>
                       )}
 
                       {product.sizes?.length > 0 && (
-                        <div>
-                          <p className="font-bold text-gray-800 mb-3">
+                        <div className="mt-4">
+                          <p className="font-bold text-gray-900 mb-3">
                             Available Sizes:
                           </p>
                           <div className="flex flex-wrap gap-3">
                             {product.sizes.map((s) => (
                               <span
                                 key={s.size}
-                                className={`px-4 py-2 rounded-full text-sm font-medium border ${
+                                className={`px-5 py-2.5 rounded-full text-sm font-medium border-2 transition-all duration-300 ${
                                   s.stock > 0
-                                    ? "bg-green-100 text-green-700 border-green-300"
-                                    : "bg-red-100 text-red-700 border-red-300 line-through"
+                                    ? "bg-green-50 text-green-700 border-green-400 hover:bg-green-100"
+                                    : "bg-red-50 text-red-600 border-red-300 line-through"
                                 }`}
                               >
                                 {s.size}{" "}
                                 {s.stock > 0
                                   ? `(${s.stock} left)`
-                                  : "(Out of stock)"}
+                                  : "(Sold Out)"}
                               </span>
                             ))}
                           </div>
                         </div>
                       )}
                     </div>
-                  )}
+                  </div>
                 </div>
 
-                {/* Product Highlights */}
-                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                {/* PRODUCT HIGHLIGHTS */}
+                <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
                   <button
                     onClick={() => setOpenNote(!openNote)}
-                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                    className="w-full px-6 py-5 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition-all duration-300 flex justify-between items-center group"
                   >
                     <span className="uppercase tracking-wider text-sm md:text-base">
-                      Product Highlights
+                      PRODUCT HIGHLIGHTS
                     </span>
-                    <span
-                      className={`text-xl transition-transform duration-300 ${
+                    <FaAngleDown
+                      className={`text-xl transition-transform duration-500 ease-out ${
                         openNote ? "rotate-180" : ""
-                      }`}
-                    >
-                      <FaAngleDown />
-                    </span>
+                      } group-hover:scale-110`}
+                    />
                   </button>
-                  {openNote && (
-                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm italic">
-                      <h3 className="text-md font-semibold text-gray-700 mb-2 uppercase tracking-wide">
-                        Product Highlights
-                      </h3>
-                      <ul className="list-disc list-inside text-gray-500 text-sm leading-relaxed space-y-1">
-                        {product.highlights.map((h, idx) => (
-                          <li key={idx}>{h}</li>
+
+                  <div
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      openNote ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="px-6 py-6 bg-gradient-to-b from-gray-50 to-white">
+                      <ul className="list-disc list-inside space-y-2 text-gray-600 text-sm">
+                        {product.highlights?.map((h, idx) => (
+                          <li key={idx} className="pl-2">
+                            {h}
+                          </li>
                         ))}
                       </ul>
                     </div>
-                  )}
+                  </div>
                 </div>
+
                 {/* SHIPPING INFORMATION */}
-                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
                   <button
                     onClick={() => setOpenShip(!openShip)}
-                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                    className="w-full px-6 py-5 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition-all duration-300 flex justify-between items-center group"
                   >
                     <span className="uppercase tracking-wider text-sm md:text-base">
                       SHIPPING INFORMATION
                     </span>
-                    <span
-                      className={`text-xl transition-transform duration-300 ${
+                    <FaAngleDown
+                      className={`text-xl transition-transform duration-500 ease-out ${
                         openShip ? "rotate-180" : ""
-                      }`}
-                    >
-                      <FaAngleDown />
-                    </span>
+                      } group-hover:scale-110`}
+                    />
                   </button>
-                  {openShip && (
-                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm space-y-2">
-                      <p>• Delivery within 3–7 business days</p>
+
+                  <div
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      openShip ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="px-6 py-6 bg-gray-50 text-sm text-gray-700 space-y-3">
+                      <p>
+                        • Delivery within <strong>3–7 business days</strong>
+                      </p>
                       <p>• Cash on Delivery (COD) available nationwide</p>
                       <p>• Tracking number provided after dispatch</p>
                       {product.shipping > 0 ? (
-                        <p>
-                          • Shipping charges:{" "}
-                          <strong>Rs. {product.shipping}</strong>
+                        <p className="text-orange-600 font-bold">
+                          • Shipping charges: Rs. {product.shipping}
                         </p>
                       ) : (
-                        <p className="text-green-600 font-bold">
+                        <p className="text-green-600 font-bold text-lg">
                           Free Shipping
                         </p>
                       )}
                     </div>
-                  )}
+                  </div>
                 </div>
+
                 {/* CARE INSTRUCTION */}
-                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
                   <button
                     onClick={() => setOpenCare(!openCare)}
-                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                    className="w-full px-6 py-5 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition-all duration-300 flex justify-between items-center group"
                   >
                     <span className="uppercase tracking-wider text-sm md:text-base">
                       CARE INSTRUCTION
                     </span>
-                    <span
-                      className={`text-xl transition-transform duration-300 ${
+                    <FaAngleDown
+                      className={`text-xl transition-transform duration-500 ease-out ${
                         openCare ? "rotate-180" : ""
-                      }`}
-                    >
-                      <FaAngleDown />
-                    </span>
+                      } group-hover:scale-110`}
+                    />
                   </button>
-                  {openCare && (
-                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm">
-                      <ul className="list-disc list-inside space-y-2">
-                        <li>Machine wash cold</li>
-                        <li>Do not bleach</li>
-                        <li>Tumble dry low</li>
-                        <li>Iron on low heat if needed</li>
-                        <li>Wash with similar colors</li>
+
+                  <div
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      openCare ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="px-6 py-6 bg-gray-50">
+                      <ul className="space-y-3 text-sm text-gray-700">
+                        <li className="flex items-center gap-3">
+                          <span className="text-green-600">•</span> Machine wash
+                          cold
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <span className="text-green-600">•</span> Do not
+                          bleach
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <span className="text-green-600">•</span> Tumble dry
+                          low
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <span className="text-green-600">•</span> Iron on low
+                          heat if needed
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <span className="text-green-600">•</span> Wash with
+                          similar colors
+                        </li>
                       </ul>
                     </div>
-                  )}
+                  </div>
                 </div>
-                {/* NOTE */}
               </div>
-              {/* Share Buttons */}
             </div>
             {/* ==================== END OF ACCORDION SECTION ==================== */}
           </div>
         </div>
 
         <div className="mt-8">
-          
-
           {/* 🌟 Description Section */}
 
           {activeTab === "reviews" && (
             <div className="mt-">
               {/* If user is logged in → show review form at the top */}
-              
-                <div
-                  id="review-form"
-                  className="mb-12 px-2 py-6 bg-white "
-                >
-                  <h2 className="text-4xl text-center font-bold text-gray-800 mb-10">
-                    Write Your Review
-                  </h2>
-                  <form onSubmit={handleReviewSubmit} className="space-y-5">
-                    {/* Star Rating */}
-                    <div className="mx-auto">
-                      <label className="block text-lg font-medium text-gray-700 mb-3">
-                        Your Rating
-                      </label>
-                      <div className="flex items-center gap-2">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <FaStar
-                            key={star}
-                            size={36}
-                            onClick={() => setRating(star)}
-                            onMouseEnter={() => setHoverRating(star)}
-                            onMouseLeave={() => setHoverRating(0)}
-                            className="cursor-pointer transition-all duration-200 hover:scale-110"
-                            fill={
-                              star <= (hoverRating || rating)
-                                ? "#facc15"
-                                : "none"
-                            }
-                            stroke="#f59e0b"
-                            strokeWidth={2}
-                          />
-                        ))}
-                        <span className="ml-4 text-lg font-medium text-gray-600">
-                          {rating} Star{rating > 1 ? "s" : ""}
-                        </span>
-                      </div>
-                    </div>
 
-                    {/* Review Text */}
-                    <div>
-                      <label className="block text-lg font-medium text-gray-700 mb-2">
-                        Your Review
-                      </label>
-                      <textarea
-                        value={reviewText}
-                        onChange={(e) => setReviewText(e.target.value)}
-                        required
-                        rows={5}
-                        placeholder="Share your experience with this product..."
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full bg-black text-white py-4 rounded-none font-bold text-lg hover:bg-gray-900 transition transform hover:scale-[1.01] shadow-lg border-4 border-yellow-400"
-                    >
-                      Submit Review
-                    </button>
-                  </form>
-                </div>
-              
-
-              {/* "No Reviews Yet" Section – with working button */}
-              {/* <div className="bg-gray-100 py-16">
-                <div className="max-w-4xl mx-auto text-center px-4">
-                  <h2 className="text-4xl font-bold text-gray-800 mb-10">
-                    Customer Reviews
-                  </h2>
-
-                  <div className="flex flex-col items-center gap-5">
-                    <div className="flex gap-3">
-                      {[1, 2, 3, 4].map((i) => (
-                        <FaStar key={i} className="text-5xl text-yellow-400" />
+              <div id="review-form" className="mb-12 px-2 py-6 bg-white ">
+                <h2 className="text-4xl text-center font-bold text-gray-800 mb-10">
+                  Write Your Review
+                </h2>
+                <form onSubmit={handleReviewSubmit} className="space-y-5">
+                  {/* Star Rating */}
+                  <div className="mx-auto">
+                    <label className="block text-lg font-medium text-gray-700 mb-3">
+                      Your Rating
+                    </label>
+                    <div className="flex items-center gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <FaStar
+                          key={star}
+                          size={36}
+                          onClick={() => setRating(star)}
+                          onMouseEnter={() => setHoverRating(star)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          className="cursor-pointer transition-all duration-200 hover:scale-110"
+                          fill={
+                            star <= (hoverRating || rating) ? "#facc15" : "none"
+                          }
+                          stroke="#f59e0b"
+                          strokeWidth={2}
+                        />
                       ))}
-                      <FaStar className="text-5xl text-gray-300" />
+                      <span className="ml-4 text-lg font-medium text-gray-600">
+                        {rating} Star{rating > 1 ? "s" : ""}
+                      </span>
                     </div>
-                    <p className="text-xl text-gray-600 text-xl">
-                      Be the first to write a review
-                    </p>
+                  </div>
+
+                  {/* Review Text */}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 mb-2">
+                      Your Review
+                    </label>
+                    <textarea
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      required
+                      rows={5}
+                      placeholder="Share your experience with this product..."
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
+                    />
                   </div>
 
                   <button
-                    onClick={() => {
-                      if (!user) {
-                        toast.error("Please log in to write a review");
-                        navigate("/login"); // optional: redirect to login
-                        return;
-                      }
-                      // Scroll to the review form smoothly
-                      document
-                        .getElementById("review-form")
-                        ?.scrollIntoView({
-                          behavior: "smooth",
-                          block: "center",
-                        });
-                    }}
-                    className="mt-12 px-16 py-5 bg-black text-white font-bold text-xl 
-                     rounded-none border-4 border-yellow-400 
-                     hover:bg-gray-900 transform hover:scale-105 
-                     transition-all duration-300 shadow-2xl"
+                    type="submit"
+                    className="w-full bg-black text-white py-4  font-bold text-lg hover:bg-gray-900 transition transform hover:scale-[1.01] shadow-lg border rounded-lg border-primary"
                   >
-                    Write a review
+                    Submit Review
                   </button>
-                </div>
-              </div> */}
+                </form>
+              </div>
 
               {/* Show actual reviews if any exist */}
               {reviews.length > 0 && (
