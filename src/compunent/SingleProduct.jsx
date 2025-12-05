@@ -12,6 +12,9 @@ import {
   FaAngleDown,
   FaFacebook,
   FaInstagram,
+  FaTiktok,
+  FaFacebookF,
+  FaYoutube,
 } from "react-icons/fa";
 import {
   fetchProductById,
@@ -671,7 +674,7 @@ const SingleProduct = () => {
               </div>
             </div> */}
             {/* ==================== NEW COLLAPSIBLE ACCORDION SECTION (Clean & Working) ==================== */}
-            <div className="mt-10 md:w-[95%] mx-auto px-4 md:px-0 font-darazs">
+            <div className="mt-10 md:w-[95%] mx-auto md:px-0 font-darazs">
               {/* WhatsApp Big Button */}
 
               <div className="">
@@ -843,148 +846,195 @@ const SingleProduct = () => {
                 {/* NOTE */}
               </div>
               {/* Share Buttons */}
-              <div className="flex justify-center gap-8 mt-10 pb-8">
-                <button className="flex items-center gap-2 text-gray-600 hover:text-[#1877f2] transition">
-                  <FaFacebook size={22} />
-                  <span className="text-sm font-medium">Share</span>
-                </button>
-
-                <button className="flex items-center gap-2 text-gray-600 hover:text-[#1da1f2] transition">
-                  <svg
-                    className="w-6 h-6"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.28 4.28 0 0 0 1.88-2.36 8.52 8.52 0 0 1-2.71.96 4.25 4.25 0 0 0-7.23 3.87 12.06 12.06 0 0 1-8.76-4.44 4.25 4.25 0 0 0 1.31 5.67c-.64-.02-1.24-.2-1.77-.49v.05a4.25 4.25 0 0 0 3.41 4.17c-.66.18-1.36.2-2.06.08a4.25 4.25 0 0 0 3.97 2.95 8.52 8.52 0 0 1-5.29 1.82c-.34 0-.68-.02-1.02-.06a12.04 12.04 0 0 0 6.52 1.91c7.82 0 12.1-6.48 12.1-12.1 0-.09-.02-.14-.03a8.62 8.62 0 0 0 2.11-2.19z" />
-                  </svg>
-                  <span className="text-sm font-medium">Share</span>
-                </button>
-
-                <button className="flex items-center gap-2 text-gray-600 hover:text-pink-600 transition">
-                  <FaInstagram size={22} />
-                  <span className="text-sm font-medium">Pin it</span>
-                </button>
-              </div>
             </div>
             {/* ==================== END OF ACCORDION SECTION ==================== */}
           </div>
         </div>
 
         <div className="mt-8">
-          <div className="flex border-b">
-            <button
-              className={`py-2 px-4 font-semibold transition-colors duration-300 ${
-                activeTab === "reviews"
-                  ? "border-b-2 border-red-600 text-gray-700"
-                  : "text-gray-600 hover:text-red-500"
-              }`}
-              onClick={() => setActiveTab("reviews")}
-            >
-              Reviews ({reviews.length})
-            </button>
-          </div>
+          
 
           {/* 🌟 Description Section */}
 
           {activeTab === "reviews" && (
-            <div className="mt-4">
-              {user && (
-                <div className="mb-6 p-4 bg-gray-50 rounded-md shadow-sm border border-gray-100">
-                  <h3 className="font-semibold text-lg mb-2">Write a Review</h3>
-                  <form onSubmit={handleReviewSubmit}>
-                    {/* ⭐ Star Rating */}
-                    <div className="mb-3">
-                      <label className="block text-gray-700 mb-1">Rating</label>
-                      <div className="flex items-center gap-1">
+            <div className="mt-">
+              {/* If user is logged in → show review form at the top */}
+              {user ? (
+                <div
+                  id="review-form"
+                  className="mb-12 px-2 py-6 bg-white "
+                >
+                  <h2 className="text-4xl text-center font-bold text-gray-800 mb-10">
+                    Write Your Review
+                  </h2>
+                  <form onSubmit={handleReviewSubmit} className="space-y-5">
+                    {/* Star Rating */}
+                    <div className="mx-auto">
+                      <label className="block text-lg font-medium text-gray-700 mb-3">
+                        Your Rating
+                      </label>
+                      <div className="flex items-center gap-2">
                         {[1, 2, 3, 4, 5].map((star) => (
-                          <svg
+                          <FaStar
                             key={star}
+                            size={36}
                             onClick={() => setRating(star)}
                             onMouseEnter={() => setHoverRating(star)}
                             onMouseLeave={() => setHoverRating(0)}
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
+                            className="cursor-pointer transition-all duration-200 hover:scale-110"
                             fill={
                               star <= (hoverRating || rating)
                                 ? "#facc15"
                                 : "none"
-                            } // yellow fill
+                            }
                             stroke="#f59e0b"
-                            strokeWidth="2"
-                            className="w-7 h-7 cursor-pointer transition-transform transform hover:scale-110"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.976-2.89a1 1 0 00-1.176 0l-3.976 2.89c-.785.57-1.84-.197-1.54-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.078 10.1c-.783-.57-.38-1.81.588-1.81h4.915a1 1 0 00.95-.69l1.518-4.674z"
-                            />
-                          </svg>
+                            strokeWidth={2}
+                          />
                         ))}
+                        <span className="ml-4 text-lg font-medium text-gray-600">
+                          {rating} Star{rating > 1 ? "s" : ""}
+                        </span>
                       </div>
-                      {rating > 0 && (
-                        <p className="text-sm text-gray-500 mt-1">
-                          Selected: {rating} star{rating > 1 ? "s" : ""}
-                        </p>
-                      )}
                     </div>
 
-                    {/* 📝 Review Textarea */}
-                    <div className="mb-3">
-                      <label className="block text-gray-700 mb-1">
+                    {/* Review Text */}
+                    <div>
+                      <label className="block text-lg font-medium text-gray-700 mb-2">
                         Your Review
                       </label>
                       <textarea
                         value={reviewText}
                         onChange={(e) => setReviewText(e.target.value)}
-                        className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-600"
-                        rows="4"
-                        placeholder="Write your review here..."
-                      ></textarea>
+                        required
+                        rows={5}
+                        placeholder="Share your experience with this product..."
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
+                      />
                     </div>
 
-                    {/* 🚀 Submit Button */}
                     <button
                       type="submit"
-                      className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition duration-300"
+                      className="w-full bg-black text-white py-4 rounded-none font-bold text-lg hover:bg-gray-900 transition transform hover:scale-[1.01] shadow-lg border-4 border-yellow-400"
                     >
                       Submit Review
                     </button>
                   </form>
                 </div>
-              )}
+              ) : null}
 
-              {/* 🧭 Reviews List */}
-              {reviewsLoading ? (
-                <Loader />
-              ) : reviewsError ? (
-                <p className="text-red-500">{reviewsError}</p>
-              ) : reviews.length === 0 ? (
-                <p className="text-gray-600">No reviews yet.</p>
-              ) : (
-                <div className="space-y-4">
-                  {reviews.map((review) => (
-                    <div
-                      key={review._id}
-                      className="p-4 border rounded-md bg-white shadow-sm"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold">
-                            {review.user_id?.username || "Anonymous"}
-                          </p>
-                          {renderStars(review.rating)}
+              {/* "No Reviews Yet" Section – with working button */}
+              {/* <div className="bg-gray-100 py-16">
+                <div className="max-w-4xl mx-auto text-center px-4">
+                  <h2 className="text-4xl font-bold text-gray-800 mb-10">
+                    Customer Reviews
+                  </h2>
+
+                  <div className="flex flex-col items-center gap-5">
+                    <div className="flex gap-3">
+                      {[1, 2, 3, 4].map((i) => (
+                        <FaStar key={i} className="text-5xl text-yellow-400" />
+                      ))}
+                      <FaStar className="text-5xl text-gray-300" />
+                    </div>
+                    <p className="text-xl text-gray-600 text-xl">
+                      Be the first to write a review
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      if (!user) {
+                        toast.error("Please log in to write a review");
+                        navigate("/login"); // optional: redirect to login
+                        return;
+                      }
+                      // Scroll to the review form smoothly
+                      document
+                        .getElementById("review-form")
+                        ?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "center",
+                        });
+                    }}
+                    className="mt-12 px-16 py-5 bg-black text-white font-bold text-xl 
+                     rounded-none border-4 border-yellow-400 
+                     hover:bg-gray-900 transform hover:scale-105 
+                     transition-all duration-300 shadow-2xl"
+                  >
+                    Write a review
+                  </button>
+                </div>
+              </div> */}
+
+              {/* Show actual reviews if any exist */}
+              {reviews.length > 0 && (
+                <div className="mt-12 max-w-4xl mx-auto px-4">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-8">
+                    Reviews ({reviews.length})
+                  </h3>
+                  <div className="space-y-6">
+                    {reviews.map((review) => (
+                      <div
+                        key={review._id}
+                        className="bg-white p-6 rounded-lg shadow"
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center gap-3">
+                            <span className="font-bold text-gray-800">
+                              {review.user_id?.username || "Anonymous"}
+                            </span>
+                            {renderStars(review.rating)}
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            {new Date(review.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )}
+                          </span>
                         </div>
-                        <p className="text-gray-500 text-sm">
-                          {new Date(review.createdAt).toLocaleDateString()}
+                        <p className="text-gray-700 leading-relaxed">
+                          {review.comment}
                         </p>
                       </div>
-                      <p className="mt-2 text-gray-700">{review.comment}</p>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
           )}
+          <div className="flex justify-center gap-8 mt-10 pb-8">
+            <a
+              target="_blank"
+              href="https://www.facebook.com/share/1D4cs4MYZy/"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-gray-600 hover:text-[#1877f2] transition"
+            >
+              <FaFacebook size={22} />
+              <span className="text-sm font-medium">Share</span>
+            </a>
+            <a
+              target="_blank"
+              href="https://www.instagram.com/bzcart"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-gray-600 hover:text-[#1877f2] transition"
+            >
+              <FaInstagram size={22} />
+              <span className="text-sm font-medium">Pin it</span>
+            </a>
+            <a
+              href="https://www.tiktok.com/@bzcart.store"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-gray-600 hover:text-[#1877f2] transition"
+            >
+              <FaTiktok size={22} />
+              <span className="text-sm font-medium">Share</span>
+            </a>
+          </div>
         </div>
       </div>
       <Footer />
