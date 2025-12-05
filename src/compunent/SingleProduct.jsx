@@ -562,7 +562,7 @@ const SingleProduct = () => {
                 {/* 🛒 Add to Cart / Buy Now Buttons */}
                 <button
                   onClick={handleAddToCart}
-                  className={`w-full py-3 rounded-sm font-semibold shadow-lg border border-primary transition-all duration-300 ${
+                  className={`w-full py-3 rounded-lg font-semibold shadow-lg border border-primary transition-all duration-300 ${
                     product.sizes?.length > 0
                       ? !selectedSize ||
                         product.sizes.find((s) => s.size === selectedSize)
@@ -586,7 +586,7 @@ const SingleProduct = () => {
 
                 <button
                   onClick={handleBuyNow}
-                  className={`w-full py-3 rounded-sm font-semibold  border border-primary shadow-lg hover:shadow[inset_0_3px_6px_rgba(0,0,0,0.08),_0_3px_6px_rgba(0,0,0,0.12)] hover:scale-[1.02] transition-all duration-300 ${
+                  className={`w-full py-3 rounded-lg font-semibold  border border-primary shadow-lg hover:shadow[inset_0_3px_6px_rgba(0,0,0,0.08),_0_3px_6px_rgba(0,0,0,0.12)] hover:scale-[1.02] transition-all duration-300 ${
                     product.sizes?.length > 0
                       ? !selectedSize ||
                         product.sizes.find((s) => s.size === selectedSize)
@@ -611,7 +611,7 @@ const SingleProduct = () => {
               {/* 💬 WhatsApp */}
               <button
                 onClick={handleOrderOnWhatsapp}
-                className={`w-full flex items-center justify-center gap-2 py-3 rounded-sm  font-semibold  border border-primary text- shadow-lg transition-all duration-300 ${
+                className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg  font-semibold  border border-primary text- shadow-lg transition-all duration-300 ${
                   product.sizes?.length > 0
                     ? !selectedSize ||
                       product.sizes.find((s) => s.size === selectedSize)
