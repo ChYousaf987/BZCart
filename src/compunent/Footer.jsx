@@ -72,9 +72,9 @@ const Footer = () => {
               open === "services" ? "block" : "hidden"
             }`}
           >
-            <li className="hover:text-white transition-colors">
+            {/* <li className="hover:text-white transition-colors">
               Contact Us & Location
-            </li>
+            </li> */}
             <li className="hover:text-white transition-colors">
               Delivery Info
             </li>
