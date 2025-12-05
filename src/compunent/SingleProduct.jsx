@@ -859,7 +859,7 @@ const SingleProduct = () => {
           {activeTab === "reviews" && (
             <div className="mt-">
               {/* If user is logged in → show review form at the top */}
-              {user ? (
+              
                 <div
                   id="review-form"
                   className="mb-12 px-2 py-6 bg-white "
@@ -920,7 +920,7 @@ const SingleProduct = () => {
                     </button>
                   </form>
                 </div>
-              ) : null}
+              
 
               {/* "No Reviews Yet" Section – with working button */}
               {/* <div className="bg-gray-100 py-16">
