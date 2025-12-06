@@ -3,7 +3,7 @@ import { LuPackageSearch } from "react-icons/lu";
 import { Link, useLocation } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
 import { HiOutlineViewGrid } from "react-icons/hi";
-import { GiNestedHearts } from "react-icons/gi";
+import { GiNestedHearts } from "react-icons/gi"; 
 import { useSelector } from "react-redux";
 import { IoSearch } from "react-icons/io5";
 import { IoMdHeartEmpty } from "react-icons/io";
@@ -12,7 +12,7 @@ import { GoHome } from "react-icons/go";
 // 🏠 Ultra-Rounded Home SVG Icon (larger, softer)
 const CustomHomeIcon = ({ className = "w-8 h-8", color = "currentColor" }) => (
   <svg
-    className="feather feather-home"
+    class="feather feather-home"
     width="20"
     height="21"
     viewBox="0 0 20 21"
@@ -28,7 +28,7 @@ const CustomHomeIcon = ({ className = "w-8 h-8", color = "currentColor" }) => (
 
 const Search = ({ className = "w-6 h-6", color = "currentColor" }) => (
   <svg
-    className="feather feather-search"
+    class="feather feather-search"
     width="21"
     height="21"
     viewBox="0 0 21 21"
@@ -44,7 +44,7 @@ const Search = ({ className = "w-6 h-6", color = "currentColor" }) => (
 );
 const Heart = ({ className = "w-6 h-6", color = "currentColor" }) => (
   <svg
-    className="feather feather-heart"
+    class="feather feather-heart"
     width="24"
     height="20"
     viewBox="0 0 24 20"
@@ -59,7 +59,7 @@ const Heart = ({ className = "w-6 h-6", color = "currentColor" }) => (
 );
 const User = ({ className = "w-6 h-6", color = "currentColor" }) => (
   <svg
-    className="feather feather-user"
+    class="feather feather-user"
     width="24"
     height="24"
     viewBox="0 0 24 24"
@@ -69,9 +69,9 @@ const User = ({ className = "w-6 h-6", color = "currentColor" }) => (
     <path
       d="M19.4329 20.1917C19.4329 16.4863 15.1552 15.6667 12.0996 15.6667C9.04405 15.6667 4.76628 16.4863 4.76628 20.1917M23.0996 12C23.0996 18.0752 18.1748 23 12.0996 23C6.02448 23 1.09961 18.0752 1.09961 12C1.09961 5.92487 6.02448 1 12.0996 1C18.1748 1 23.0996 5.92487 23.0996 12ZM15.7663 8.33333C15.7663 10.3584 14.1247 12 12.0996 12C10.0745 12 8.43294 10.3584 8.43294 8.33333C8.43294 6.30829 10.0745 4.66667 12.0996 4.66667C14.1247 4.66667 15.7663 6.30829 15.7663 8.33333Z"
       stroke="#2A2A2A"
-      strokeWidth="1.38095"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      stroke-width="1.38095"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     ></path>
   </svg>
 );
@@ -99,23 +99,24 @@ const BottomNav = () => {
   const profilePath = user ? "/profile" : "/loginprofile"; // ✅ dynamic route
 
   const navItems = [
-    { path: "/faverat", label: "Favorite", icon: <Heart /> },
-    { path: "/search", label: "Search", icon: <Search /> },
     { path: "/", label: "Home", icon: <CustomHomeIcon /> },
-    { path: "/categories", label: "Categories", icon: <Catogery /> },
+    { path: "/search", label: "Search", icon: <Search /> },
+    { path: "/faverat", label: "Favorite", icon: <Heart /> },
     { path: profilePath, label: "Profile", icon: <User /> }, // ✅ dynamic
+    { path: "/categories", label: "Categories", icon: <Catogery /> },
   ];
 
   // ✅ Fixed highlight logic
-  const getActiveKey = (pathname) => {
-    if (pathname === "/") return "/";
-    if (pathname.startsWith("/categories")) return "/categories";
-    if (pathname.startsWith("/faverat")) return "/faverat";
-    if (pathname.startsWith("/search")) return "/search";
-    if (pathname.startsWith("/profile")) return "/profile";
-    if (pathname.startsWith("/loginprofile")) return "/loginprofile";
-    return "";
-  };
+const getActiveKey = (pathname) => {
+  if (pathname === "/") return "/";
+  if (pathname.startsWith("/categories")) return "/categories";
+  if (pathname.startsWith("/faverat")) return "/faverat";
+  if (pathname.startsWith("/search")) return "/search";
+  if (pathname.startsWith("/profile")) return "/profile";
+  if (pathname.startsWith("/loginprofile")) return "/loginprofile";
+  return "";
+};
+
 
   useEffect(() => {
     setActive(getActiveKey(location.pathname));
@@ -131,7 +132,7 @@ const BottomNav = () => {
   return (
     <div className="fixed bottom-2 left-0 w-full flex justify-center z-50 font-daraz md:hidden ">
       <div
-        className="relative w-[94%]  max-w-md rounded-full h-[7vh] 
+        className="relative w-[90%]  max-w-md rounded-full h-[6vh] 
         bg-white/10 backdrop-blur-xl border border-white/10 
         shadow-[0_8px_25px_rgba(0,0,0,0.25)]
         flex items-center justify-around transition-all duration-300"
@@ -165,7 +166,7 @@ const BottomNav = () => {
         {/* 💫 Bar curve under floating circle */}
         {active && (
           <div
-            className="absolute -top-1 w-16 h-9 bg-white/15 backdrop-blur-lg 
+            className="absolute -top-0 w-14 h-8 bg-white/5 backdrop-blur-lg 
             rounded-b-full shadow-[0_4px_12px_rgba(242,108,43,0.25)] 
             border border-white/10 transition-all duration-500"
             style={{
@@ -207,7 +208,7 @@ const BottomNav = () => {
                   : "text-gray-800/70 group-hover:text-primary"
               }`}
             >
-              {item.label}
+              {/* {item.label} */}
             </span>
           </Link>
         ))}

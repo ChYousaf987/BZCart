@@ -3,10 +3,10 @@ import { motion } from "framer-motion";
 export default function PageTransition({ children }) {
   return (
     <motion.div
-      initial={{ x: 300, opacity: 0 }} // start off to the right
-      animate={{ x: 0, opacity: 1 }} // slide in to center
-      exit={{ x: -300, opacity: 0 }} // exit to the left
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      initial={{ opacity: 0, scale: 0.95 }} // start slightly smaller and invisible
+      animate={{ opacity: 1, scale: 1 }} // fade in and scale to normal
+      exit={{ opacity: 0, scale: 0.95 }} // fade out and shrink slightly
+      transition={{ duration: 0.25, ease: "easeInOut" }} // smooth transition
       className="w-full h-full"
     >
       {children}

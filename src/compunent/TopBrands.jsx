@@ -170,8 +170,8 @@ const TopBrands = ({ sortedProducts, loading }) => {
             {sortedProducts.slice(0, visibleCount).map((product) => {
               const isLoaded = loadedImages[product._id];
               return (
-                <div key={product._id} className="snap-start flex-shrink-0">
-                  <div className="group mb-3 bg-white rounded-2xl border shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
+                <div key={product._id} className="snap-start flex-shrink-0 ">
+                  <div className="group mb-3  bg-white rounded-2xl border border-primary shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
                     {/* Discount Badge */}
                     {getDiscountPercent(
                       product.product_base_price,
@@ -236,7 +236,7 @@ const TopBrands = ({ sortedProducts, loading }) => {
                             }}
                           >
                             <Skeleton
-                              height={240}
+                              height={265}
                               className="rounded-lg h-full w-full"
                             />
                           </div>
@@ -244,11 +244,11 @@ const TopBrands = ({ sortedProducts, loading }) => {
                       </div>
 
                       {/* Product Info */}
-                      <div className="px-2 py-2 md:py-4 border-t bg-orange-50">
+                      <div className="px-2 py-2 md:py-4 border-t bg--50">
                         <h3 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1 hover:text-[#f06621] transition-colors duration-200">
                           {product.product_name || "Unknown Product"}
                         </h3>
-                        <div className="flex items-center text-yellow-400 text-sm mb-1">
+                        {/* <div className="flex items-center text-yellow-400 text-sm mb-1">
                           {[...Array(5)].map((_, i) => (
                             <svg
                               key={i}
@@ -265,21 +265,24 @@ const TopBrands = ({ sortedProducts, loading }) => {
                           <span className="text-gray-600 text-xs ml-2">
                             ({product.rating || 4})
                           </span>
-                        </div>
+                        </div> */}
                       </div>
                     </Link>
 
                     {/* Price Info */}
-                    <div className="px-2 pb-4 bg-orange-50">
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="line-through text-gray-400">
-                          Rs. {product.product_base_price || "N/A"}
+                    <div className="px-2 pb-4 bg-orange-">
+                      <div className="flex items-center justify-start gap-3">
+                        <span className="font-semibold text-black">
+                          Rs. {product.product_discounted_price || "N/A"}
                         </span>
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="line-through text-gray-400 text-xs">
+                            Rs. {product.product_base_price || "N/A"}
+                          </span>
+                        </div>
                       </div>
-                      <span className="font-semibold text-black">
-                        Rs. {product.product_discounted_price || "N/A"}
-                      </span>
-                      {product.product_base_price &&
+
+                      {/* {product.product_base_price &&
                         product.product_discounted_price && (
                           <p className="text-green-600 text-xs mt-1">
                             Save - Rs.{" "}
@@ -288,7 +291,7 @@ const TopBrands = ({ sortedProducts, loading }) => {
                               product.product_discounted_price
                             ).toFixed(2)}
                           </p>
-                        )}
+                        )} */}
                     </div>
                   </div>
                 </div>

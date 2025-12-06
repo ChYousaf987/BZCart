@@ -20,7 +20,7 @@ const Footer = () => {
 
   return (
     <footer className="pt">
-      <div className="bg-[#F26C2B] w-full max-w-7xl mt-8 mx-auto my-2 text-white  grid md:grid-cols-4 gap-6 border-b border-white/20 pb-8 rounded-3xl p-3 md:p-6 text-sm md:text-sm font-darazs">
+      <div className="bg-[#F26C2B] w-[95%] max-w-7xl mt-6 mx-auto my-2 text-white  grid md:grid-cols-4 gap-6 border-b border-white/20 pb- rounded-3xl p-3 md:p-6 text-sm md:text-sm font-darazs">
         {/* 🏢 Contact Details */}
         <div>
           <div className="flex gap-3 items-center justify-start md:justify-start mb-4">
@@ -72,9 +72,9 @@ const Footer = () => {
               open === "services" ? "block" : "hidden"
             }`}
           >
-            <li className="hover:text-white transition-colors">
+            {/* <li className="hover:text-white transition-colors">
               Contact Us & Location
-            </li>
+            </li> */}
             <li className="hover:text-white transition-colors">
               Delivery Info
             </li>
@@ -203,7 +203,7 @@ const Footer = () => {
       </div>
 
       {/* ⚙️ Bottom Bar */}
-      <div className="bg-black text-center py-5 text-white font-daraz text border-t border-white/10">
+      {/* <div className="bg-black text-center py-5 text-white font-daraz text border-t border-white/10">
         <p className="text-white/80 tracking-wide">
           Copyright © {new Date().getFullYear()}{" "}
           <span className="text-primary font-semibold hover:text-white transition-all duration-300">
@@ -214,7 +214,7 @@ const Footer = () => {
         <p className="mt-1 text-[10px] text-white/50">
           Crafted with ❤️ by <span className="text-primary">BZCart</span>
         </p>
-      </div>
+      </div> */}
     </footer>
   );
 };

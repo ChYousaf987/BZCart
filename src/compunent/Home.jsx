@@ -15,6 +15,7 @@ const BeatSeller = React.lazy(() => import("./BeatSeller"));
 
 import axios from "axios";
 import { toSlug } from "../utils/slugify";
+import FridayBannerDisplay from "./FridayBannerDisplay";
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false };
@@ -92,6 +93,11 @@ const Home = () => {
         <Suspense fallback={<div></div>}>
           <LazyWrapper>
             <Slider />
+          </LazyWrapper>
+        </Suspense>
+        <Suspense fallback={<div></div>}>
+          <LazyWrapper>
+            <FridayBannerDisplay />
           </LazyWrapper>
         </Suspense>
 

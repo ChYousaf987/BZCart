@@ -12,6 +12,9 @@ import {
   FaAngleDown,
   FaFacebook,
   FaInstagram,
+  FaTiktok,
+  FaFacebookF,
+  FaYoutube,
 } from "react-icons/fa";
 import {
   fetchProductById,
@@ -33,9 +36,14 @@ const SingleProduct = () => {
   const { productName } = useParams();
   const dispatch = useDispatch();
 
-  const { product, loading, error, reviews, reviewsLoading } = useSelector(
-    (state) => state.products
-  );
+  const {
+    product,
+    loading,
+    error,
+    reviews,
+    reviewsLoading,
+    reviewsError, // ← ADD THIS
+  } = useSelector((state) => state.products);
   const { user, userLoading, token } = useSelector((state) => state.auth);
 
   // Local state
@@ -43,7 +51,7 @@ const SingleProduct = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [activeSlide, setActiveSlide] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
-  const [activeTab, setActiveTab] = useState("description");
+  const [activeTab, setActiveTab] = useState("reviews");
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
   // Add these lines with your other useState hooks
@@ -420,14 +428,14 @@ const SingleProduct = () => {
               </div>
 
               {/* ⭐ Rating + Reviews */}
-              <div className="flex items-center ">
+              {/* <div className="flex items-center ">
                 {renderStars(product.rating || 0)}
                 <p className="text-gray-500 text-sm ml-2 font-medium">
                   {reviews.length > 0
                     ? `${reviews.length} review${reviews.length > 1 ? "s" : ""}`
                     : "No reviews yet"}
                 </p>
-              </div>
+              </div> */}
 
               {/* 💰 Pricing */}
               <div>
@@ -491,7 +499,7 @@ const SingleProduct = () => {
                 </div>
               ) : (
                 <div>
-                  {product.product_stock > 0 ? (
+                  {/* {product.product_stock > 0 ? (
                     <div
                       className={`flex items-center gap-2 text-sm font-semibold ${
                         product.product_stock < 4
@@ -511,12 +519,12 @@ const SingleProduct = () => {
                       <span className="text-lg">❌</span>
                       Out of Stock
                     </div>
-                  )}
+                  )} */}
                 </div>
               )}
 
               {/* 🚚 Shipping, Warranty, Payment */}
-              <div className="space-y-1 text-[15px]">
+              {/* <div className="space-y-1 text-[15px]">
                 <p className="flex items-center gap-2 mt-2">
                   <span className="text-gray-600 font-medium">
                     🚚 Shipping:
@@ -547,75 +555,23 @@ const SingleProduct = () => {
                     {product.payment?.join(", ")}
                   </span>
                 </p>
-              </div>
+              </div> */}
             </div>
 
-            {/* 🛒 Add to Cart / Buy Now Buttons */}
             <div className="mt-6 space-y-4">
-              <button
-                onClick={handleAddToCart}
-                className={`w-full py-3 rounded-sm font-semibold shadow-lg border border-orange-600 transition-all duration-300 ${
-                  product.sizes?.length > 0
-                    ? !selectedSize ||
-                      product.sizes.find((s) => s.size === selectedSize)
-                        ?.stock <= 0
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg--500 hover:shadow-lg hover:scale-[1.02]"
-                    : product.product_stock > 0
-                    ? "bg--500  hover:shadow-lg hover:scale-[1.02]"
-                    : "bg-gray-300 cursor-not-allowed"
-                }`}
-                disabled={
-                  product.sizes?.length > 0
-                    ? !selectedSize ||
-                      product.sizes.find((s) => s.size === selectedSize)
-                        ?.stock <= 0
-                    : product.product_stock <= 0
-                }
-              >
-                ADD TO CART
-              </button>
-
-              <div className="">
-                {/* ⚡ Buy Now */}
+              <div className="flex items-center justify-center gap-2">
+                {/* 🛒 Add to Cart / Buy Now Buttons */}
                 <button
-                  onClick={handleBuyNow}
-                  className={`w-full py-3 rounded-sm font-semibold border border-orange-800
-      bg-primary shadow-lg
-      hover:shadow-[inset_0_3px_6px_rgba(0,0,0,0.08),_0_3px_6px_rgba(0,0,0,0.12)]
-      hover:scale-[1.02] transition-all duration-300 ${
-        product.sizes?.length > 0
-          ? !selectedSize ||
-            product.sizes.find((s) => s.size === selectedSize)?.stock <= 0
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
-            : ""
-          : product.product_stock > 0
-          ? "bg-white hover:shadow-lg hover:scale-[1.02]"
-          : "bg-gray-300 cursor-not-allowed"
-      }`}
-                  disabled={
-                    product.sizes?.length > 0
-                      ? !selectedSize ||
-                        product.sizes.find((s) => s.size === selectedSize)
-                          ?.stock <= 0
-                      : product.product_stock <= 0
-                  }
-                >
-                  BUY IT NOW
-                </button>
-
-                {/* 💬 WhatsApp */}
-                <button
-                  onClick={handleOrderOnWhatsapp}
-                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-sm mt-3 font-semibold border border-orange-800 text- shadow-lg transition-all duration-300 ${
+                  onClick={handleAddToCart}
+                  className={`w-full py-3 rounded-lg font-semibold shadow-lg border border-primary transition-all duration-300 ${
                     product.sizes?.length > 0
                       ? !selectedSize ||
                         product.sizes.find((s) => s.size === selectedSize)
                           ?.stock <= 0
                         ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-primary hover:shadow-lg hover:scale-[1.02]"
+                        : "bg--500 hover:shadow-lg hover:scale-[1.02]"
                       : product.product_stock > 0
-                      ? "bg-green-500 hover:shadow-lg hover:scale-[1.02]"
+                      ? "  hover:shadow-lg hover:scale-[1.02]"
                       : "bg-gray-300 cursor-not-allowed"
                   }`}
                   disabled={
@@ -626,244 +582,270 @@ const SingleProduct = () => {
                       : product.product_stock <= 0
                   }
                 >
-                  WHATSAPP
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12.04 2c-5.52 0-10 4.47-10 9.99 0 1.76.46 3.46 1.34 4.97L2 22l5.19-1.36c1.45.79 3.08 1.2 4.85 1.2 5.53 0 10-4.48 10-10s-4.47-9.84-10-9.84zm.04 18.03c-1.54 0-3.02-.41-4.3-1.2l-.31-.19-3.07.8.82-3.02-.2-.31c-.84-1.33-1.28-2.86-1.28-4.41 0-4.53 3.7-8.23 8.23-8.23 2.19 0 4.25.85 5.79 2.39 1.55 1.55 2.4 3.61 2.4 5.79-.01 4.53-3.7 8.38-8.28 8.38zm4.67-6.23c-.26-.13-1.54-.76-1.78-.84-.24-.09-.41-.13-.58.13-.17.26-.67.84-.82 1.01-.15.17-.3.2-.56.07-.26-.13-1.1-.4-2.1-1.27-.77-.68-1.28-1.52-1.43-1.78-.15-.26-.02-.41.11-.54.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.07-.13-.58-1.39-.8-1.9-.21-.51-.42-.44-.58-.45-.15-.01-.32-.01-.49-.01-.17 0-.45.07-.69.32-.24.26-.9.88-.9 2.15s.92 2.49 1.05 2.66c.13.17 1.8 2.75 4.35 3.86.61.27 1.09.43 1.46.55.61.19 1.17.16 1.61.1.49-.07 1.54-.63 1.76-1.23.22-.61.22-1.13.15-1.23-.06-.1-.24-.16-.5-.29z" />
-                  </svg>
+                  ADD TO CART
+                </button>
+
+                <button
+                  onClick={handleBuyNow}
+                  className={`w-full py-3 rounded-lg font-semibold  border border-primary shadow-lg hover:shadow[inset_0_3px_6px_rgba(0,0,0,0.08),_0_3px_6px_rgba(0,0,0,0.12)] hover:scale-[1.02] transition-all duration-300 ${
+                    product.sizes?.length > 0
+                      ? !selectedSize ||
+                        product.sizes.find((s) => s.size === selectedSize)
+                          ?.stock <= 0
+                        ? "bg-gray-500 text-gray-400 cursor-not-allowed shadow-none"
+                        : ""
+                      : product.product_stock > 0
+                      ? "bg- hover:shadow-lg hover:scale-[1.02]"
+                      : "bg-gray-300 cursor-not-allowed"
+                  }`}
+                  disabled={
+                    product.sizes?.length > 0
+                      ? !selectedSize ||
+                        product.sizes.find((s) => s.size === selectedSize)
+                          ?.stock <= 0
+                      : product.product_stock <= 0
+                  }
+                >
+                  BUY IT NOW
                 </button>
               </div>
+              {/* 💬 WhatsApp */}
+              <button
+                onClick={handleOrderOnWhatsapp}
+                className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg  font-semibold  border border-primary text- shadow-lg transition-all duration-300 ${
+                  product.sizes?.length > 0
+                    ? !selectedSize ||
+                      product.sizes.find((s) => s.size === selectedSize)
+                        ?.stock <= 0
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg- hover:shadow-lg hover:scale-[1.02]"
+                    : product.product_stock > 0
+                    ? "bg- hover:shadow-lg hover:scale-[1.02]"
+                    : "bg-gray-300 cursor-not-allowed"
+                }`}
+                disabled={
+                  product.sizes?.length > 0
+                    ? !selectedSize ||
+                      product.sizes.find((s) => s.size === selectedSize)
+                        ?.stock <= 0
+                    : product.product_stock <= 0
+                }
+              >
+                WHATSAPP
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12.04 2c-5.52 0-10 4.47-10 9.99 0 1.76.46 3.46 1.34 4.97L2 22l5.19-1.36c1.45.79 3.08 1.2 4.85 1.2 5.53 0 10-4.48 10-10s-4.47-9.84-10-9.84zm.04 18.03c-1.54 0-3.02-.41-4.3-1.2l-.31-.19-3.07.8.82-3.02-.2-.31c-.84-1.33-1.28-2.86-1.28-4.41 0-4.53 3.7-8.23 8.23-8.23 2.19 0 4.25.85 5.79 2.39 1.55 1.55 2.4 3.61 2.4 5.79-.01 4.53-3.7 8.38-8.28 8.38zm4.67-6.23c-.26-.13-1.54-.76-1.78-.84-.24-.09-.41-.13-.58.13-.17.26-.67.84-.82 1.01-.15.17-.3.2-.56.07-.26-.13-1.1-.4-2.1-1.27-.77-.68-1.28-1.52-1.43-1.78-.15-.26-.02-.41.11-.54.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.07-.13-.58-1.39-.8-1.9-.21-.51-.42-.44-.58-.45-.15-.01-.32-.01-.49-.01-.17 0-.45.07-.69.32-.24.26-.9.88-.9 2.15s.92 2.49 1.05 2.66c.13.17 1.8 2.75 4.35 3.86.61.27 1.09.43 1.46.55.61.19 1.17.16 1.61.1.49-.07 1.54-.63 1.76-1.23.22-.61.22-1.13.15-1.23-.06-.1-.24-.16-.5-.29z" />
+                </svg>
+              </button>
             </div>
 
-            {/* 🚚 Icons Section
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
-              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                <FaTruck className="text-orange-600 text-xl" />
-                <div>
-                  <h4 className="font-semibold text-sm">Fast Shipping</h4>
-                  <p className="text-xs text-gray-500">Shipped In 1–3 Days</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                <FaUndo className="text-orange-600 text-xl" />
-                <div>
-                  <h4 className="font-semibold text-sm">Free Returns</h4>
-                  <p className="text-xs text-gray-500">7 Days Return</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                <FaMoneyBillAlt className="text-orange-600 text-xl" />
-                <div>
-                  <h4 className="font-semibold text-sm">Cash on Delivery</h4>
-                  <p className="text-xs text-gray-500">COD Available</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 border rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                <FaHeadset className="text-orange-600 text-xl" />
-                <div>
-                  <h4 className="font-semibold text-sm">Customer Support</h4>
-                  <p className="text-xs text-gray-500">Phone & Email</p>
-                </div>
-              </div>
-            </div> */}
             {/* ==================== NEW COLLAPSIBLE ACCORDION SECTION (Clean & Working) ==================== */}
-            <div className="mt-10 md:w-[95%] mx-auto px-4 md:px-0 font-darazs">
+            <div className="mt-10 md:w-[95%] mx-auto md:px-0 font-darazs">
               {/* WhatsApp Big Button */}
 
-              <div className="">
+              <div className="mt-10 space-y-4">
                 {/* DESCRIPTION */}
-                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
                   <button
                     onClick={() => setOpenDesc(!openDesc)}
-                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                    className="w-full px-6 py-5 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition-all duration-300 flex justify-between items-center group"
                   >
                     <span className="uppercase tracking-wider text-sm md:text-base">
                       DESCRIPTION
                     </span>
-                    <span
-                      className={`text-xl transition-transform duration-300 ${
+                    <FaAngleDown
+                      className={`text-xl transition-transform duration-500 ease-out ${
                         openDesc ? "rotate-180" : ""
-                      }`}
-                    >
-                      <FaAngleDown />
-                    </span>
+                      } group-hover:scale-110`}
+                    />
                   </button>
-                  {openDesc && (
-                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm leading-relaxed space-y-4">
+
+                  {/* Animated Content */}
+                  <div
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      openDesc ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="px-6 py-6 bg-gray-50 text-gray-700 text-sm leading-relaxed space-y-5">
                       <p className="whitespace-pre-line">
                         {product.product_description ||
                           "No description available."}
                       </p>
 
                       {product.highlights && product.highlights.length > 0 && (
-                        <div>
-                          <p className="font-bold text-gray-800 mb-2">
-                            Highlights:
-                          </p>
-                          <ul className="list-disc list-inside space-y-1">
+                        <div className="space-y-2">
+                          <p className="font-bold text-gray-900">Highlights:</p>
+                          <ul className="list-disc list-inside space-y-1 pl-4">
                             {product.highlights.map((h, i) => (
-                              <li key={i}>{h}</li>
+                              <li key={i} className="text-gray-600">
+                                {h}
+                              </li>
                             ))}
                           </ul>
                         </div>
                       )}
 
                       {product.warranty && (
-                        <p>
-                          <strong>Warranty:</strong> {product.warranty}
+                        <p className="font-medium">
+                          <span className="text-gray-900 font-bold">
+                            Warranty:
+                          </span>{" "}
+                          {product.warranty}
                         </p>
                       )}
 
                       {product.sizes?.length > 0 && (
-                        <div>
-                          <p className="font-bold text-gray-800 mb-3">
+                        <div className="mt-4">
+                          <p className="font-bold text-gray-900 mb-3">
                             Available Sizes:
                           </p>
                           <div className="flex flex-wrap gap-3">
                             {product.sizes.map((s) => (
                               <span
                                 key={s.size}
-                                className={`px-4 py-2 rounded-full text-sm font-medium border ${
+                                className={`px-5 py-2.5 rounded-full text-sm font-medium border-2 transition-all duration-300 ${
                                   s.stock > 0
-                                    ? "bg-green-100 text-green-700 border-green-300"
-                                    : "bg-red-100 text-red-700 border-red-300 line-through"
+                                    ? "bg-green-50 text-green-700 border-green-400 hover:bg-green-100"
+                                    : "bg-red-50 text-red-600 border-red-300 line-through"
                                 }`}
                               >
                                 {s.size}{" "}
                                 {s.stock > 0
                                   ? `(${s.stock} left)`
-                                  : "(Out of stock)"}
+                                  : "(Sold Out)"}
                               </span>
                             ))}
                           </div>
                         </div>
                       )}
                     </div>
-                  )}
+                  </div>
                 </div>
 
-                {/* Product Highlights */}
-                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                {/* PRODUCT HIGHLIGHTS */}
+                <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
                   <button
                     onClick={() => setOpenNote(!openNote)}
-                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                    className="w-full px-6 py-5 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition-all duration-300 flex justify-between items-center group"
                   >
                     <span className="uppercase tracking-wider text-sm md:text-base">
-                      Product Highlights
+                      PRODUCT HIGHLIGHTS
                     </span>
-                    <span
-                      className={`text-xl transition-transform duration-300 ${
+                    <FaAngleDown
+                      className={`text-xl transition-transform duration-500 ease-out ${
                         openNote ? "rotate-180" : ""
-                      }`}
-                    >
-                      <FaAngleDown />
-                    </span>
+                      } group-hover:scale-110`}
+                    />
                   </button>
-                  {openNote && (
-                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm italic">
-                      <h3 className="text-md font-semibold text-gray-700 mb-2 uppercase tracking-wide">
-                        Product Highlights
-                      </h3>
-                      <ul className="list-disc list-inside text-gray-500 text-sm leading-relaxed space-y-1">
-                        {product.highlights.map((h, idx) => (
-                          <li key={idx}>{h}</li>
+
+                  <div
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      openNote ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="px-6 py-6 bg-gradient-to-b from-gray-50 to-white">
+                      <ul className="list-disc list-inside space-y-2 text-gray-600 text-sm">
+                        {product.highlights?.map((h, idx) => (
+                          <li key={idx} className="pl-2">
+                            {h}
+                          </li>
                         ))}
                       </ul>
                     </div>
-                  )}
+                  </div>
                 </div>
+
                 {/* SHIPPING INFORMATION */}
-                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
                   <button
                     onClick={() => setOpenShip(!openShip)}
-                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                    className="w-full px-6 py-5 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition-all duration-300 flex justify-between items-center group"
                   >
                     <span className="uppercase tracking-wider text-sm md:text-base">
                       SHIPPING INFORMATION
                     </span>
-                    <span
-                      className={`text-xl transition-transform duration-300 ${
+                    <FaAngleDown
+                      className={`text-xl transition-transform duration-500 ease-out ${
                         openShip ? "rotate-180" : ""
-                      }`}
-                    >
-                      <FaAngleDown />
-                    </span>
+                      } group-hover:scale-110`}
+                    />
                   </button>
-                  {openShip && (
-                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm space-y-2">
-                      <p>• Delivery within 3–7 business days</p>
+
+                  <div
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      openShip ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="px-6 py-6 bg-gray-50 text-sm text-gray-700 space-y-3">
+                      <p>
+                        • Delivery within <strong>3–7 business days</strong>
+                      </p>
                       <p>• Cash on Delivery (COD) available nationwide</p>
                       <p>• Tracking number provided after dispatch</p>
                       {product.shipping > 0 ? (
-                        <p>
-                          • Shipping charges:{" "}
-                          <strong>Rs. {product.shipping}</strong>
+                        <p className="text-orange-600 font-bold">
+                          • Shipping charges: Rs. {product.shipping}
                         </p>
                       ) : (
-                        <p className="text-green-600 font-bold">
+                        <p className="text-green-600 font-bold text-lg">
                           Free Shipping
                         </p>
                       )}
                     </div>
-                  )}
+                  </div>
                 </div>
+
                 {/* CARE INSTRUCTION */}
-                <div className="border border-gray-200  overflow-hidden shadow-sm bg-white">
+                <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
                   <button
                     onClick={() => setOpenCare(!openCare)}
-                    className="w-full px-6 py-4 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition flex justify-between items-center"
+                    className="w-full px-6 py-5 text-left font-bold text-gray-800 bg-white hover:bg-gray-50 transition-all duration-300 flex justify-between items-center group"
                   >
                     <span className="uppercase tracking-wider text-sm md:text-base">
                       CARE INSTRUCTION
                     </span>
-                    <span
-                      className={`text-xl transition-transform duration-300 ${
+                    <FaAngleDown
+                      className={`text-xl transition-transform duration-500 ease-out ${
                         openCare ? "rotate-180" : ""
-                      }`}
-                    >
-                      <FaAngleDown />
-                    </span>
+                      } group-hover:scale-110`}
+                    />
                   </button>
-                  {openCare && (
-                    <div className="px-6 py-5 bg-gray-50 text-gray-600 text-sm">
-                      <ul className="list-disc list-inside space-y-2">
-                        <li>Machine wash cold</li>
-                        <li>Do not bleach</li>
-                        <li>Tumble dry low</li>
-                        <li>Iron on low heat if needed</li>
-                        <li>Wash with similar colors</li>
+
+                  <div
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      openCare ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="px-6 py-6 bg-gray-50">
+                      <ul className="space-y-3 text-sm text-gray-700">
+                        <li className="flex items-center gap-3">
+                          <span className="text-green-600">•</span> Machine wash
+                          cold
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <span className="text-green-600">•</span> Do not
+                          bleach
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <span className="text-green-600">•</span> Tumble dry
+                          low
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <span className="text-green-600">•</span> Iron on low
+                          heat if needed
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <span className="text-green-600">•</span> Wash with
+                          similar colors
+                        </li>
                       </ul>
                     </div>
-                  )}
+                  </div>
                 </div>
-                {/* NOTE */}
-              </div>
-              {/* Share Buttons */}
-              <div className="flex justify-center gap-8 mt-10 pb-8">
-                <button className="flex items-center gap-2 text-gray-600 hover:text-[#1877f2] transition">
-                  <FaFacebook size={22} />
-                  <span className="text-sm font-medium">Share</span>
-                </button>
-
-                <button className="flex items-center gap-2 text-gray-600 hover:text-[#1da1f2] transition">
-                  <svg
-                    className="w-6 h-6"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.28 4.28 0 0 0 1.88-2.36 8.52 8.52 0 0 1-2.71.96 4.25 4.25 0 0 0-7.23 3.87 12.06 12.06 0 0 1-8.76-4.44 4.25 4.25 0 0 0 1.31 5.67c-.64-.02-1.24-.2-1.77-.49v.05a4.25 4.25 0 0 0 3.41 4.17c-.66.18-1.36.2-2.06.08a4.25 4.25 0 0 0 3.97 2.95 8.52 8.52 0 0 1-5.29 1.82c-.34 0-.68-.02-1.02-.06a12.04 12.04 0 0 0 6.52 1.91c7.82 0 12.1-6.48 12.1-12.1 0-.09-.02-.14-.03a8.62 8.62 0 0 0 2.11-2.19z" />
-                  </svg>
-                  <span className="text-sm font-medium">Share</span>
-                </button>
-
-                <button className="flex items-center gap-2 text-gray-600 hover:text-pink-600 transition">
-                  <FaInstagram size={22} />
-                  <span className="text-sm font-medium">Pin it</span>
-                </button>
               </div>
             </div>
             {/* ==================== END OF ACCORDION SECTION ==================== */}
@@ -871,120 +853,137 @@ const SingleProduct = () => {
         </div>
 
         <div className="mt-8">
-          <div className="flex border-b">
-            <button
-              className={`py-2 px-4 font-semibold transition-colors duration-300 ${
-                activeTab === "reviews"
-                  ? "border-b-2 border-red-600 text-gray-700"
-                  : "text-gray-600 hover:text-red-500"
-              }`}
-              onClick={() => setActiveTab("reviews")}
-            >
-              Reviews ({reviews.length})
-            </button>
-          </div>
-
           {/* 🌟 Description Section */}
 
           {activeTab === "reviews" && (
-            <div className="mt-4">
-              {user && (
-                <div className="mb-6 p-4 bg-gray-50 rounded-md shadow-sm border border-gray-100">
-                  <h3 className="font-semibold text-lg mb-2">Write a Review</h3>
-                  <form onSubmit={handleReviewSubmit}>
-                    {/* ⭐ Star Rating */}
-                    <div className="mb-3">
-                      <label className="block text-gray-700 mb-1">Rating</label>
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <svg
-                            key={star}
-                            onClick={() => setRating(star)}
-                            onMouseEnter={() => setHoverRating(star)}
-                            onMouseLeave={() => setHoverRating(0)}
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill={
-                              star <= (hoverRating || rating)
-                                ? "#facc15"
-                                : "none"
-                            } // yellow fill
-                            stroke="#f59e0b"
-                            strokeWidth="2"
-                            className="w-7 h-7 cursor-pointer transition-transform transform hover:scale-110"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.976-2.89a1 1 0 00-1.176 0l-3.976 2.89c-.785.57-1.84-.197-1.54-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.078 10.1c-.783-.57-.38-1.81.588-1.81h4.915a1 1 0 00.95-.69l1.518-4.674z"
-                            />
-                          </svg>
-                        ))}
-                      </div>
-                      {rating > 0 && (
-                        <p className="text-sm text-gray-500 mt-1">
-                          Selected: {rating} star{rating > 1 ? "s" : ""}
-                        </p>
-                      )}
+            <div className="mt-">
+              {/* If user is logged in → show review form at the top */}
+
+              <div id="review-form" className="mb-12 px-2 py-6 bg-white ">
+                <h2 className="text-4xl text-center font-bold text-gray-800 mb-10">
+                  Write Your Review
+                </h2>
+                <form onSubmit={handleReviewSubmit} className="space-y-5">
+                  {/* Star Rating */}
+                  <div className="mx-auto">
+                    <label className="block text-lg font-medium text-gray-700 mb-3">
+                      Your Rating
+                    </label>
+                    <div className="flex items-center gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <FaStar
+                          key={star}
+                          size={36}
+                          onClick={() => setRating(star)}
+                          onMouseEnter={() => setHoverRating(star)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          className="cursor-pointer transition-all duration-200 hover:scale-110"
+                          fill={
+                            star <= (hoverRating || rating) ? "#facc15" : "none"
+                          }
+                          stroke="#f59e0b"
+                          strokeWidth={2}
+                        />
+                      ))}
+                      <span className="ml-4 text-lg font-medium text-gray-600">
+                        {rating} Star{rating > 1 ? "s" : ""}
+                      </span>
                     </div>
+                  </div>
 
-                    {/* 📝 Review Textarea */}
-                    <div className="mb-3">
-                      <label className="block text-gray-700 mb-1">
-                        Your Review
-                      </label>
-                      <textarea
-                        value={reviewText}
-                        onChange={(e) => setReviewText(e.target.value)}
-                        className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-600"
-                        rows="4"
-                        placeholder="Write your review here..."
-                      ></textarea>
-                    </div>
+                  {/* Review Text */}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 mb-2">
+                      Your Review
+                    </label>
+                    <textarea
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      required
+                      rows={5}
+                      placeholder="Share your experience with this product..."
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
+                    />
+                  </div>
 
-                    {/* 🚀 Submit Button */}
-                    <button
-                      type="submit"
-                      className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition duration-300"
-                    >
-                      Submit Review
-                    </button>
-                  </form>
-                </div>
-              )}
+                  <button
+                    type="submit"
+                    className="w-full   py-4  font-bold text-lg  transition transform hover:scale-[1.01] shadow-lg border rounded-lg border-primary"
+                  >
+                    Submit Review
+                  </button>
+                </form>
+              </div>
 
-              {/* 🧭 Reviews List */}
-              {reviewsLoading ? (
-                <Loader />
-              ) : reviewsError ? (
-                <p className="text-red-500">{reviewsError}</p>
-              ) : reviews.length === 0 ? (
-                <p className="text-gray-600">No reviews yet.</p>
-              ) : (
-                <div className="space-y-4">
-                  {reviews.map((review) => (
-                    <div
-                      key={review._id}
-                      className="p-4 border rounded-md bg-white shadow-sm"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold">
-                            {review.user_id?.username || "Anonymous"}
-                          </p>
-                          {renderStars(review.rating)}
+              {/* Show actual reviews if any exist */}
+              {reviews.length > 0 && (
+                <div className="mt-12 max-w-4xl mx-auto px-4">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-8">
+                    Reviews ({reviews.length})
+                  </h3>
+                  <div className="space-y-6">
+                    {reviews.map((review) => (
+                      <div
+                        key={review._id}
+                        className="bg-white p-6 rounded-lg shadow"
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center gap-3">
+                            <span className="font-bold text-gray-800">
+                              {review.user_id?.username || "Anonymous"}
+                            </span>
+                            {renderStars(review.rating)}
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            {new Date(review.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )}
+                          </span>
                         </div>
-                        <p className="text-gray-500 text-sm">
-                          {new Date(review.createdAt).toLocaleDateString()}
+                        <p className="text-gray-700 leading-relaxed">
+                          {review.comment}
                         </p>
                       </div>
-                      <p className="mt-2 text-gray-700">{review.comment}</p>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
           )}
+          <div className="flex justify-center gap-8 mt-10 pb-8">
+            <a
+              target="_blank"
+              href="https://www.facebook.com/share/1D4cs4MYZy/"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-gray-600 hover:text-[#1877f2] transition"
+            >
+              <FaFacebook size={22} />
+              <span className="text-sm font-medium">Share</span>
+            </a>
+            <a
+              target="_blank"
+              href="https://www.instagram.com/bzcart"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-gray-600 hover:text-[#1877f2] transition"
+            >
+              <FaInstagram size={22} />
+              <span className="text-sm font-medium">Pin it</span>
+            </a>
+            <a
+              href="https://www.tiktok.com/@bzcart.store"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-gray-600 hover:text-[#1877f2] transition"
+            >
+              <FaTiktok size={22} />
+              <span className="text-sm font-medium">Share</span>
+            </a>
+          </div>
         </div>
       </div>
       <Footer />

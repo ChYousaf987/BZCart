@@ -11,7 +11,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import Loader from "./Loader";
-import { sendAnalyticsEvent } from "../utils/analytics";
 
 const colorNames = [
   "Red",
@@ -99,12 +98,9 @@ const Carts = () => {
     }
     const stock = getStock(item);
     if (stock <= item.quantity) {
-      toast.error(
-        `Cannot add more: ${item.selected_size || "Item"} out of stock`,
-        {
-          position: "top-right",
-        }
-      );
+      toast.error(`Cannot add more: ${item.selected_size || "Item"} out of stock`, {
+        position: "top-right",
+      });
       return;
     }
     dispatch(
@@ -116,68 +112,7 @@ const Carts = () => {
       })
     )
       .unwrap()
-      .then((updatedCarts) => {
-        toast.success("Quantity updated!", { position: "top-right" });
-        // send add_to_cart analytics event (non-blocking) using server-canonical data
-        try {
-          const cartItem = Array.isArray(updatedCarts)
-            ? updatedCarts.find(
-                (c) =>
-                  String(c.product_id?._id || c.product_id) ===
-                  String(item.product_id._id || item.product_id)
-              ) || updatedCarts[0]
-            : null;
-
-          const productObj = cartItem?.product_id || item.product_id || {};
-          const cartCount = Array.isArray(updatedCarts)
-            ? updatedCarts.reduce((t, it) => t + (it.quantity || 0), 0)
-            : undefined;
-
-          // helper: best-effort device_model for this non-captured event
-          const ua = navigator.userAgent || "";
-          const detectModel = () => {
-            if (/iPad/i.test(ua)) return "iPad";
-            if (/iPhone/i.test(ua)) return "iPhone";
-            const m = ua.match(
-              /Android[\d\.]*;\s*([^;\)]+)\s*(Build|AppleWebKit|;)/i
-            );
-            if (m && m[1]) return m[1].trim();
-            return "";
-          };
-
-          sendAnalyticsEvent({
-            event_type: "add_to_cart",
-            user_id:
-              JSON.parse(localStorage.getItem("myUser"))?.id ||
-              JSON.parse(localStorage.getItem("myUser"))?._id ||
-              null,
-            user_display:
-              JSON.parse(localStorage.getItem("myUser"))?.username ||
-              JSON.parse(localStorage.getItem("myUser"))?.name ||
-              null,
-            guest_id: guestId,
-            session_id: localStorage.getItem("analyticsSession") || undefined,
-            url: window.location.href,
-            meta: { ua, device_model: detectModel() },
-            data: {
-              product_id:
-                productObj?._id || item.product_id._id || item.product_id,
-              product_name:
-                productObj?.product_name || item.product_id.product_name,
-              selected_image: cartItem?.selected_image || item.selected_image,
-              quantity: 1,
-              price:
-                productObj?.product_discounted_price ||
-                productObj?.product_base_price ||
-                item.product_id.product_discounted_price ||
-                item.product_id.product_base_price,
-              cart_item_count: cartCount,
-            },
-          });
-        } catch (err) {
-          /* swallow */
-        }
-      })
+      .then(() => toast.success("Quantity updated!", { position: "top-right" }))
       .catch((err) =>
         toast.error(err?.message || err || "Failed to update quantity", {
           position: "top-right",
@@ -325,12 +260,7 @@ const Carts = () => {
                 item.product_id?.sizes?.length > 0 && !item.selected_size;
               return (
                 <div
-                  key={
-                    item._id ||
-                    `${item.product_id?._id || index}-${item.selected_image}-${
-                      item.selected_size
-                    }`
-                  }
+                  key={`${item.product_id?._id || index}-${item.selected_image}-${item.selected_size}`}
                   className="flex items-center justify-between bg-light p-4 rounded-xl"
                 >
                   <div className="flex items-center gap-4">
@@ -459,12 +389,7 @@ const Carts = () => {
 
             {cart.map((item) => (
               <div
-                key={
-                  item._id ||
-                  `${item.product_id?._id || item._id}-${item.selected_image}-${
-                    item.selected_size
-                  }`
-                }
+                key={`${item.product_id?._id || item._id}-${item.selected_image}-${item.selected_size}`}
                 className="flex justify-between text-sm text-dark"
               >
                 <span>
