@@ -112,12 +112,18 @@ const AllProducts = () => {
                   )}
 
                   {/* Product Image */}
-                  <Link to={`/product/${toSlug(product.product_name)}`}>
+                  <Link
+                    to={`/product/${toSlug(product.product_name)}`}
+                    data-product-id={product._id}
+                    data-product-name={product.product_name}
+                  >
                     <div
                       className="md:h-48 flex items-center justify-center"
                       style={{
                         backgroundColor: product.bg_color || "#f3f4f6",
                       }}
+                      data-product-id={product._id}
+                      data-product-name={product.product_name}
                     >
                       <img
                         src={

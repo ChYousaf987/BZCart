@@ -115,9 +115,13 @@ const NewArrival = () => {
               to={`/product/${toSlug(product.product_name)}`}
               key={`${product._id}-${index}`}
               className="flex flex-col items-center text-center bg-transparent"
+              data-product-id={product._id}
+              data-product-name={product.product_name}
             >
               <div
                 className="w-36 h-36 lg:w-40 lg:h-40 rounded-3xl border border-[#f06621] mt-2 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-105"
+                data-product-id={product._id}
+                data-product-name={product.product_name}
                 style={{ backgroundColor: product.bg_color || "#fbf6f4" }}
               >
                 <img

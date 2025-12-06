@@ -8,6 +8,7 @@ import "./index.css";
 import App from "./App.jsx";
 import { store } from "./app/store.js";
 import Navbar from "./compunent/Navbar.jsx";
+import AnalyticsProvider from "./compunent/AnalyticsProvider.jsx";
 
 // ✅ Custom wrapper component to handle conditional Navbar
 function Layout() {
@@ -29,7 +30,9 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <Layout />
+        <AnalyticsProvider>
+          <Layout />
+        </AnalyticsProvider>
       </BrowserRouter>
     </Provider>
   </StrictMode>

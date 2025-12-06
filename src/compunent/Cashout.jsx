@@ -26,6 +26,7 @@ const Cashout = () => {
     shippingAddress: "",
     discountCode: "",
     isValidDiscount: false,
+    city: "",
   });
   const [errors, setErrors] = useState({});
 

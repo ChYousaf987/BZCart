@@ -77,10 +77,14 @@ const AllDeals = () => {
                 <Link
                   to={`/deal/${deal._id}`}
                   aria-label={`View details for ${deal.deal_name}`}
+                  data-product-id={deal._id}
+                  data-product-name={deal.deal_name}
                 >
                   <div
                     className="p-4 h-48 flex items-center justify-center"
                     style={{ backgroundColor: deal.bg_color || "#f3f4f6" }}
+                    data-product-id={deal._id}
+                    data-product-name={deal.deal_name}
                   >
                     <img
                       src={
@@ -140,7 +144,7 @@ const AllDeals = () => {
           })}
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

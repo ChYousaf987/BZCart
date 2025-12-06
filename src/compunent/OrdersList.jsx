@@ -156,6 +156,9 @@ const OrdersList = ({ guestId: propGuestId }) => {
                     <p className="text-sm text-gray-500">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </p>
+                    <p className="text-sm text-gray-500 ml-4">
+                      {order.city ? `City: ${order.city}` : "City: N/A"}
+                    </p>
                     <div className="mt-2 text-sm">
                       {order.items &&
                         order.items.map((item, idx) => (

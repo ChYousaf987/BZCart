@@ -69,23 +69,127 @@ const AnalyticsProvider = ({ children }) => {
     // attach click event
     const clickHandler = (e) => {
       const target = e.target;
+      // safe element id/class/tag extraction (avoid DOM objects)
+      const elId = target && target.id ? String(target.id) : null;
+      let elClass = null;
+      try {
+        if (target && typeof target.className === "string")
+          elClass = target.className;
+        else if (target && target.getAttribute)
+          elClass = target.getAttribute("class");
+      } catch (err) {
+        elClass = null;
+      }
+      const elTag = target && target.tagName ? String(target.tagName) : null;
+
+      // Detect product interactions: prefer explicit data-product-id/name,
+      // otherwise try to extract product slug from the nearest anchor href.
+      let productId = null;
+      let productName = null;
+      let productSlug = null;
+      try {
+        const prodEl = target.closest && target.closest("[data-product-id]");
+        if (prodEl) {
+          productId = prodEl.getAttribute("data-product-id");
+          try {
+            productName = prodEl.getAttribute("data-product-name") || null;
+          } catch (e) {}
+        }
+
+        if (!productId) {
+          const a = target.closest ? target.closest("a[href]") : null;
+          if (a && a.getAttribute) {
+            let href = a.getAttribute("href") || "";
+            // If href is absolute, extract pathname
+            try {
+              if (/^https?:\/\//i.test(href)) {
+                const u = new URL(href, window.location.origin);
+                href = u.pathname + (u.search || "") + (u.hash || "");
+              }
+            } catch (e) {}
+            // capture slug part after /product/
+            const m = href.match(/\/product\/(.+?)(?:[\/#?]|$)/i);
+            if (m && m[1]) {
+              productSlug = m[1];
+              // if slug looks like an ObjectId, treat as productId
+              if (/^[a-f0-9]{24}$/i.test(productSlug)) productId = productSlug;
+            }
+          }
+        }
+      } catch (err) {
+        productId = null;
+        productName = null;
+        productSlug = null;
+      }
+
+      // Detect add-to-cart action by data-action or class naming
+      let action = null;
+      try {
+        const actionEl = target.closest && target.closest("[data-action]");
+        if (actionEl) action = actionEl.getAttribute("data-action");
+        if (
+          !action &&
+          elClass &&
+          /add[-_]?to[-_]?cart|add-cart|buy-now/i.test(elClass)
+        ) {
+          action = "add_to_cart_click";
+        }
+      } catch (err) {
+        action = null;
+      }
+
+      const text =
+        (target &&
+          target.innerText &&
+          String(target.innerText).slice(0, 200)) ||
+        null;
+
       const payload = {
-        event_type: "click",
+        event_type: productId
+          ? "product_click"
+          : action
+          ? "action_click"
+          : "click",
         user_id: user?.id || user?._id || null,
         user_display: user?.username || user?.name || user?.email || null,
         guest_id: localStorage.getItem("guestId") || null,
         session_id: sessionId,
         url: window.location.href,
-        element: target
-          ? target.id || target.className || target.tagName
-          : null,
+        element: elId || elClass || elTag || null,
         data: {
-          text:
-            (target && target.innerText && target.innerText.slice(0, 200)) ||
+          text,
+          href:
+            (target &&
+              target.closest &&
+              target.closest("a[href]") &&
+              target.closest("a[href]").getAttribute("href")) ||
             null,
+          product_id: productId || null,
+          product_slug: productSlug || null,
+          product_name: productName || null,
+          action: action || null,
         },
         meta: deviceMeta,
       };
+      try {
+        if (typeof console !== "undefined") {
+          const dbg = {
+            productId: productId || null,
+            productSlug: productSlug || null,
+            productName: productName || null,
+            href: payload.data.href || null,
+            action: payload.data.action || null,
+            element: payload.element || null,
+            event_type: payload.event_type,
+          };
+          try {
+            console.debug &&
+              console.debug("analytics: click payload", JSON.stringify(dbg));
+          } catch (e) {
+            console.debug && console.debug("analytics: click payload", dbg);
+          }
+        }
+      } catch (e) {}
       sendAnalyticsEvent(payload);
     };
 
@@ -94,6 +198,17 @@ const AnalyticsProvider = ({ children }) => {
       const now = Date.now();
       if (now - lastScrollAt < 2000) return; // throttle 2s
       lastScrollAt = now;
+      const doc = document.documentElement || document.body;
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      const viewport = window.innerHeight || (doc && doc.clientHeight) || 0;
+      const docHeight = Math.max(
+        doc.scrollHeight || 0,
+        document.body.scrollHeight || 0
+      );
+      const percent =
+        docHeight > 0
+          ? Math.min(100, Math.round(((scrollY + viewport) / docHeight) * 100))
+          : 0;
       const payload = {
         event_type: "scroll",
         user_id: user?.id || user?._id || null,
@@ -101,7 +216,7 @@ const AnalyticsProvider = ({ children }) => {
         guest_id: localStorage.getItem("guestId") || null,
         session_id: sessionId,
         url: window.location.href,
-        data: { scrollY: window.scrollY },
+        data: { scrollY, percent },
         meta: deviceMeta,
       };
       sendAnalyticsEvent(payload);

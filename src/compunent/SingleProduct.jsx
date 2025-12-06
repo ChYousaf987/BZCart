@@ -30,7 +30,6 @@ import { fromSlug, toSlug } from "../utils/slugify";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-
 const SingleProduct = () => {
   const navigate = useNavigate();
   const { productName } = useParams();
@@ -260,6 +259,9 @@ const SingleProduct = () => {
       selected_image: selectedImage,
       selected_size: selectedSize || null,
       shipping: product.shipping || 0,
+      // Include stock and sizes so checkout can validate availability for Buy Now
+      product_stock: product.product_stock,
+      sizes: product.sizes,
     };
 
     navigate("/Cashout", {

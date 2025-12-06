@@ -26,7 +26,9 @@ const PaymentForm = ({
   const cart = displayCart || reduxCart;
 
   const [paymentMethod, setPaymentMethod] = useState("cash");
-  const [agree, setAgree] = useState(false);
+  const [agree, setAgree] = useState(
+    Array.isArray(displayCart) && displayCart.length > 0
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [discountCode, setDiscountCode] = useState("");
   const [isValidDiscount, setIsValidDiscount] = useState(false);
@@ -57,9 +59,11 @@ const PaymentForm = ({
   };
 
   const validatePhone = (value) => {
-    const phoneRegex = /^\+?\d{10,15}$/;
+    const phoneRegex = /^(?:\+92\d{10}|\d{11})$/;
     if (!phoneRegex.test(value)) {
-      setPhoneError("Phone number must be 10-15 digits, optional + prefix");
+      setPhoneError(
+        "Phone must be 11 digits (e.g. 03001234567) or +92XXXXXXXXXX"
+      );
     } else {
       setPhoneError("");
     }
@@ -140,6 +144,7 @@ const PaymentForm = ({
   const discountAmount = subtotal - discountedSubtotal;
 
   const handlePlaceOrder = async () => {
+    console.log("PaymentForm: handlePlaceOrder called", { formData, cart });
     if (!agree) {
       alert("Please agree to Terms and Conditions first");
       return;
@@ -180,6 +185,7 @@ const PaymentForm = ({
       })),
       total_amount: subtotal,
       shipping_address: formData.shippingAddress,
+      city: formData.city || undefined,
       order_email: formData.email,
       phone_number: formData.phoneNumber,
       full_name: formData.fullName,
@@ -188,7 +194,9 @@ const PaymentForm = ({
     };
 
     try {
+      console.log("PaymentForm: dispatching createOrder", orderDataToSend);
       const result = await dispatch(createOrder(orderDataToSend)).unwrap();
+      console.log("PaymentForm: createOrder result", result);
 
       // NO TOAST — INSTEAD PASS JUSTPLACED FLAG
       setOrderData({
@@ -203,6 +211,7 @@ const PaymentForm = ({
         email: authUser?.email || "",
         phoneNumber: "",
         shippingAddress: "",
+        city: "",
         discountCode: "",
         isValidDiscount: false,
       });
@@ -211,6 +220,7 @@ const PaymentForm = ({
 
       onNext(); // Go to TrackOrders
     } catch (err) {
+      console.error("PaymentForm: createOrder error", err);
       alert(err?.message || err || "Failed to place order");
     } finally {
       setIsSubmitting(false);
@@ -466,6 +476,33 @@ const PaymentForm = ({
           "PLACE ORDER (Cash on Delivery)"
         )}
       </button>
+
+      {/* Disabled reason helper to make it obvious why button is inert */}
+      <div className="mt-2 text-sm text-red-600">
+        {(() => {
+          if (paymentMethod !== "cash")
+            return "Payment method must be 'Cash' for placing this order.";
+          if (!agree) return "You must agree to Terms and Conditions.";
+          if (
+            !formData.fullName ||
+            !formData.shippingAddress ||
+            !formData.email ||
+            !formData.phoneNumber
+          )
+            return "Please complete all required shipping fields.";
+          if (phoneError) return phoneError;
+          if (cart.some((item) => getStock(item) < (item.quantity || 1)))
+            return "One or more items are out of stock.";
+          if (
+            cart.some((item) => {
+              const product = item.product_id || item;
+              return product.sizes?.length > 0 && !item.selected_size;
+            })
+          )
+            return "Please select sizes for products that require them.";
+          return null;
+        })()}
+      </div>
 
       <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
         <p className="font-medium mb-1">Payment Method: Cash on Delivery</p>

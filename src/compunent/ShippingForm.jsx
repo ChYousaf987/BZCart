@@ -17,6 +17,7 @@ const ShippingForm = ({
     phoneNumber: formData.phoneNumber || "",
     shippingAddress: formData.shippingAddress || "",
     discountCode: formData.discountCode || "",
+    city: formData.city || "",
   });
 
   const [phoneError, setPhoneError] = useState("");
@@ -31,13 +32,17 @@ const ShippingForm = ({
       phoneNumber: formData.phoneNumber || "",
       shippingAddress: formData.shippingAddress || "",
       discountCode: formData.discountCode || "",
+      city: formData.city || "",
     });
   }, [authUser, formData]);
 
   const validatePhone = (value) => {
-    const phoneRegex = /^\+?\d{10,15}$/;
+    // Accept 11-digit local numbers (e.g. 03001234567) or international +92XXXXXXXXXX
+    const phoneRegex = /^(?:\+92\d{10}|\d{11})$/;
     if (!phoneRegex.test(value)) {
-      setPhoneError("Phone number must be 10-15 digits, optional + prefix");
+      setPhoneError(
+        "Phone must be 11 digits (e.g. 03001234567) or +92XXXXXXXXXX"
+      );
     } else {
       setPhoneError("");
     }
@@ -99,6 +104,7 @@ const ShippingForm = ({
       newErrors.phoneNumber = phoneError || "Phone number is required";
     if (!localFormData.shippingAddress)
       newErrors.shippingAddress = "Shipping address is required";
+    if (!localFormData.city) newErrors.city = "City is required";
 
     setErrors(newErrors);
 
@@ -117,6 +123,7 @@ const ShippingForm = ({
     !localFormData.fullName ||
     !localFormData.email ||
     !localFormData.phoneNumber ||
+    !localFormData.city ||
     !localFormData.shippingAddress ||
     phoneError ||
     loadingDiscount ||
@@ -283,6 +290,30 @@ const ShippingForm = ({
             <p className="text-xs text-red-500 mt-1">
               {errors.shippingAddress}
             </p>
+          )}
+        </div>
+
+        {/* City */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            City <span className="text-red-500">*</span>
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              name="city"
+              value={localFormData.city}
+              onChange={handleChange}
+              placeholder="Enter your city"
+              className={`w-full border-b py-2 pl-2 pr-2 bg-transparent outline-none transition-all duration-200 ${
+                errors.city
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-gray-300 focus:border-black"
+              }`}
+            />
+          </div>
+          {errors.city && (
+            <p className="text-xs text-red-500 mt-1">{errors.city}</p>
           )}
         </div>
 

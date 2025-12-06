@@ -98,17 +98,24 @@ const Carts = () => {
     }
     const stock = getStock(item);
     if (stock <= item.quantity) {
-      toast.error(`Cannot add more: ${item.selected_size || "Item"} out of stock`, {
-        position: "top-right",
-      });
+      toast.error(
+        `Cannot add more: ${item.selected_size || "Item"} out of stock`,
+        {
+          position: "top-right",
+        }
+      );
       return;
     }
     dispatch(
       addToCart({
-        prod_id: item.product_id._id,
-        selected_image: item.selected_image,
-        selected_size: item.selected_size,
-        guestId,
+        cartData: {
+          product_id: item.product_id._id,
+          selected_image: item.selected_image,
+          selected_size: item.selected_size,
+          guestId,
+        },
+        userId: user?._id,
+        token: null,
       })
     )
       .unwrap()
@@ -128,10 +135,11 @@ const Carts = () => {
     }
     dispatch(
       removeFromCart({
-        prod_id: item.product_id._id,
+        product_id: item.product_id._id,
         selected_image: item.selected_image,
-        selected_size: item.selected_size,
         guestId,
+        selected_size: item.selected_size,
+        removeAll: false,
       })
     )
       .unwrap()
@@ -260,7 +268,9 @@ const Carts = () => {
                 item.product_id?.sizes?.length > 0 && !item.selected_size;
               return (
                 <div
-                  key={`${item.product_id?._id || index}-${item.selected_image}-${item.selected_size}`}
+                  key={`${item.product_id?._id || index}-${
+                    item.selected_image
+                  }-${item.selected_size}`}
                   className="flex items-center justify-between bg-light p-4 rounded-xl"
                 >
                   <div className="flex items-center gap-4">
@@ -389,7 +399,9 @@ const Carts = () => {
 
             {cart.map((item) => (
               <div
-                key={`${item.product_id?._id || item._id}-${item.selected_image}-${item.selected_size}`}
+                key={`${item.product_id?._id || item._id}-${
+                  item.selected_image
+                }-${item.selected_size}`}
                 className="flex justify-between text-sm text-dark"
               >
                 <span>

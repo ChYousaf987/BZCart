@@ -51,6 +51,16 @@ const Home = () => {
     }
   }, [dispatch, products.length, loading, error]);
 
+  // Ensure page starts at top when Home mounts (useful on reload)
+  useEffect(() => {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    } catch (e) {
+      // fallback
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
   return (
     <div className="relative font-daraz bg-white">
       <ErrorBoundary>
