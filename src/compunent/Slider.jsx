@@ -59,6 +59,7 @@ const HeroSection = () => {
                 </div>
                 <div className="flex justify-center flex-1">
                   <img
+                    loading="lazy"
                     src={large.image}
                     alt="banner"
                     className="w-40 sm:w-40 md:w-72 lg:w-96 object-contain drop-shadow-2xl"
@@ -89,6 +90,7 @@ const HeroSection = () => {
                       </button>
                     </div>
                     <img
+                      loading="lazy"
                       src={item.image}
                       alt={item.alt}
                       className="w-20 h-20 md:w-36 md:h-36 -mr-2"
@@ -115,6 +117,7 @@ const HeroSection = () => {
               className="block rounded-xl overflow-hidden shadow-lg mb-4"
             >
               <img
+                loading="lazy"
                 src={large.image}
                 alt="banner"
                 className="w-full h-auto object-cover"
@@ -128,6 +131,7 @@ const HeroSection = () => {
               <a key={index} href={item.link}>
                 <div className="h-full rounded-xl shadow-sm flex items-start overflow-hidden">
                   <img
+                    loading="lazy"
                     src={item.image}
                     alt={item.title}
                     className="inset-0 w-full h-full object-cover"

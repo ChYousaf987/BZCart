@@ -50,6 +50,7 @@ const PromoBanner = () => {
         muted
         loop
         playsInline
+        loading="lazy"
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
       >
         <source src="./video.mp4" type="video/mp4" />

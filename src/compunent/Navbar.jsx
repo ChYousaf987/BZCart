@@ -177,6 +177,7 @@ const Navbar = () => {
           </button>
           <Link to="/">
             <img
+              loading="lazy"
               src="/loggo.png"
               alt="logo"
               className="w-[150px] md:w-[200px] object-contain"
@@ -384,6 +385,7 @@ const Navbar = () => {
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-14 h-14 rounded-full overflow-hidden bg-white border">
                   <img
+                    loading="lazy"
                     src={user.profileImage || "/default-avatar.png"}
                     alt="avatar"
                     className="w-full h-full object-cover"

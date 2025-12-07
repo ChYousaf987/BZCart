@@ -25,6 +25,7 @@ const Footer = () => {
         <div>
           <div className="flex gap-3 items-center justify-start md:justify-start mb-4">
             <img
+              loading="lazy"
               src="/logg.png"
               className="w-10 h-10 bg-white/70 rounded-full object-cover"
               alt="BZ Cart Logo"
