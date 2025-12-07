@@ -3,10 +3,13 @@ import axios from "axios";
 
 const FridayBannerDisplay = () => {
   const [banner, setBanner] = useState(null);
+  const [animateSec, setAnimateSec] = useState(false);
+
   const [time, setTime] = useState({
     days: "00",
     hours: "00",
     minutes: "00",
+    seconds: "00",
   });
 
   const API = "https://bzbackend.online/api/friday-banner";
@@ -17,7 +20,6 @@ const FridayBannerDisplay = () => {
         const { data } = await axios.get(API);
         if (!data) return;
 
-        // check if expired
         if (data.timer && new Date(data.timer).getTime() < Date.now()) return;
 
         setBanner(data);
@@ -32,7 +34,12 @@ const FridayBannerDisplay = () => {
             const distance = endTime - now;
 
             if (distance <= 0) {
-              setTime({ days: "00", hours: "00", minutes: "00" });
+              setTime({
+                days: "00",
+                hours: "00",
+                minutes: "00",
+                seconds: "00",
+              });
               clearInterval(timerInterval);
             } else {
               const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -42,11 +49,17 @@ const FridayBannerDisplay = () => {
               const minutes = Math.floor(
                 (distance % (1000 * 60 * 60)) / (1000 * 60)
               );
+              const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+              // Trigger animation only when seconds change
+              setAnimateSec(true);
+              setTimeout(() => setAnimateSec(false), 300);
 
               setTime({
                 days: format(days),
                 hours: format(hours),
                 minutes: format(minutes),
+                seconds: format(seconds),
               });
             }
           }, 1000);
@@ -65,12 +78,12 @@ const FridayBannerDisplay = () => {
 
   return (
     <>
+      {/* Banner Section */}
       <a
         href={banner.buttonLink || "#"}
         className="relative w-[97%] mx-auto overflow-hidden rounded-lg shadow-lg block"
         rel="noopener noreferrer"
       >
-        {/* Image / Video */}
         {banner.videoUrl ? (
           <video
             src={banner.videoUrl}
@@ -97,7 +110,6 @@ const FridayBannerDisplay = () => {
           />
         )}
 
-        {/* Overlay */}
         <div className="absolute inset-0 flex flex-col justify-between text-center p-4">
           <div className="flex flex-col items-center mt-2">
             {banner.title && (
@@ -114,44 +126,48 @@ const FridayBannerDisplay = () => {
         </div>
       </a>
 
-      {/* --- CUSTOM COUNTDOWN TIMER DESIGN --- */}
+      {/* Countdown Timer */}
       <div className="flex items-center justify-center mt-4">
         <div className="flex justify-center items-center gap-3">
-          {/* LEFT SIDE */}
+          {/* Days */}
           <div className="flex flex-col gap-2">
-            {/* Big Number Box */}
-            <div className="p-14 px-20 bg-white/80 rounded-xl shadow-lg flex items-center justify-center">
+            <div className="p-20 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
               <span className="text-6xl font-bold">{time.days}</span>
             </div>
 
-            {/* Text Box */}
-            <div className="p-4 bg-white/80 rounded-xl shadow-lg flex items-center justify-center">
+            <div className="p-5 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
               <span className="text-xl font-semibold tracking-wide">DAYS</span>
             </div>
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* Hours / Min / Sec */}
           <div className="flex flex-col gap-1">
-            {/* Hours Number */}
-            <div className="p-5 px-10 bg-white/80 rounded-xl shadow-lg flex items-center justify-center">
+            {/* Hours */}
+            <div className="p-3 px-10 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
               <span className="text-4xl font-bold">{time.hours}</span>
             </div>
-
-            {/* Hours Text */}
-            <div className="p-2 bg-white/80 rounded-xl shadow-lg flex items-center justify-center">
-              <span className="text-sm font-semibold tracking-wide">HOURS</span>
+            <div className="p-1 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
+              <span className="text-sm font-semibold">HOURS</span>
             </div>
 
-            {/* Minutes Number */}
-            <div className="p-5 px-10 bg-white/80 rounded-xl shadow-lg flex items-center justify-center">
+            {/* Minutes */}
+            <div className="p-3 px-10 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
               <span className="text-4xl font-bold">{time.minutes}</span>
             </div>
+            <div className="p-1 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
+              <span className="text-sm font-semibold">MINUTES</span>
+            </div>
 
-            {/* Minutes Text */}
-            <div className="p-2 bg-white/80 rounded-xl shadow-lg flex items-center justify-center">
-              <span className="text-sm font-semibold tracking-wide">
-                MINUTES
-              </span>
+            {/* Seconds with flip animation */}
+            <div
+              className={`p-3 px-10 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center ${
+                animateSec ? "flip" : ""
+              }`}
+            >
+              <span className="text-4xl font-bold">{time.seconds}</span>
+            </div>
+            <div className="p-1 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
+              <span className="text-sm font-semibold">SECONDS</span>
             </div>
           </div>
         </div>
