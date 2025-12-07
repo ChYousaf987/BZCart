@@ -51,14 +51,9 @@ const Home = () => {
     }
   }, [dispatch, products.length, loading, error]);
 
-  // Ensure page starts at top when Home mounts (useful on reload)
+  // Scroll to top when Home component mounts
   useEffect(() => {
-    try {
-      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    } catch (e) {
-      // fallback
-      window.scrollTo(0, 0);
-    }
+    window.scrollTo(0, 0);
   }, []);
 
   return (

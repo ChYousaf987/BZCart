@@ -33,67 +33,7 @@ const CategoryProducts = () => {
     setLoadedImages((prev) => ({ ...prev, [id]: true }));
   };
 
-  // Restore scroll position on mount
-  useLayoutEffect(() => {
-    // Disable browser's automatic scroll restoration
-    window.history.scrollRestoration = "manual";
-
-    // Scroll to clicked product if available, else restore saved scroll
-    const clickedProduct = localStorage.getItem("clickedProduct");
-    if (clickedProduct && !hasScrolled) {
-      const productIndex = categoryProducts.findIndex(
-        (product) => product._id === clickedProduct
-      );
-      if (productIndex !== -1 && categoryProducts.length > 0) {
-        setShouldScroll(true);
-        setHasScrolled(true);
-      }
-    } else {
-      const savedScroll = localStorage.getItem("categoryProductsScroll");
-      if (savedScroll) {
-        window.scrollTo(0, parseInt(savedScroll, 10));
-      }
-    }
-  }, [categoryProducts.length, hasScrolled]);
-
-  // Handle scrolling after component update
-  useEffect(() => {
-    if (shouldScroll) {
-      const clickedProduct = localStorage.getItem("clickedProduct");
-      if (clickedProduct) {
-        const element = document.getElementById(`product-${clickedProduct}`);
-        if (element) {
-          // Scroll instantly to product (no animation)
-          element.scrollIntoView({ behavior: "auto", block: "center" });
-          // Mobile adjustment: center the product in viewport instantly
-          const isMobile = window.innerWidth < 768;
-          if (isMobile) {
-            setTimeout(() => {
-              const rect = element.getBoundingClientRect();
-              const scrollY =
-                window.scrollY +
-                rect.top -
-                window.innerHeight / 2 +
-                rect.height / 2;
-              window.scrollTo({ top: scrollY, behavior: "auto" });
-            }, 0);
-          }
-        }
-        localStorage.removeItem("clickedProduct");
-        setShouldScroll(false);
-      }
-    }
-  }, [categoryProducts, shouldScroll]);
-
-  // Save scroll position on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      localStorage.setItem("categoryProductsScroll", window.scrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Scroll restoration removed from CategoryProducts
 
   useEffect(() => {
     const fetchCategoryData = async () => {

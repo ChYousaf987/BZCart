@@ -22,6 +22,8 @@ import About from "./compunent/About";
 import PrivacyPolicy from "./compunent/PrivacyPolicy";
 import ReturnRefund from "./compunent/ReturnRefund";
 import TermsAndCondition from "./compunent/TermsAndCondition";
+import ForgotPassword from "./compunent/ForgotPassword";
+import ResetPassword from "./compunent/ResetPassword";
 import Checkout from "./compunent/Checkout";
 import FAQS from "./compunent/FAQS";
 import BottomNav from "./compunent/BottomNav";
@@ -34,38 +36,11 @@ import PageTransition from "./compunent/PageTransition";
 const App = () => {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
-  const [scrollPositions, setScrollPositions] = useState({});
-  const scrollTimeoutRef = useRef(null);
   const { products, loading: productsLoading } = useSelector(
     (state) => state.products
   );
 
-  // Debounce scroll position updates
-  const debounce = (func, wait) => {
-    return (...args) => {
-      clearTimeout(scrollTimeoutRef.current);
-      scrollTimeoutRef.current = setTimeout(() => func(...args), wait);
-    };
-  };
-
-  // Save scroll position
-  useEffect(() => {
-    const saveScrollPosition = debounce(() => {
-      setScrollPositions((prev) => ({
-        ...prev,
-        [location.pathname]: window.scrollY,
-      }));
-    }, 100);
-
-    window.addEventListener("scroll", saveScrollPosition);
-    return () => {
-      window.removeEventListener("scroll", saveScrollPosition);
-      clearTimeout(scrollTimeoutRef.current);
-    };
-  }, [location.pathname]);
-
-  // Handle route change and restore scroll position
-  // Handle route change and restore scroll position
+  // Handle route change: only manage loading state here. Scroll restoration intentionally disabled.
   useEffect(() => {
     // Only show loader if products are actually loading and no products are in store
     if (productsLoading && !products.length) {
@@ -74,17 +49,7 @@ const App = () => {
     }
 
     setLoading(false);
-
-    // ✅ Only run scroll restore on location change, not on re-renders
-    let restored = false;
-    const scrollY = location.pathname.startsWith("/product/")
-      ? 0
-      : location.state?.scrollY || scrollPositions[location.pathname] || 0;
-
-    if (!restored) {
-      window.scrollTo({ top: scrollY, behavior: "instant" });
-      restored = true;
-    }
+    // No automatic scroll restore performed here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
@@ -113,6 +78,22 @@ const App = () => {
               element={
                 <PageTransition>
                   <Auth />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/forgot"
+              element={
+                <PageTransition>
+                  <ForgotPassword />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <PageTransition>
+                  <ResetPassword />
                 </PageTransition>
               }
             />

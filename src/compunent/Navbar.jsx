@@ -92,7 +92,6 @@ const Navbar = () => {
       .catch(() => toast.error("Failed to fetch categories"));
   }, []);
 
-
   // Fetch cart
   useEffect(() => {
     if (user?.token) {
@@ -212,7 +211,7 @@ const Navbar = () => {
             <p className="font-semibold text-sm">+92 329-7609190</p>
           </div>
           <Link to="/orders" className="hover:text-primary md:hidden">
-            <CiDeliveryTruck  size={28} />
+            <CiDeliveryTruck size={28} />
           </Link>
           <div className="relative mr-1">
             <Link to="/payment" className="hover:text-primary">
@@ -380,6 +379,71 @@ const Navbar = () => {
 
           {/* Scrollable Content */}
           <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+            {/* Mobile account area: show profile and allow upload */}
+            {user ? (
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-14 h-14 rounded-full overflow-hidden bg-white border">
+                  <img
+                    src={user.profileImage || "/default-avatar.png"}
+                    alt="avatar"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold text-sm">
+                    {getUserDisplayName()}
+                  </div>
+                  <label className="text-xs text-primary hover:underline cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const f = e.target.files?.[0];
+                        if (!f) return;
+                        const reader = new FileReader();
+                        reader.onload = async () => {
+                          try {
+                            const imageUrl = reader.result;
+                            // call backend to update profile image
+                            await axios.patch("/users/profile-image", {
+                              imageUrl,
+                            });
+                            // update localStorage user
+                            const stored = JSON.parse(
+                              localStorage.getItem("myUser") || "{}"
+                            );
+                            stored.profileImage = imageUrl;
+                            localStorage.setItem(
+                              "myUser",
+                              JSON.stringify(stored)
+                            );
+                            window.location.reload();
+                          } catch (err) {
+                            toast.error(
+                              err?.response?.data?.message ||
+                                "Failed to upload image"
+                            );
+                          }
+                        };
+                        reader.readAsDataURL(f);
+                      }}
+                    />
+                    Change Photo
+                  </label>
+                </div>
+              </div>
+            ) : (
+              <div className="mb-4">
+                <Link
+                  to="/loginprofile"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block py-2 px-3 bg-primary text-white rounded-lg text-center"
+                >
+                  Sign in / Register
+                </Link>
+              </div>
+            )}
             {/* Categories */}
             {categories.map((cat, index) => (
               <div key={cat._id} className="border-b border-gray-300 pb-2">

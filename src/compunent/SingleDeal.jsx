@@ -70,9 +70,7 @@ const SingleDeal = () => {
   }, [currentDeal?.deal_expiry]);
 
   // Scroll to top
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, []);
+  // Scroll-to-top removed
 
   // Buy Now
   const handleBuyNow = () => {

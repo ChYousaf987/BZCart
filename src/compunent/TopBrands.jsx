@@ -35,69 +35,7 @@ const TopBrands = ({ sortedProducts, loading }) => {
     }
   }, [dispatch, products, sortedProducts, hasLoaded]);
 
-  // Restore scroll position on mount
-  useLayoutEffect(() => {
-    // Disable browser's automatic scroll restoration
-    window.history.scrollRestoration = "manual";
-
-    // Scroll to clicked product if available, else restore saved scroll
-    const clickedProduct = localStorage.getItem("clickedProduct");
-    if (clickedProduct && !hasScrolled) {
-      // Ensure the clicked product is visible by updating visibleCount
-      const productIndex = sortedProducts.findIndex(
-        (product) => toSlug(product.product_name) === clickedProduct
-      );
-      if (productIndex !== -1) {
-        setVisibleCount((prev) => Math.max(prev, productIndex + 1));
-        setShouldScroll(true);
-        setHasScrolled(true);
-      }
-    } else {
-      const savedScroll = localStorage.getItem("topBrandsScroll");
-      if (savedScroll) {
-        window.scrollTo(0, parseInt(savedScroll, 10));
-      }
-    }
-  }, [sortedProducts.length, hasScrolled]); // Wait until products are loaded
-
-  // Handle scrolling after visibleCount update
-  useEffect(() => {
-    if (shouldScroll) {
-      const clickedProduct = localStorage.getItem("clickedProduct");
-      if (clickedProduct) {
-        const element = document.getElementById(`product-${clickedProduct}`);
-        if (element) {
-          // Scroll instantly to product (no animation)
-          element.scrollIntoView({ behavior: "auto", block: "center" });
-          // Mobile adjustment: center the product in viewport instantly
-          const isMobile = window.innerWidth < 768;
-          if (isMobile) {
-            setTimeout(() => {
-              const rect = element.getBoundingClientRect();
-              const scrollY =
-                window.scrollY +
-                rect.top -
-                window.innerHeight / 2 +
-                rect.height / 2;
-              window.scrollTo({ top: scrollY, behavior: "auto" });
-            }, 0);
-          }
-        }
-        localStorage.removeItem("clickedProduct");
-        setShouldScroll(false);
-      }
-    }
-  }, [visibleCount, shouldScroll]);
-
-  // Save scroll position on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      localStorage.setItem("topBrandsScroll", window.scrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Scroll restoration removed — behaviour intentionally disabled
 
   useEffect(() => {
     if (visibleCount >= sortedProducts.length || loading || error) return;
@@ -222,6 +160,7 @@ const TopBrands = ({ sortedProducts, loading }) => {
                             "https://via.placeholder.com/150"
                           }
                           alt={product.product_name || "Product"}
+                          loading="lazy"
                           className="object-contain max-h-full transition-transform duration-300 group-hover:scale-105"
                           onLoad={() => handleImageLoad(product._id)}
                           style={{

@@ -87,7 +87,7 @@ const SingleProduct = () => {
     setSelectedSize("");
     setActiveSlide(0);
     hasFetchedCart.current = false;
-    window.scrollTo({ top: 0, behavior: "instant" });
+    window.scrollTo(0, 0); // Scroll to top when product changes
   }, [productName, dispatch]);
 
   // ─────────────────────────────────────
@@ -368,6 +368,7 @@ const SingleProduct = () => {
                   <img
                     src={img}
                     alt={`${product.product_name} image ${i}`}
+                    loading="lazy"
                     className="w-full max-h-[300px] object-contain rounded-md border bg-gray-50"
                   />
                 </div>
@@ -381,6 +382,7 @@ const SingleProduct = () => {
                   key={i}
                   src={img}
                   alt={`${product.product_name} thumbnail ${i}`}
+                  loading="lazy"
                   onClick={() => mainSliderRef.current?.slickGoTo(i)}
                   className={`h-16 w-16 mt-1 object-contain rounded-md border flex-shrink-0 cursor-pointer transition-transform duration-200 ${
                     activeSlide === i
@@ -398,6 +400,7 @@ const SingleProduct = () => {
                 <img
                   key={i}
                   src={img}
+                  loading="lazy"
                   onClick={() => setSelectedImage(img)}
                   className={`w-20 h-20 border rounded-md cursor-pointer ${
                     selectedImage === img ? "border-red-600" : ""
@@ -409,6 +412,7 @@ const SingleProduct = () => {
               <img
                 src={product.product_images?.[0]}
                 alt={product.product_name}
+                loading="eager"
                 className="w-full h-[450px] object-contain"
               />
             </div>

@@ -22,23 +22,7 @@ const AllProducts = () => {
       .catch(() => {});
   }, [dispatch]);
 
-  // Restore scroll position on mount
-  useEffect(() => {
-    const savedScroll = localStorage.getItem("allProductsScroll");
-    if (savedScroll) {
-      window.scrollTo(0, parseInt(savedScroll, 10));
-    }
-  }, [filter]); // Restore when filter changes
-
-  // Save scroll position on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      localStorage.setItem("allProductsScroll", window.scrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Scroll restoration removed from AllProducts
 
   // Filter + sort products
   const filteredProducts = useMemo(() => {

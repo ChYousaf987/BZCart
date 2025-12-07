@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ import { loginMyUser, userReset } from "../features/users/userSlice";
 
 export default function Login({ setIsSignIn }) {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, userLoading, userError, userMessage, userSuccess } =
@@ -82,15 +83,24 @@ export default function Login({ setIsSignIn }) {
               <label className="block text-xs font-semibold text-gray-600 mb-2">
                 PASSWORD
               </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="••••••••"
-                required
-                className="w-full bg-gray-100/80 text-gray-800 rounded-xl px-4 py-3 shadow-inner outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white transition placeholder-gray-400"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  required
+                  className="w-full bg-gray-100/80 text-gray-800 rounded-xl px-4 py-3 pr-12 shadow-inner outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white transition placeholder-gray-400"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
 
             {/* Remember me */}
@@ -99,9 +109,12 @@ export default function Login({ setIsSignIn }) {
                 <input type="checkbox" className="w-4 h-4 accent-orange-500" />
                 <span>Remember me</span>
               </label>
-              <span className="text-orange-500 text-sm font-medium hover:underline cursor-pointer">
+              <a
+                href="https://bzcart.store/forgot"
+                className="text-orange-500 text-sm font-medium hover:underline"
+              >
                 Forgot Password?
-              </span>
+              </a>
             </div>
 
             {/* Submit */}
@@ -155,11 +168,17 @@ export default function Login({ setIsSignIn }) {
               onChange={handleChange}
             />
 
-            <div className="flex items-center mb-6 mt-2">
-              <input type="checkbox" id="remember" className="mr-2 w-4 h-4" />
+            <div className="flex items-center justify-between mb-6 mt-2">
               <label htmlFor="remember" className="text-sm text-gray-600">
+                <input type="checkbox" id="remember" className="mr-2 w-4 h-4" />
                 Remember me
               </label>
+              <a
+                href="https://bzcart.store/forgot"
+                className="text-orange-500 text-sm font-medium hover:underline"
+              >
+                Forgot Password?
+              </a>
             </div>
 
             <button
