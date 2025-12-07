@@ -159,11 +159,3 @@
 
 
 
-@keyframes flip {
-  0% { transform: rotateX(0deg); }
-  50% { transform: rotateX(-90deg); opacity: 0.3; }
-  100% { transform: rotateX(0deg); opacity: 1; }
-}
-.animate-flip {
-  animation: flip 0.7s ease;
-}

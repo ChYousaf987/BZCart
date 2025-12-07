@@ -100,10 +100,12 @@ const Home = () => {
             <Slider />
           </LazyWrapper>
         </Suspense>
-        
+
         <Suspense fallback={<div></div>}>
           <LazyWrapper>
-            <FridayBannerDisplay />
+            <div className="block md:hidden">
+              <FridayBannerDisplay />
+            </div>
           </LazyWrapper>
         </Suspense>
 
