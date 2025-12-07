@@ -127,49 +127,31 @@ const FridayBannerDisplay = () => {
       </a>
 
       {/* Countdown Timer */}
-      <div className="flex items-center justify-center mt-4">
-        <div className="flex justify-center items-center gap-3">
-          {/* Days */}
-          <div className="flex flex-col gap-2">
-            <div className="p-20 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
-              <span className="text-6xl font-bold">{time.days}</span>
-            </div>
 
-            <div className="p-5 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
-              <span className="text-xl font-semibold tracking-wide">DAYS</span>
-            </div>
-          </div>
+      <div className=" flex flex-col items-center justify-center  p-6 ">
+        <p className="text-gray-700 text-lg md:text-xl font-semibold mb-4 uppercase tracking-wide">
+          Friday Sale Ends In
+        </p>
 
-          {/* Hours / Min / Sec */}
-          <div className="flex flex-col gap-1">
-            {/* Hours */}
-            <div className="p-3 px-10 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
-              <span className="text-4xl font-bold">{time.hours}</span>
+        <div className="flex gap-2">
+          {["days", "hours", "minutes", "seconds"].map((unit) => (
+            <div key={unit} className="flex flex-col items-center">
+              <div
+                className={`relative w-20 h-24 flex items-center justify-center bg-gradient-to-b from-[#2c2c2c] to-[#1a1a1a] rounded-xl shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] ${
+                  animateSec && unit === "seconds" ? "animate-flip" : ""
+                } transition-transform duration-300`}
+              >
+                <span className="text-white text-5xl font-extrabold tracking-wide">
+                  {time[unit]}
+                </span>
+                {/* Orange glow at bottom */}
+                <div className="absolute bottom-2 left-1/4 right-1/4 h-1 bg-primary rounded-full opacity-90 shadow-[0_0_8px_rgba(255,165,0,0.8)]"></div>
+              </div>
+              <span className="text-gray-700 mt-3 text-sm md:text-base font-semibold uppercase tracking-wider">
+                {unit}
+              </span>
             </div>
-            <div className="p-1 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
-              <span className="text-sm font-semibold">HOURS</span>
-            </div>
-
-            {/* Minutes */}
-            <div className="p-3 px-10 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
-              <span className="text-4xl font-bold">{time.minutes}</span>
-            </div>
-            <div className="p-1 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
-              <span className="text-sm font-semibold">MINUTES</span>
-            </div>
-
-            {/* Seconds with flip animation */}
-            <div
-              className={`p-3 px-10 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center ${
-                animateSec ? "flip" : ""
-              }`}
-            >
-              <span className="text-4xl font-bold">{time.seconds}</span>
-            </div>
-            <div className="p-1 bg-orange-50 rounded-xl shadow-lg flex items-center justify-center">
-              <span className="text-sm font-semibold">SECONDS</span>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </>
