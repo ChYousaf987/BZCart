@@ -58,6 +58,8 @@ const SingleProduct = () => {
   const [openShip, setOpenShip] = useState(false);
   const [openCare, setOpenCare] = useState(false);
   const [openNote, setOpenNote] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
 
   // Critical: Track if we're currently resolving the product
   const [resolvingProduct, setResolvingProduct] = useState(true);
@@ -408,12 +410,27 @@ const SingleProduct = () => {
                 />
               ))}
             </div>
-            <div className="flex-1">
+            <div
+              className="flex-1 relative overflow-hidden rounded-md border border-gray-200 bg-gray-50"
+              style={{ height: "450px" }}
+              onMouseEnter={() => setIsZoomed(true)}
+              onMouseLeave={() => setIsZoomed(false)}
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                setZoomPosition({ x, y });
+              }}
+            >
               <img
-                src={product.product_images?.[0]}
+                src={selectedImage || product.product_images?.[0]}
                 alt={product.product_name}
                 loading="eager"
-                className="w-full h-[450px] object-contain"
+                className="w-full h-full object-contain transition-transform duration-300"
+                style={{
+                  transform: isZoomed ? "scale(2)" : "scale(1)",
+                  transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                }}
               />
             </div>
           </div>
